@@ -11,6 +11,7 @@
 #include <util/prec.hpp>
 #include <data/field.hpp>
 #include <script/scriptable.hpp>
+#include <util/io/package.hpp>
 
 DECLARE_POINTER_TYPE(SymbolFilter);
 DECLARE_POINTER_TYPE(SymbolVariation);
@@ -65,7 +66,7 @@ class SymbolVariation : public IntrusivePtrBase<SymbolVariation> {
 class SymbolValue : public Value {
   public:
   inline SymbolValue(const SymbolFieldP& field) : Value(field) {}
-  DECLARE_VALUE_TYPE(Symbol, FileName);
+  DECLARE_VALUE_TYPE(Symbol, LocalFileName);
   
   ValueType filename;    ///< Filename of the symbol (in the current package)
   Age       last_update; ///< When was the symbol last changed?

@@ -152,7 +152,7 @@ SetP MtgEditorFileFormat::importSet(const String& filename) {
       }
       // copy image into set
       if (wxFileExists(line)) {
-        String image_file = set->newFileName(_("image"),_(""));
+        LocalFileName image_file = set->newFileName(_("image"),_(""));
         if (wxCopyFile(line, set->nameOut(image_file), true)) {
           current_card->value<ImageValue>(_("image")).filename = image_file;
         }

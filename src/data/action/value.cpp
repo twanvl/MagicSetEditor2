@@ -87,10 +87,10 @@ unique_ptr<ValueAction> value_action(const ChoiceValueP& value, const Defaultabl
 unique_ptr<ValueAction> value_action(const ColorValueP& value, const Defaultable<Color>& new_value) {
   return make_unique<SimpleValueAction<ColorValue, true>>(value, new_value);
 }
-unique_ptr<ValueAction> value_action(const ImageValueP& value, const FileName& new_value) {
+unique_ptr<ValueAction> value_action(const ImageValueP& value, const LocalFileName& new_value) {
   return make_unique<SimpleValueAction<ImageValue, false>>(value, new_value);
 }
-unique_ptr<ValueAction> value_action(const SymbolValueP& value, const FileName& new_value) {
+unique_ptr<ValueAction> value_action(const SymbolValueP& value, const LocalFileName& new_value) {
   return make_unique<SimpleValueAction<SymbolValue, false>>(value, new_value);
 }
 unique_ptr<ValueAction> value_action(const PackageChoiceValueP& value, const String& new_value) {

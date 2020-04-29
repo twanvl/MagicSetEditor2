@@ -148,13 +148,13 @@ SCRIPT_FUNCTION(symbol_variation) {
   SCRIPT_PARAM(ScriptValueP, symbol); // TODO: change to input?
   ScriptObject<ValueP>* valueO = dynamic_cast<ScriptObject<ValueP>*>(symbol.get());
   SymbolValue* value = valueO ? dynamic_cast<SymbolValue*>(valueO->getValue().get()) : nullptr;
-  String filename;
+  LocalFileName filename;
   if (value) {
     filename = value->filename;
   } else if (valueO) {
     throw ScriptErrorConversion(valueO->typeName(), _TYPE_("symbol" ));
   } else {
-    filename = from_script<String>(symbol);
+    filename = LocalFileName::fromReadString(symbol->toString());
   }
   // known variation?
   SCRIPT_OPTIONAL_PARAM_(String, variation)

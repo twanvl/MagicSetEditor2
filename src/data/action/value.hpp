@@ -19,6 +19,7 @@
 
 class Card;
 class StyleSheet;
+class LocalFileName;
 DECLARE_POINTER_TYPE(Set);
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(Style);
@@ -57,8 +58,8 @@ class ValueAction : public Action {
 unique_ptr<ValueAction> value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value);
 unique_ptr<ValueAction> value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change);
 unique_ptr<ValueAction> value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value);
-unique_ptr<ValueAction> value_action(const ImageValueP&          value, const FileName&            new_value);
-unique_ptr<ValueAction> value_action(const SymbolValueP&         value, const FileName&            new_value);
+unique_ptr<ValueAction> value_action(const ImageValueP&          value, const LocalFileName&       new_value);
+unique_ptr<ValueAction> value_action(const SymbolValueP&         value, const LocalFileName&       new_value);
 unique_ptr<ValueAction> value_action(const PackageChoiceValueP&  value, const String&              new_value);
 
 // ----------------------------------------------------------------------------- : Text

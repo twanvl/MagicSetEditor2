@@ -245,7 +245,7 @@ String Package::nameOut(const String& file) {
   }
 }
 
-FileName Package::newFileName(const String& prefix, const String& suffix) {
+LocalFileName Package::newFileName(const String& prefix, const String& suffix) {
   assert(wxThread::IsMain()); // Writing should only be done from the main thread
   String name;
   UInt infix = 0;
@@ -273,21 +273,23 @@ void Package::referenceFile(const String& file) {
   it->second.keep = true;
 }
 
-String Package::absoluteName(const String& file) {
+// ----------------------------------------------------------------------------- : LocalFileNames and absolute file references
+
+String Package::absoluteName(const LocalFileName& file) {
   assert(wxThread::IsMain());
-  FileInfos::iterator it = files.find(normalize_internal_filename(file));
+  FileInfos::iterator it = files.find(normalize_internal_filename(file.fn));
   if (it == files.end()) {
-    throw FileNotFoundError(file, filename);
+    throw FileNotFoundError(file.fn, filename);
   }
   if (it->second.wasWritten()) {
     // written to this file, return the temp file
     return it->second.tempName;
-  } else if (wxFileExists(filename+_("/")+file)) {
+  } else if (wxFileExists(filename + _("/") + file.fn)) {
     // dir package
-    return filename+_("/")+file;
+    return filename + _("/") + file.fn;
   } else {
     // assume zip package
-    return filename+_("\1")+file;
+    return filename + _("\1") + file.fn;
   }
 }
 // Open a file that is in some package
@@ -305,6 +307,42 @@ unique_ptr<wxInputStream> Package::openAbsoluteFile(const String& name) {
     return p.openIn( name.substr(pos + 1));
   }
 }
+
+String LocalFileName::toStringForWriting() const {
+  if (!fn.empty() && clipboard_package()) {
+    // use absolute names on clipboard
+    try {
+      return clipboard_package()->absoluteName(fn);
+    } catch (const Error&) {
+      // ignore errors
+      return String();
+    }
+  } else if (!fn.empty() && writing_package()) {
+    writing_package()->referenceFile(fn);
+    return fn;
+  } else {
+    return fn;
+  }
+}
+
+LocalFileName LocalFileName::fromReadString(String const& fn, String const& prefix, String const& suffix) {
+  if (!fn.empty() && clipboard_package()) {
+    // copy file into current package
+    try {
+      LocalFileName local_name = clipboard_package()->newFileName(_("image"),_("")); // a new unique name in the package, assume it's an image
+      auto out_stream = clipboard_package()->openOut(local_name);
+      auto in_stream  = Package::openAbsoluteFile(fn);
+      out_stream->Write(*in_stream); // copy
+      return local_name;
+    } catch (const Error&) {
+      // ignore errors
+      return LocalFileName();
+    }
+  } else {
+    return LocalFileName(fn);
+  }
+}
+
 
 // ----------------------------------------------------------------------------- : Package : private
 

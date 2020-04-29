@@ -25,6 +25,40 @@ DECLARE_DYNAMIC_ARG(Package*, writing_package);
 /// The package that is being put onto/read from the clipboard
 DECLARE_DYNAMIC_ARG(Package*, clipboard_package);
 
+// ----------------------------------------------------------------------------- : File names
+
+/// A string standing for a filename in a package
+/// Differs from a string because when writing the file should be included in the package
+/// Behaviour is controled by dynamic args:
+///   * clipboard_package
+///   * writing_package
+class LocalFileName {
+public:
+  LocalFileName() {}
+
+  // Convert to a string that can be written to a package.
+  // notifies the package that the underlying file is in use.
+  // when writing to the clipboard, instead returns a global file reference.
+  String toStringForWriting() const;
+  // Construct a LocalFileName based on a string read from a package.
+  // when reading from the clipboard, this will instead be a global file reference, and it is converted at this point.
+  static LocalFileName fromReadString(const String&, const String& prefix = _("image"), String const& suffix = _(""));
+
+  inline bool empty() const {
+    return fn.empty();
+  }
+  inline bool operator == (LocalFileName const& that) const {
+    return this->fn == that.fn;
+  }
+
+  inline String const& toStringForKey() const { return fn; }
+
+private:
+  LocalFileName(const wxString& fn) : fn(fn) {}
+  String fn;
+  friend class Package;
+};
+
 // ----------------------------------------------------------------------------- : Package
 
 /// A package is a container for files. On disk it is either a directory or a zip file.
@@ -100,39 +134,41 @@ class Package : public IntrusivePtrVirtualBase {
 
   /// Open an input stream for a file in the package.
   unique_ptr<wxInputStream> openIn(const String& file);
+  inline unique_ptr<wxInputStream> openIn(const LocalFileName& file) {
+    return openIn(file.fn);
+  }
 
   /// Open an output stream for a file in the package.
   /// (changes are only committed with save())
   unique_ptr<wxOutputStream> openOut(const String& file);
+  inline unique_ptr<wxOutputStream> openOut(const LocalFileName& file) {
+    return openOut(file.fn);
+  }
 
   /// Get a filename that can be written to to modfify a file in the package
   /// (changes are only committed with save())
   String nameOut(const String& file);
+  inline String nameOut(const LocalFileName& file) {
+    return nameOut(file.fn);
+  }
 
   /// Creates a new, unique, filename with the specified prefix and suffix
   /// for example newFileName("image/",".jpg") -> "image/1.jpg"
   /// Returns the name of a temporary file that can be written to.
-  FileName newFileName(const String& prefix, const String& suffix);
+  LocalFileName newFileName(const String& prefix, const String& suffix);
 
   /// Signal that a file is still used by this package.
   /// Must be called for files not opened using openOut/nameOut
   /// If they are to be kept in the package.
   void referenceFile(const String& file);
 
-  /// Get an 'absolute filename' for a file in the package.
-  /// This file can later be opened from anywhere (other process) using openAbsoluteFile()
-  String absoluteName(const String& file);
-
-  /// Open a file given an absolute filename
-  static unique_ptr<wxInputStream> openAbsoluteFile(const String& name);
-
   // --------------------------------------------------- : Managing the inside of the package : Reader/writer
 
   template <typename T>
-  void readFile(const String& file, T& obj);
+  void readFile(const LocalFileName& file, T& obj);
 
   template <typename T>
-  T readFile(const String& file) {
+  T readFile(const LocalFileName& file) {
     T obj;
     readFile(file, obj);
     return obj;
@@ -194,6 +230,14 @@ class Package : public IntrusivePtrVirtualBase {
   void saveToZipfile(const String&,   bool remove_unused, bool is_copy);
   void saveToDirectory(const String&, bool remove_unused, bool is_copy);
   FileInfos::iterator addFile(const String& file);
+
+  /// Get an 'absolute filename' for a file in the package.
+  /// This file can later be opened from anywhere (other process) using openAbsoluteFile()
+  String absoluteName(const LocalFileName& file);
+
+  /// Open a file given an absolute filename
+  static unique_ptr<wxInputStream> openAbsoluteFile(const String& name);
+  friend class LocalFileName;
 };
 
 // ----------------------------------------------------------------------------- : Packaged
@@ -291,13 +335,13 @@ intrusive_ptr<T> open_package(const String& filename) {
 
 // This is here because it uses dynamic_cast and must be to a complete type.
 template <typename T>
-inline void Package::readFile(const String& file, T& obj) {
+inline void Package::readFile(const LocalFileName& file, T& obj) {
   auto stream = openIn(file);
-  Reader reader(*stream, dynamic_cast<Packaged*>(this), absoluteFilename() + _("/") + file);
+  Reader reader(*stream, dynamic_cast<Packaged*>(this), absoluteFilename() + _("/") + file.fn);
   try {
     reader.handle_greedy(obj);
   } catch (const ParseError& err) {
-    throw FileParseError(err.what(), absoluteFilename() + _("/") + file); // more detailed message
+    throw FileParseError(err.what(), absoluteFilename() + _("/") + file.fn); // more detailed message
   }
 }
 

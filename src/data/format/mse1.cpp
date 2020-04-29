@@ -112,16 +112,16 @@ void read_mse1_card(Set& set, wxFileInputStream& f, wxTextInputStream& file) {
         card->value<TextValue>(_("name"))        .value.assign(line);
         break;
       } case 'C': case 'D': { // image filename
-        String image_file = set.newFileName(_("image"),_("")); // a new unique name in the package
+        LocalFileName image_file = set.newFileName(_("image"),_("")); // a new unique name in the package
         if (wxCopyFile(line, set.nameOut(image_file), true)) {
-          card->value<ImageValue>(_("image"))  .filename = image_file;
+          card->value<ImageValue>(_("image")).filename = image_file;
         }
         break;
       } case 'E':  {  // super type
-        card->value<TextValue>(_("super type"))  .value.assign(line);
+        card->value<TextValue>(_("super type")).value.assign(line);
         break;
       } case 'F': {  // sub type
-        card->value<TextValue>(_("sub type"))    .value.assign(line);
+        card->value<TextValue>(_("sub type")).value.assign(line);
         break;
       } case 'G': {  // casting cost
         card->value<TextValue>(_("casting cost")).value.assign(line);

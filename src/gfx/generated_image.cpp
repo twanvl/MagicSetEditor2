@@ -444,7 +444,7 @@ bool BuiltInImage::operator == (const GeneratedImage& that) const {
 
 // ----------------------------------------------------------------------------- : SymbolToImage
 
-SymbolToImage::SymbolToImage(bool is_local, const String& filename, Age age, const SymbolVariationP& variation)
+SymbolToImage::SymbolToImage(bool is_local, const LocalFileName& filename, Age age, const SymbolVariationP& variation)
   : is_local(is_local), filename(filename), age(age), variation(variation)
 {}
 SymbolToImage::~SymbolToImage() {}
@@ -480,7 +480,7 @@ bool SymbolToImage::operator == (const GeneratedImage& that) const {
 
 // ----------------------------------------------------------------------------- : ImageValueToImage
 
-ImageValueToImage::ImageValueToImage(const String& filename, Age age)
+ImageValueToImage::ImageValueToImage(const LocalFileName& filename, Age age)
   : filename(filename), age(age)
 {}
 ImageValueToImage::~ImageValueToImage() {}

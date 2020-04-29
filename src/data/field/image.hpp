@@ -12,6 +12,7 @@
 #include <data/field.hpp>
 #include <script/scriptable.hpp>
 #include <script/image.hpp>
+#include <util/io/package.hpp>
 
 // ----------------------------------------------------------------------------- : ImageField
 
@@ -45,7 +46,7 @@ class ImageStyle : public Style {
 class ImageValue : public Value {
   public:
   inline ImageValue(const ImageFieldP& field) : Value(field) {}
-  DECLARE_VALUE_TYPE(Image, FileName);
+  DECLARE_VALUE_TYPE(Image, LocalFileName);
   
   ValueType filename;    ///< Filename of the image (in the current package), or ""
   Age       last_update; ///< When was the image last changed?

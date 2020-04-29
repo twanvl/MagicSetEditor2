@@ -51,6 +51,8 @@ String SymbolValue::toString() const {
   return filename.empty() ? wxEmptyString : _("<symbol>");
 }
 
-IMPLEMENT_REFLECTION_NAMELESS(SymbolValue) {
+IMPLEMENT_REFLECTION_NO_GET_MEMBER(SymbolValue) {
   if (fieldP->save_value || !handler.isWriting) REFLECT_NAMELESS(filename);
 }
+void SymbolValue::reflect(GetMember& handler) {}
+void SymbolValue::reflect(GetDefaultMember& handler) {}

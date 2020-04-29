@@ -10,6 +10,7 @@
 
 #include <util/prec.hpp>
 #include <util/age.hpp>
+#include <util/io/package.hpp>
 #include <gfx/gfx.hpp>
 #include <script/value.hpp>
 
@@ -352,7 +353,7 @@ private:
 /// Use a symbol as an image
 class SymbolToImage : public GeneratedImage {
 public:
-  SymbolToImage(bool is_local, const String& filename, Age age, const SymbolVariationP& variation);
+  SymbolToImage(bool is_local, const LocalFileName& filename, Age age, const SymbolVariationP& variation);
   ~SymbolToImage();
   Image generate(const Options& opt) const override;
   bool operator == (const GeneratedImage& that) const override;
@@ -364,7 +365,7 @@ public:
 private:
   SymbolToImage(const SymbolToImage&); // copy ctor
   bool             is_local; ///< Use local package?
-  String           filename;
+  LocalFileName    filename;
   Age              age;      ///< Age the symbol was last updated
   SymbolVariationP variation;
 };
@@ -374,14 +375,14 @@ private:
 /// Use an image from an ImageValue as an image
 class ImageValueToImage : public GeneratedImage {
 public:
-  ImageValueToImage(const String& filename, Age age);
+  ImageValueToImage(const LocalFileName& filename, Age age);
   ~ImageValueToImage();
   Image generate(const Options& opt) const override;
   bool operator == (const GeneratedImage& that) const override;
   bool local() const override { return true; }
 private:
   ImageValueToImage(const ImageValueToImage&); // copy ctor
-  String filename;
-  Age    age; ///< Age the symbol was last updated
+  LocalFileName filename;
+  Age age; ///< Age the image was last updated
 };
 

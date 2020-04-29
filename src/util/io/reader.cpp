@@ -354,26 +354,8 @@ template <> void Reader::handle(Vector2D& vec) {
   }
 }
 
-template <> void Reader::handle(FileName& f) {
-  if (clipboard_package()) {
-    String str = getValue();
-    if (!str.empty()) {
-      // copy file into current package
-      try {
-        String packaged_name = clipboard_package()->newFileName(_("image"),_("")); // a new unique name in the package, assume it's an image
-        auto out_stream = clipboard_package()->openOut(packaged_name);
-        auto in_stream  = Package::openAbsoluteFile(str);
-        out_stream->Write(*in_stream); // copy
-        f.assign(packaged_name);
-      } catch (Error const&) {
-        // ignore errors
-      }
-    } else {
-      f.assign(str);
-    }
-  } else {
-    handle(static_cast<String&>(f));
-  }
+template <> void Reader::handle(LocalFileName& f) {
+  f = LocalFileName::fromReadString(this->getValue());
 }
 
 // ----------------------------------------------------------------------------- : EnumReader

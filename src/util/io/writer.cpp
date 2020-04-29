@@ -131,18 +131,6 @@ template <> void Writer::handle(const Vector2D& vec) {
   handle(String::Format(_("(%.10lf,%.10lf)"), vec.x, vec.y));
 }
 
-template <> void Writer::handle(const FileName& value) {
-  if (clipboard_package() && !value.empty()) {
-    // use absolute names on clipboard
-    try {
-      handle(clipboard_package()->absoluteName(value));
-    } catch (const Error&) {
-      // ignore errors
-    }
-  } else {
-    handle(static_cast<const String&>(value));
-    if (writing_package()) {
-      writing_package()->referenceFile(value);
-    }
-  }
+template <> void Writer::handle(const LocalFileName& value) {
+  handle(value.toStringForWriting());
 }

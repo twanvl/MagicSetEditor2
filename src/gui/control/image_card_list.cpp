@@ -50,10 +50,10 @@ ImageFieldP ImageCardList::findImageField() {
 /// A request for a thumbnail of a card image
 class CardThumbnailRequest : public ThumbnailRequest {
   public:
-  CardThumbnailRequest(ImageCardList* parent, const String& filename)
+  CardThumbnailRequest(ImageCardList* parent, const LocalFileName& filename)
     : ThumbnailRequest(
       parent,
-      _("card") + parent->set->absoluteFilename() + _("-") + filename,
+      _("card") + parent->set->absoluteFilename() + _("-") + filename.toStringForKey(),
       wxDateTime::Now())  // TODO: Find mofication time of card image
     , filename(filename)
   {}
@@ -78,23 +78,23 @@ class CardThumbnailRequest : public ThumbnailRequest {
     if (img.Ok()) {
       wxImageList* il = parent->GetImageList(wxIMAGE_LIST_SMALL);
       int id = il->Add(wxBitmap(img));
-      parent->thumbnails.insert(make_pair(filename, id));
+      parent->thumbnails.insert(make_pair(filename.toStringForKey(), id));
       parent->Refresh(false);
     }
   }
 
   virtual bool threadSafe() const {return true;}
-  private:
-  String filename;
+private:
+  LocalFileName filename;
 };
 
 int ImageCardList::OnGetItemImage(long pos) const {
   if (image_field) {
     // Image = thumbnail of first image field of card
     ImageValue& val = static_cast<ImageValue&>(*getCard(pos)->data[image_field]);
-    if (!val.filename) return -1; // no image
+    if (val.filename.empty()) return -1; // no image
     // is there already a thumbnail?
-    map<String,int>::const_iterator it = thumbnails.find(val.filename);
+    map<String,int>::const_iterator it = thumbnails.find(val.filename.toStringForKey());
     if (it != thumbnails.end()) {
       return it->second;
     } else {

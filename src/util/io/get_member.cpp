@@ -18,7 +18,6 @@ using boost::tribool;
 
             void GetDefaultMember::handle(const Char*         v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const String&       v) { value = to_script(v); }
-template <> void GetDefaultMember::handle(const FileName&     v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const int&          v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const unsigned int& v) { value = to_script((int)v); }
 template <> void GetDefaultMember::handle(const double&       v) { value = to_script(v); }

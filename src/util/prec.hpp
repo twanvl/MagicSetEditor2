@@ -84,13 +84,6 @@ typedef wxOutputStream OutputStream;
 typedef unsigned char Byte;
 typedef unsigned int  UInt;
 
-/// A string standing for a filename, has different behaviour when reading/writing
-class FileName : public wxString {
-  public:
-  FileName()                                {}
-  FileName(const wxString& s) : wxString(s) {}
-};
-
 // ----------------------------------------------------------------------------- : MSE Headers
 
 // MSE utility headers (ones unlikely to change and used everywhere)
