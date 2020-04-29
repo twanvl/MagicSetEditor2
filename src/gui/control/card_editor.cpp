@@ -18,6 +18,8 @@
 #include <wx/caret.h>
 #include <boost/iterator/filter_iterator.hpp>
 
+const bool draw_hover_borders = false;
+
 // ----------------------------------------------------------------------------- : DataEditor
 
 DataEditor::DataEditor(Window* parent, int id, long style)
@@ -40,7 +42,7 @@ ValueViewerP DataEditor::makeViewer(const StyleP& style) {
 DrawWhat DataEditor::drawWhat(const ValueViewer* viewer) const {
   int what = DRAW_NORMAL
            | DRAW_ACTIVE * viewerIsCurrent(viewer)
-           | DRAW_HOVER * (viewer == hovered_viewer);
+           | DRAW_HOVER * (draw_hover_borders && viewer == hovered_viewer);
   if (nativeLook()) {
     what |= DRAW_BOXES | DRAW_EDITING | DRAW_NATIVELOOK | DRAW_ERRORS;
   } else {
@@ -312,10 +314,10 @@ void DataEditor::onMotion(wxMouseEvent& ev) {
       ValueEditor* e = old_hovered_viewer->getEditor();
       RealPoint pos = mousePoint(ev, *hovered_viewer);
       if (e) e->onMouseLeave(pos, ev);
-      redraw(*old_hovered_viewer);
+      if (draw_hover_borders) redraw(*old_hovered_viewer);
     }
     if (hovered_viewer && hovered_viewer != old_hovered_viewer) {
-      redraw(*hovered_viewer);
+      if (draw_hover_borders) redraw(*hovered_viewer);
     }
     // change cursor and set status text
     wxFrame* frame = dynamic_cast<wxFrame*>( wxGetTopLevelParent(this) );
@@ -340,7 +342,7 @@ void DataEditor::onMouseLeave(wxMouseEvent& ev) {
   if (hovered_viewer) {
     ValueEditor* e = hovered_viewer->getEditor();
     if (e) e->onMouseLeave(mousePoint(ev,*hovered_viewer), ev);
-    if (hovered_viewer) redraw(*hovered_viewer);
+    if (draw_hover_borders && hovered_viewer) redraw(*hovered_viewer);
     hovered_viewer = nullptr;
   }
   // clear status text
