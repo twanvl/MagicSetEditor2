@@ -23,8 +23,9 @@
 /** Reflection allows the member variables of a class to be inspected at runtime.
  */
 #define DECLARE_REFLECTION_PREFIX(PREFIX,SUFFIX) \
-  protected: \
+  private: \
     template<class Handler> void reflect_impl(Handler&); \
+  protected: \
     friend class Reader; \
     friend class Writer; \
     friend class GetDefaultMember; \
@@ -101,7 +102,7 @@
 #define REFLECT_NAMELESS(var) handler.handle(var)
 
 /// Declare that the variables of a base class should also be reflected
-#define REFLECT_BASE(Base)    Base::reflect_impl(handler)
+#define REFLECT_BASE(Base)    Base::reflect(handler)
 
 /// Reflect a group of declarations only when reading
 /** Usage:
