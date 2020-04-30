@@ -165,9 +165,7 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(filter_text) {
     ret.append(pos.first, pos.second);  // the match
     if (pos.second == start) {
       // regex matched the empty string, would cause an infinite loop
-      queue_message(MESSAGE_WARNING, "Regular expression matches empty string in filter_text");
-      if (start == input.end()) break;
-      ++start;
+      throw ScriptError("Regular expression matches empty string");
     } else {
       start = pos.second;
     }
