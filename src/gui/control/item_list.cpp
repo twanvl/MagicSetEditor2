@@ -226,6 +226,14 @@ void ItemList::SetColumnImage(int col, int image) {
 
 // ----------------------------------------------------------------------------- : ItemList : Window events
 
+wxSize ItemList::DoGetBestClientSize() const {
+  // wxWidgets decided to be 'smart', and calculate the best size of a list view based on the column header width.
+  // But this also sets the minimum window size, so the window can't be made any smaller than that, even on small screens.
+  // See issue #9
+  // So, return some small size instead.
+  return wxSize(10,10);
+}
+
 void ItemList::onColumnClick(wxListEvent& ev) {
   long new_sort_by_column = ev.GetColumn();
   if (sort_by_column == new_sort_by_column) {

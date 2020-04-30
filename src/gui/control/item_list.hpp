@@ -92,7 +92,11 @@ class ItemList : public wxListView {
   void focusItem(const VoidP& item, bool focus = true);
   /// Count the number of focused items
   long focusCount() const;
-  
+
+  // --------------------------------------------------- : Fixing wx issues
+
+  wxSize DoGetBestClientSize() const;
+
   // --------------------------------------------------- : Data
   VoidP          selected_item;    ///< The currently selected item
   long           selected_item_pos; ///< Position of the selected item in the sorted_list, or -1 if no card is selected
