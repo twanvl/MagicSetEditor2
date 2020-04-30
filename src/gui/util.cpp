@@ -147,7 +147,7 @@ public:
     return stream.IsOk();
   }
   bool IsSeekable() const override {
-    return pos < BUFFER_SIZE;
+    return pos < (wxFileOffset)BUFFER_SIZE;
   }
   size_t LastRead() const override {
     return last_read;
@@ -176,7 +176,7 @@ public:
       stream.Read(out_buffer, size);
       size_t read = stream.LastRead();
       last_read += read;
-      if (pos < BUFFER_SIZE) {
+      if (pos < (wxFileOffset)BUFFER_SIZE) {
         // update buffer
         memcpy(buffer + pos, out_buffer, min(BUFFER_SIZE - (size_t)pos, read));
       }
@@ -187,8 +187,8 @@ public:
   }
   wxFileOffset SeekI(wxFileOffset target, wxSeekMode mode = wxFromStart) override {
     assert(mode == wxFromStart);
-    assert(target < BUFFER_SIZE);
-    if (target < BUFFER_SIZE) {
+    assert(target < (wxFileOffset)BUFFER_SIZE);
+    if (target < (wxFileOffset)BUFFER_SIZE) {
       pos = target;
       return target;
     } else {
@@ -205,7 +205,7 @@ protected:
   }
 private:
   wxInputStream& stream;
-  static const size_t BUFFER_SIZE = 16;
+  static constexpr size_t BUFFER_SIZE = 16;
   Byte buffer[BUFFER_SIZE];
   // positions:
   // Invariant: pos < stream_pos ==> pos < BUFFER_SIZE && buffer[i] is valid for i<=pos
