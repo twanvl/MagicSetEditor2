@@ -39,7 +39,13 @@ class ScriptRegex : public ScriptValue, public Regex {
         if (in_context->matches(context_str)) {
           return true; // the context matches, done
         }
-        begin = match.second; // skip
+        if (begin == match.second) {
+          // matched empty string, prevent loop
+          if (begin == str.end()) break;
+          ++begin;
+        } else {
+          begin = match.second; // skip
+        }
       }
       return false;
     }
@@ -121,6 +127,10 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(replace_text) {
     replacer.replacement_string = replacer.replacement_function->toString();
     replacer.replacement_function = ScriptValueP();
   }
+  if (replacer.replacement_function == script_replace_text) {
+    // the replace built in function looks like the "replace" parameter, but that would cause a stack overflow.
+    throw ScriptErrorNoVariable(variable_to_string(SCRIPT_VAR_replace));
+  }
   // run
   SCRIPT_PARAM_C(String, input);
   if (replacer.context || replacer.replacement_function || replacer.recursive) {
@@ -153,7 +163,14 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(filter_text) {
     // match, append to result
     ScriptRegex::Results::const_reference pos = results[0];
     ret.append(pos.first, pos.second);  // the match
-    start = pos.second;
+    if (pos.second == start) {
+      // regex matched the empty string, would cause an infinite loop
+      queue_message(MESSAGE_WARNING, "Regular expression matches empty string in filter_text");
+      if (start == input.end()) break;
+      ++start;
+    } else {
+      start = pos.second;
+    }
   }
   SCRIPT_RETURN(ret);
 }
