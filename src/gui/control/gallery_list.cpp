@@ -83,6 +83,7 @@ void GalleryList::update() {
   }
   updateScrollbar();
   Refresh(false);
+  InvalidateBestSize();
 }
 
 size_t GalleryList::findItem(const wxMouseEvent& ev) const {
@@ -263,13 +264,14 @@ void GalleryList::onChar(wxKeyEvent& ev) {
   }
 }
 
-wxSize GalleryList::DoGetBestClientSize() const {
+wxSize GalleryList::DoGetBestSize() const {
+  wxSize ws = GetSize(), cs = GetClientSize();
   const int w = item_size.x + 2*MARGIN + 2*BORDER;
   const int h = item_size.y + 2*MARGIN + 2*BORDER;
   if (direction == wxHORIZONTAL) {
-    return wxSize(w, h * (int)column_count);
+    return wxSize(w, h * (int)column_count) + ws - cs;
   } else {
-    return wxSize(w * (int)column_count, h);
+    return wxSize(w * (int)column_count, h) + ws - cs;
   }
 }
 

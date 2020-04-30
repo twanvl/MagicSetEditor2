@@ -71,7 +71,7 @@ class GalleryList : public wxPanel {
   virtual void onSelect(size_t item, size_t col, bool& changes) {}
   
   /// Return the desired size of control
-  virtual wxSize DoGetBestClientSize() const;
+  virtual wxSize DoGetBestSize() const;
   
   /// Information on the subcolumns. These are columns inside items
   struct SubColumn {
