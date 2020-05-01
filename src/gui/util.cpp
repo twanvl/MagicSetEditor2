@@ -241,10 +241,17 @@ Image generate_disabled_image(Image const& image) {
 }
 
 void set_menu_item_image(wxMenuItem* item, const String& resource) {
+  #if defined(__WXGTK__)
+    if (item->GetKind() == wxITEM_CHECK) return; // check items can't have icons
+  #endif
   Image bitmap = load_resource_tool_image(resource);
-  Image disabled_bitmap = generate_disabled_image(bitmap);
-  item->SetBitmaps(bitmap, bitmap);
-  item->SetDisabledBitmap(disabled_bitmap);
+  #if defined(__WXMSW__)
+    Image disabled_bitmap = generate_disabled_image(bitmap);
+    item->SetBitmaps(bitmap, bitmap);
+    item->SetDisabledBitmap(disabled_bitmap);
+  #else
+    item->SetBitmap(bitmap);
+  #endif
 }
 
 wxMenuItem* make_menu_item(wxMenu* menu, int id, const char* resource, const String& text, const String& help, wxItemKind kind, wxMenu* submenu) {
@@ -278,7 +285,11 @@ wxToolBarToolBase* add_tool(wxToolBar* toolbar, int id, const char* resource, co
       wxPoint pos((size.GetWidth() - bitmap.GetWidth()) / 2, (size.GetHeight() - bitmap.GetHeight()) / 2);
       bitmap.Resize(size, pos);
     }
-    Image disabled_bitmap = generate_disabled_image(bitmap);
+    #if defined(__WXGTK__)
+      wxBitmap disabled_bitmap = wxNullBitmap; // gtk can produce decent disabled bitmaps by itself
+    #else
+      Image disabled_bitmap = generate_disabled_image(bitmap);
+    #endif
     auto tool = new wxToolBarToolBase(toolbar, id, label, bitmap, disabled_bitmap, kind, nullptr, tooltip, help);
     toolbar->AddTool(tool);
     return tool;
