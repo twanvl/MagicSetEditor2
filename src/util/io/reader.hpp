@@ -145,7 +145,7 @@ private:
   /// Line number of the previous_line
   int previous_line_number;
   /// Input stream we are reading from
-  wxInputStream& input;
+  wxBufferedInputStream input;
   /// Accumulated warning messages
   String warnings;
   

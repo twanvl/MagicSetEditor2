@@ -202,10 +202,10 @@ unique_ptr<wxInputStream> Package::openIn(const String& file) {
   unique_ptr<wxInputStream> stream;
   if (it != files.end() && it->second.wasWritten()) {
     // written to this file, open the temp file
-    stream = make_unique<BufferedFileInputStream>(it->second.tempName);
+    stream = make_unique<wxFileInputStream>(it->second.tempName);
   } else if (wxFileExists(filename+_("/")+file)) {
     // a file in directory package
-    stream = make_unique<BufferedFileInputStream>(filename+_("/")+file);
+    stream = make_unique<wxFileInputStream>(filename+_("/")+file);
   } else if (wxFileExists(filename) && it != files.end() && it->second.zipEntry) {
     // a file in a zip archive
     stream = make_unique<ZipFileInputStream>(filename, it->second.zipEntry);
