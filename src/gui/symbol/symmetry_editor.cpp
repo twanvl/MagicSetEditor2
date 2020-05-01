@@ -58,11 +58,11 @@ void SymbolSymmetryEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
   copies->SetHelpText(_HELP_("copies"));
   copies->SetSize(50, -1);
   tb->AddSeparator();
-  tb->AddTool(ID_ADD_SYMMETRY,    _TOOL_("add symmetry"),    load_resource_tool_image(_("symmetry_add")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("add symmetry"),    _HELP_("add symmetry"));
-  tb->AddTool(ID_REMOVE_SYMMETRY,    _TOOL_("remove symmetry"),  load_resource_tool_image(_("symmetry_remove")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("remove symmetry"), _HELP_("remove symmetry"));
+  add_tool_tr(tb, ID_ADD_SYMMETRY, "symmetry_add", "add_symmetry", true, wxITEM_CHECK);
+  add_tool_tr(tb, ID_REMOVE_SYMMETRY, "symmetry_remove", "remove_symmetry", true, wxITEM_CHECK);
   tb->AddSeparator();
-  tb->AddTool(ID_SYMMETRY_ROTATION,  _TOOL_("rotation"),    load_resource_image(_("symmetry_rotation")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("rotation"),   _HELP_("rotation"));
-  tb->AddTool(ID_SYMMETRY_REFLECTION,  _TOOL_("reflection"),  load_resource_image(_("symmetry_reflection")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("reflection"), _HELP_("reflection"));
+  add_tool_tr(tb, ID_SYMMETRY_ROTATION, "symmetry_rotation", "rotation", true, wxITEM_CHECK);
+  add_tool_tr(tb, ID_SYMMETRY_REFLECTION, "symmetry_reflection", "reflection", true, wxITEM_CHECK);
   tb->AddSeparator();
   tb->AddControl(copies);
   tb->Realize();

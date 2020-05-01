@@ -15,7 +15,6 @@
 class wxSplitterWindow;
 class KeywordList;
 class TextCtrl;
-class IconMenu;
 struct KeywordSelectEvent;
 class FilterCtrl;
 
@@ -63,7 +62,7 @@ class KeywordsPanel : public SetWindowPanel {
   TextCtrl*         match;
   TextCtrl*         reminder;
   TextCtrl*         rules;
-  IconMenu*         menuKeyword;
+  wxMenu*           menuKeyword;
   wxStaticText*     fixedL;
   wxSizer*          fixed;
   wxStaticText*     errors;

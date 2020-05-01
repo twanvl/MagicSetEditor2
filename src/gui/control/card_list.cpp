@@ -9,7 +9,7 @@
 #include <util/prec.hpp>
 #include <gui/control/card_list.hpp>
 #include <gui/control/card_list_column_select.hpp>
-#include <gui/icon_menu.hpp>
+#include <gui/util.hpp>
 #include <data/game.hpp>
 #include <data/field.hpp>
 #include <data/field/choice.hpp>
@@ -382,13 +382,13 @@ void CardListBase::onDrag(wxMouseEvent& ev) {
 
 void CardListBase::onContextMenu(wxContextMenuEvent&) {
   if (allowModify()) {
-    IconMenu m;
-    m.Append(wxID_CUT,    _("cut"),    _CONTEXT_MENU_("cut"),      _HELP_("cut card"));
-    m.Append(wxID_COPY,    _("copy"),    _CONTEXT_MENU_("copy"),      _HELP_("copy card"));
-    m.Append(wxID_PASTE,  _("paste"),    _CONTEXT_MENU_("paste"),    _HELP_("paste card"));
+    wxMenu m;
+    add_menu_item_tr(&m, wxID_CUT, "cut", "cut_card");
+    add_menu_item_tr(&m, wxID_COPY, "copy", "copy_card");
+    add_menu_item_tr(&m, wxID_PASTE, "paste", "paste_card");
     m.AppendSeparator();
-    m.Append(ID_CARD_ADD,  _("card_add"),  _CONTEXT_MENU_("add card"),    _HELP_("add card"));
-    m.Append(ID_CARD_REMOVE,_("card_del"),  _CONTEXT_MENU_("remove card"),  _HELP_("remove card"));
+    add_menu_item_tr(&m, ID_CARD_ADD, "card_add", "add card");
+    add_menu_item_tr(&m, ID_CARD_REMOVE, "card_del", "remove card");
     PopupMenu(&m);
   }
 }

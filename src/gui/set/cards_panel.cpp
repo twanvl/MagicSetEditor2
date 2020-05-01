@@ -14,7 +14,6 @@
 #include <gui/control/filter_ctrl.hpp>
 #include <gui/about_window.hpp> // for HoverButton
 #include <gui/update_checker.hpp>
-#include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
@@ -26,12 +25,6 @@
 #include <util/tagged_string.hpp>
 #include <util/window_id.hpp>
 #include <wx/splitter.h>
-
-#ifdef EVT_TOOL_DROPDOWN
-  // This is only available after patching wx or in version 2.10
-  // see http://trac.wxwidgets.org/ticket/8556
-  #define HAVE_TOOLBAR_DROPDOWN_MENU 1
-#endif
 
 // ----------------------------------------------------------------------------- : CardsPanel
 
@@ -71,34 +64,32 @@ CardsPanel::CardsPanel(Window* parent, int id)
   SetSizer(s);
   
   // init menus
-  menuCard = new IconMenu();
-    menuCard->Append(ID_CARD_PREV,                _MENU_("previous card"),  _HELP_("previous card"));
-    menuCard->Append(ID_CARD_NEXT,                _MENU_("next card"),    _HELP_("next card"));
+  menuCard = new wxMenu();
+    add_menu_item_tr(menuCard, ID_CARD_PREV, nullptr, "previous card");
+    add_menu_item_tr(menuCard, ID_CARD_NEXT, nullptr, "next card");
     menuCard->AppendSeparator();
-    menuCard->Append(ID_CARD_ADD,    _("card_add"),      _MENU_("add card"),      _HELP_("add card"));
-    insertManyCardsMenu = new wxMenuItem(menuCard, ID_CARD_ADD_MULT, _MENU_("add cards"), _HELP_("add cards"));
-    set_menu_item_image(insertManyCardsMenu, _("card_add_multiple"));
-    ((wxMenu*)menuCard)->Append(insertManyCardsMenu);
-                                  // NOTE: space after "Del" prevents wx from making del an accellerator
-                                  // otherwise we delete a card when delete is pressed inside the editor
-                                  // Adding a space never hurts, please keep it just to be safe.
-    menuCard->Append(ID_CARD_REMOVE,  _("card_del"),      _MENU_("remove card")+_(" "),_HELP_("remove card"));
+    add_menu_item_tr(menuCard, ID_CARD_ADD, "card_add", "add_card");
+    insertManyCardsMenu = add_menu_item_tr(menuCard, ID_CARD_ADD_MULT, "card_add_multiple", "add cards");
+    // NOTE: space after "Del" prevents wx from making del an accellerator
+    // otherwise we delete a card when delete is pressed inside the editor
+    // Adding a space never hurts, please keep it just to be safe.
+    add_menu_item(menuCard, ID_CARD_REMOVE, "card_del", _MENU_("remove card")+_(" "), _HELP_("remove card"));
     menuCard->AppendSeparator();
-    IconMenu* menuRotate = new IconMenu();
-      menuRotate->Append(ID_CARD_ROTATE_0,    _("card_rotate_0"),    _MENU_("rotate 0"),    _HELP_("rotate 0"),    wxITEM_CHECK);
-      menuRotate->Append(ID_CARD_ROTATE_270,    _("card_rotate_270"),  _MENU_("rotate 270"),  _HELP_("rotate 270"),  wxITEM_CHECK);
-      menuRotate->Append(ID_CARD_ROTATE_90,    _("card_rotate_90"),  _MENU_("rotate 90"),  _HELP_("rotate 90"),  wxITEM_CHECK);
-      menuRotate->Append(ID_CARD_ROTATE_180,    _("card_rotate_180"),  _MENU_("rotate 180"),  _HELP_("rotate 180"),  wxITEM_CHECK);
-    menuCard->Append(wxID_ANY,      _("card_rotate"),    _MENU_("orientation"),    _HELP_("orientation"),    wxITEM_NORMAL, menuRotate);
+    auto menuRotate = new wxMenu();
+      add_menu_item_tr(menuRotate, ID_CARD_ROTATE_0, "card_rotate_0", "rotate_0", wxITEM_CHECK);
+      add_menu_item_tr(menuRotate, ID_CARD_ROTATE_270, "card_rotate_270", "rotate_270", wxITEM_CHECK);
+      add_menu_item_tr(menuRotate, ID_CARD_ROTATE_180, "card_rotate_180", "rotate_180", wxITEM_CHECK);
+      add_menu_item_tr(menuRotate, ID_CARD_ROTATE_90, "card_rotate_90", "rotate_90", wxITEM_CHECK);
+    add_menu_item_tr(menuCard, wxID_ANY, "card_rotate", "orientation", wxITEM_NORMAL, menuRotate);
     menuCard->AppendSeparator();
     // This probably belongs in the window menu, but there we can't remove the separator once it is added
-    menuCard->Append(ID_SELECT_COLUMNS,              _MENU_("card list columns"),_HELP_("card list columns"));
+    add_menu_item_tr(menuCard, ID_SELECT_COLUMNS, nullptr, "card_list_columns");
   
-  menuFormat = new IconMenu();
-    menuFormat->Append(ID_FORMAT_BOLD,    _("bold"),      _MENU_("bold"),        _HELP_("bold"),        wxITEM_CHECK);
-    menuFormat->Append(ID_FORMAT_ITALIC,  _("italic"),    _MENU_("italic"),      _HELP_("italic"),      wxITEM_CHECK);
-    menuFormat->Append(ID_FORMAT_SYMBOL,  _("symbol"),    _MENU_("symbols"),      _HELP_("symbols"),      wxITEM_CHECK);
-    menuFormat->Append(ID_FORMAT_REMINDER,  _("reminder"),    _MENU_("reminder text"),  _HELP_("reminder text"),  wxITEM_CHECK);
+  menuFormat = new wxMenu();
+    add_menu_item_tr(menuFormat, ID_FORMAT_BOLD, "bold", "bold", wxITEM_CHECK);
+    add_menu_item_tr(menuFormat, ID_FORMAT_ITALIC, "italic", "italic", wxITEM_CHECK);
+    add_menu_item_tr(menuFormat, ID_FORMAT_SYMBOL, "symbol", "symbols", wxITEM_CHECK);
+    add_menu_item_tr(menuFormat, ID_FORMAT_REMINDER, "reminder", "reminder_text", wxITEM_CHECK);
     menuFormat->AppendSeparator();
     insertSymbolMenu = new wxMenuItem(menuFormat, ID_INSERT_SYMBOL, _MENU_("insert symbol"));
     menuFormat->Append(insertSymbolMenu);
@@ -161,25 +152,23 @@ void CardsPanel::onChangeSet() {
   menuCard->Remove(ID_CARD_ADD_MULT);
   ((wxMenu*)menuCard)->Insert(4,insertManyCardsMenu); // HACK: the position is hardcoded
   // also for the toolbar dropdown menu
-  #if HAVE_TOOLBAR_DROPDOWN_MENU
-    if (toolAddCard) {
-      toolAddCard->SetDropdownMenu(makeAddCardsSubmenu(true));
-    }
-  #endif
+  if (toolAddCard) {
+    toolAddCard->SetDropdownMenu(makeAddCardsSubmenu(true));
+  }
 }
 
 wxMenu* CardsPanel::makeAddCardsSubmenu(bool add_single_card_option) {
-  IconMenu* cards_scripts_menu = nullptr;
+  wxMenu* cards_scripts_menu = nullptr;
   // default item?
   if (add_single_card_option) {
-    cards_scripts_menu = new IconMenu;
-    cards_scripts_menu->Append(ID_CARD_ADD, _("card_add"), _MENU_("add card"), _HELP_("add card"));
+    cards_scripts_menu = new wxMenu();
+    add_menu_item_tr(cards_scripts_menu, ID_CARD_ADD, "card_add", "add_card");
     cards_scripts_menu->AppendSeparator();
   }
   // create menu for add_cards_scripts
   if (set && set->game && !set->game->add_cards_scripts.empty()) {
     int id = ID_ADD_CARDS_MENU_MIN;
-    if (!cards_scripts_menu) cards_scripts_menu = new IconMenu;
+    if (!cards_scripts_menu) cards_scripts_menu = new wxMenu();
     FOR_EACH(cs, set->game->add_cards_scripts) {
       cards_scripts_menu->Append(id++, cs->name, cs->description);
     }
@@ -191,30 +180,22 @@ wxMenu* CardsPanel::makeAddCardsSubmenu(bool add_single_card_option) {
 
 void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
   // Toolbar
-  tb->AddTool(ID_FORMAT_BOLD,    _(""), load_resource_tool_image(_("bold")),      wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("bold"),      _HELP_("bold"));
-  tb->AddTool(ID_FORMAT_ITALIC,  _(""), load_resource_tool_image(_("italic")),    wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("italic"),    _HELP_("italic"));
-  tb->AddTool(ID_FORMAT_SYMBOL,  _(""), load_resource_tool_image(_("symbol")),    wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("symbols"),    _HELP_("symbols"));
-  tb->AddTool(ID_FORMAT_REMINDER,  _(""), load_resource_tool_image(_("reminder")),    wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("reminder text"),  _HELP_("reminder text"));
+  add_tool_tr(tb, ID_FORMAT_BOLD, "bold", "bold", false, wxITEM_CHECK);
+  add_tool_tr(tb, ID_FORMAT_ITALIC, "italic", "italic", false, wxITEM_CHECK);
+  add_tool_tr(tb, ID_FORMAT_SYMBOL, "symbol", "symbols", false, wxITEM_CHECK);
+  add_tool_tr(tb, ID_FORMAT_REMINDER, "reminder", "reminder_text", false, wxITEM_CHECK);
   tb->AddSeparator();
-  #if HAVE_TOOLBAR_DROPDOWN_MENU
-    toolAddCard = tb->AddTool(ID_CARD_ADD,    _(""), load_resource_tool_image(_("card_add")),    wxNullBitmap, wxITEM_DROPDOWN,_TOOLTIP_("add card"),    _HELP_("add card"));
-    toolAddCard->SetDropdownMenu(makeAddCardsSubmenu(true));
-  #else
-    tb->AddTool(ID_CARD_ADD,    _(""), load_resource_tool_image(_("card_add")),    wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("add card"),    _HELP_("add card"));
-  #endif
-  tb->AddTool(ID_CARD_REMOVE,    _(""), load_resource_tool_image(_("card_del")),    wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("remove card"),  _HELP_("remove card"));
+  toolAddCard = add_tool_tr(tb, ID_CARD_ADD, "card_add", "add_card", false, wxITEM_DROPDOWN);
+  toolAddCard->SetDropdownMenu(makeAddCardsSubmenu(true));
+  add_tool_tr(tb, ID_CARD_REMOVE, "card_del", "remove_card");
   tb->AddSeparator();
-  #if HAVE_TOOLBAR_DROPDOWN_MENU
-    wxToolBarToolBase* rot = tb->AddTool(ID_CARD_ROTATE,    _(""), load_resource_tool_image(_("card_rotate")),  wxNullBitmap, wxITEM_DROPDOWN, _TOOLTIP_("rotate card"),  _HELP_("rotate card"));
-    IconMenu* menuRotate = new IconMenu();
-      menuRotate->Append(ID_CARD_ROTATE_0,    _("card_rotate_0"),    _MENU_("rotate 0"),    _HELP_("rotate 0"),    wxITEM_CHECK);
-      menuRotate->Append(ID_CARD_ROTATE_270,    _("card_rotate_270"),  _MENU_("rotate 270"),  _HELP_("rotate 270"),  wxITEM_CHECK);
-      menuRotate->Append(ID_CARD_ROTATE_90,    _("card_rotate_90"),  _MENU_("rotate 90"),  _HELP_("rotate 90"),  wxITEM_CHECK);
-      menuRotate->Append(ID_CARD_ROTATE_180,    _("card_rotate_180"),  _MENU_("rotate 180"),  _HELP_("rotate 180"),  wxITEM_CHECK);
-    rot->SetDropdownMenu(menuRotate);
-  #else
-    tb->AddTool(ID_CARD_ROTATE,    _(""), load_resource_tool_image(_("card_rotate")),  wxNullBitmap,wxITEM_NORMAL, _TOOLTIP_("rotate card"),  _HELP_("rotate card"));
-  #endif
+  wxToolBarToolBase* rot = add_tool_tr(tb, ID_CARD_ROTATE, "card_rotate", "rotate_card", false, wxITEM_DROPDOWN);
+  auto menuRotate = new wxMenu();
+    add_menu_item_tr(menuRotate, ID_CARD_ROTATE_0, "card_rotate_0", "rotate_0", wxITEM_CHECK);
+    add_menu_item_tr(menuRotate, ID_CARD_ROTATE_270, "card_rotate_270", "rotate_270", wxITEM_CHECK);
+    add_menu_item_tr(menuRotate, ID_CARD_ROTATE_180, "card_rotate_180", "rotate_180", wxITEM_CHECK);
+    add_menu_item_tr(menuRotate, ID_CARD_ROTATE_90, "card_rotate_90", "rotate_90", wxITEM_CHECK);
+  rot->SetDropdownMenu(menuRotate);
   // Filter/search textbox
   tb->AddSeparator();
   assert(!filter);

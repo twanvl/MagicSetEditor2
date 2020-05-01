@@ -10,7 +10,6 @@
 #include <gui/symbol/window.hpp>
 #include <gui/symbol/control.hpp>
 #include <gui/symbol/part_list.hpp>
-#include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <data/field/symbol.hpp>
 #include <data/format/image_to_symbol.hpp>
@@ -71,35 +70,35 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
   inSelectionEvent = false;
   
   // Menu bar
-  wxMenuBar* menuBar = new wxMenuBar();
-  IconMenu* menuFile = new IconMenu();
-    menuFile->Append(ID_FILE_NEW,    _("new"),      _MENU_("new symbol"),      _HELP_("new symbol"));
-    menuFile->Append(ID_FILE_OPEN,    _("open"),      _MENU_("open symbol"),      _HELP_("open symbol"));
-    menuFile->Append(ID_FILE_SAVE,    _("save"),      _MENU_("save symbol"),      _HELP_("save symbol"));
-    menuFile->Append(ID_FILE_SAVE_AS,            _MENU_("save symbol as"),    _HELP_("save symbol as"));
+  auto menuBar = new wxMenuBar();
+  auto menuFile = new wxMenu();
+    add_menu_item_tr(menuFile, ID_FILE_NEW, "new", "new_symbol");
+    add_menu_item_tr(menuFile, ID_FILE_OPEN, "open", "open_symbol");
+    add_menu_item_tr(menuFile, ID_FILE_SAVE, "save", "save_symbol");
+    add_menu_item_tr(menuFile, ID_FILE_SAVE_AS, nullptr, "save_symbol_as");
     menuFile->AppendSeparator();
-    menuFile->Append(ID_FILE_STORE,    _("apply"),      _MENU_("store symbol"),      _HELP_("store symbol"));
+    add_menu_item_tr(menuFile, ID_FILE_STORE, "apply", "store_symbol");
     menuFile->AppendSeparator();
-    menuFile->Append(ID_FILE_EXIT,              _MENU_("close symbol editor"),  _HELP_("close symbol editor"));
+    add_menu_item_tr(menuFile, ID_FILE_EXIT, nullptr, "close_symbol_editor");
   menuBar->Append(menuFile, _MENU_("file"));
   
-  IconMenu* menuEdit = new IconMenu();
-    menuEdit->Append(ID_EDIT_UNDO,    _("undo"),      _MENU_1_("undo",wxEmptyString),  _HELP_("undo"));
-    menuEdit->Append(ID_EDIT_REDO,    _("redo"),      _MENU_1_("redo",wxEmptyString),  _HELP_("redo"));
+  auto menuEdit = new wxMenu();
+    add_menu_item(menuEdit, ID_EDIT_UNDO, "undo", _MENU_1_("undo",wxEmptyString), _HELP_("undo"));
+    add_menu_item(menuEdit, ID_EDIT_REDO, "redo", _MENU_1_("redo",wxEmptyString), _HELP_("redo"));
     menuEdit->AppendSeparator();
-    menuEdit->Append(ID_EDIT_GROUP,    _("group"),      _MENU_("group"),        _HELP_("group"));
-    menuEdit->Append(ID_EDIT_UNGROUP,  _("ungroup"),    _MENU_("ungroup"),        _HELP_("ungroup"));
+    add_menu_item_tr(menuEdit, ID_EDIT_GROUP, "group", "group");
+    add_menu_item_tr(menuEdit, ID_EDIT_UNGROUP, "ungroup", "ungroup");
     menuEdit->AppendSeparator();
-    menuEdit->Append(ID_EDIT_DUPLICATE,  _("duplicate"),    _MENU_("duplicate"),      _HELP_("duplicate"));
+    add_menu_item_tr(menuEdit, ID_EDIT_DUPLICATE, "duplicate", "duplicate");
   menuBar->Append(menuEdit, _MENU_("edit"));
   
-  IconMenu* menuTool = new IconMenu();
-    menuTool->Append(ID_MODE_SELECT,  _("mode_select"),  _MENU_("select"),        _HELP_("select"),    wxITEM_CHECK);
-    menuTool->Append(ID_MODE_ROTATE,  _("mode_rotate"),  _MENU_("rotate"),        _HELP_("rotate"),    wxITEM_CHECK);
-    menuTool->Append(ID_MODE_POINTS,  _("mode_curve"),  _MENU_("points"),        _HELP_("points"),    wxITEM_CHECK);
-    menuTool->Append(ID_MODE_SHAPES,  _("circle"),    _MENU_("basic shapes"),      _HELP_("basic shapes"),  wxITEM_CHECK);
-    menuTool->Append(ID_MODE_SYMMETRY,  _("mode_symmetry"),  _MENU_("symmetry"),        _HELP_("symmetry"),    wxITEM_CHECK);
-    menuTool->Append(ID_MODE_PAINT,    _("mode_paint"),  _MENU_("paint"),        _HELP_("paint"),    wxITEM_CHECK);
+  auto menuTool = new wxMenu();
+    add_menu_item_tr(menuTool, ID_MODE_SELECT, "mode_select", "select", wxITEM_CHECK);
+    add_menu_item_tr(menuTool, ID_MODE_ROTATE, "mode_rotate", "rotate", wxITEM_CHECK);
+    add_menu_item_tr(menuTool, ID_MODE_POINTS, "mode_curve", "points", wxITEM_CHECK);
+    add_menu_item_tr(menuTool, ID_MODE_SHAPES, "circle", "basic_shapes", wxITEM_CHECK);
+    add_menu_item_tr(menuTool, ID_MODE_SYMMETRY, "mode_symmetry", "symmetry", wxITEM_CHECK);
+    add_menu_item_tr(menuTool, ID_MODE_PAINT, "mode_paint", "paint", wxITEM_CHECK);
   menuBar->Append(menuTool, _MENU_("tool"));
   
   SetMenuBar(menuBar);
@@ -110,27 +109,27 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
   
   // Toolbar
   wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_TEXT);
-  tb->AddTool(ID_FILE_STORE,    _TOOL_("store symbol"),  load_resource_tool_image(_("apply")),    wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("store symbol"), _HELP_("store symbol"));
+  add_tool_tr(tb, ID_FILE_STORE, "apply", "store_symbol", true);
   tb->AddSeparator();
-  tb->AddTool(ID_EDIT_UNDO,    _TOOL_("undo"),      load_resource_tool_image(_("undo")),    wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_1_("undo",wxEmptyString));
-  tb->AddTool(ID_EDIT_REDO,    _TOOL_("redo"),      load_resource_tool_image(_("redo")),    wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_1_("redo",wxEmptyString));
+  add_tool(tb, ID_EDIT_UNDO, "undo", _TOOL_("undo"), _TOOLTIP_1_("undo",wxEmptyString), _HELP_("undo"));
+  add_tool(tb, ID_EDIT_REDO, "redo", _TOOL_("redo"), _TOOLTIP_1_("redo",wxEmptyString), _HELP_("redo"));
   tb->AddSeparator();
-  tb->AddTool(ID_VIEW_GRID,    _TOOL_("grid"),      load_resource_tool_image(_("grid")),    wxNullBitmap, wxITEM_CHECK,  _TOOLTIP_("grid"),      _HELP_("grid"));
-  tb->AddTool(ID_VIEW_GRID_SNAP,  _TOOL_("snap"),      load_resource_tool_image(_("grid_snap")),  wxNullBitmap, wxITEM_CHECK,  _TOOLTIP_("snap"),      _HELP_("snap"));
+  add_tool_tr(tb, ID_VIEW_GRID, "grid", "grid", true, wxITEM_CHECK);
+  add_tool_tr(tb, ID_VIEW_GRID_SNAP, "grid_snap", "snap", true, wxITEM_CHECK);
   tb->Realize();
   
   // Edit mode toolbar
   wxPanel* emp = new wxPanel(this, wxID_ANY);
   wxToolBar* em = new wxToolBar(emp, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_VERTICAL | wxTB_HORZ_TEXT);
   em->SetToolBitmapSize(wxSize(17,17));
-  em->AddTool(ID_MODE_SELECT,    _TOOL_("select"),    load_resource_tool_image(_("mode_select")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("select"),    _HELP_("select"));
-  em->AddTool(ID_MODE_ROTATE,    _TOOL_("rotate"),    load_resource_tool_image(_("mode_rotate")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("rotate"),    _HELP_("rotate"));
+  add_tool_tr(em, ID_MODE_SELECT, "mode_select", "select", true, wxITEM_CHECK);
+  add_tool_tr(em, ID_MODE_ROTATE, "mode_rotate", "rotate", true, wxITEM_CHECK);
   em->AddSeparator();
-  em->AddTool(ID_MODE_POINTS,    _TOOL_("points"),    load_resource_tool_image(_("mode_curve")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("points"),    _HELP_("points"));
+  add_tool_tr(em, ID_MODE_POINTS, "mode_curve", "points", true, wxITEM_CHECK);
   em->AddSeparator();
-  em->AddTool(ID_MODE_SHAPES,    _TOOL_("basic shapes"),  load_resource_tool_image(_("circle")),    wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("basic shapes"),  _HELP_("basic shapes"));
-  em->AddTool(ID_MODE_SYMMETRY,  _TOOL_("symmetry"),    load_resource_tool_image(_("mode_symmetry")),wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("symmetry"),    _HELP_("symmetry"));
-  //em->AddTool(ID_MODE_PAINT,    _TOOL_("paint"),    load_resource_tool_image(_("mode_paint")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("paint"),      _HELP_("paint"));
+  add_tool_tr(em, ID_MODE_SHAPES, "circle", "basic shapes", true, wxITEM_CHECK);
+  add_tool_tr(em, ID_MODE_SYMMETRY, "mode_symmetry", "symmetry", true, wxITEM_CHECK);
+  //add_tool_tr(em, ID_MODE_PAINT, "mode_paint", "paint", true, wxITEM_CHECK);
   em->Realize();
   
   // Lay out
@@ -177,14 +176,13 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
     em = new wxToolBar(emp, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_VERTICAL | wxTB_HORZ_TEXT);
     em->SetToolBitmapSize(wxSize(17,17));
     String spaces(max(0,n-1), _(' '));
-    em->AddTool(ID_MODE_SELECT,    _TOOL_("select")       + spaces, load_resource_tool_image(_("mode_select")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("select"),    _HELP_("select"));
-    em->AddTool(ID_MODE_ROTATE,    _TOOL_("rotate")       + spaces, load_resource_tool_image(_("mode_rotate")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("rotate"),    _HELP_("rotate"));
+    add_tool(em, ID_MODE_SELECT,   "mode_select",  _TOOL_("select")       + spaces, _TOOLTIP_("select"),    _HELP_("select"), wxITEM_CHECK);
+    add_tool(em, ID_MODE_ROTATE,   "mode_rotate",  _TOOL_("rotate")       + spaces, _TOOLTIP_("rotate"),    _HELP_("rotate"), wxITEM_CHECK);
     em->AddSeparator();
-    em->AddTool(ID_MODE_POINTS,    _TOOL_("points")       + spaces, load_resource_tool_image(_("mode_curve")),   wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("points"),    _HELP_("points"));
+    add_tool(em, ID_MODE_POINTS,   "mode_curve",   _TOOL_("points")       + spaces, _TOOLTIP_("points"),    _HELP_("points"), wxITEM_CHECK);
     em->AddSeparator();
-    em->AddTool(ID_MODE_SHAPES,    _TOOL_("basic shapes") + spaces, load_resource_tool_image(_("circle")),       wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("basic shapes"),_HELP_("basic shapes"));
-    em->AddTool(ID_MODE_SYMMETRY,  _TOOL_("symmetry")     + spaces, load_resource_tool_image(_("mode_symmetry")),wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("symmetry"),  _HELP_("symmetry"));
-    //em->AddTool(ID_MODE_PAINT,  _TOOL_("paint")        + spaces, load_resource_tool_image(_("mode_paint")),   wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("paint"),    _HELP_("paint"));
+    add_tool(em, ID_MODE_SHAPES,   "circle",        _TOOL_("basic shapes") + spaces, _TOOLTIP_("basic shapes"),_HELP_("basic shapes"), wxITEM_CHECK);
+    add_tool(em, ID_MODE_SYMMETRY, "mode_symmetry", _TOOL_("symmetry")     + spaces, _TOOLTIP_("symmetry"),  _HELP_("symmetry"), wxITEM_CHECK);
     em->Realize();
     
     es = new wxBoxSizer(wxVERTICAL);

@@ -8,7 +8,7 @@
 
 #include <util/prec.hpp>
 #include <gui/control/keyword_list.hpp>
-#include <gui/icon_menu.hpp>
+#include <gui/util.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
 #include <data/card.hpp>
@@ -237,13 +237,13 @@ wxListItemAttr* KeywordList::OnGetItemAttr(long pos) const {
 // ----------------------------------------------------------------------------- : KeywordList : Context menu
 
 void KeywordList::onContextMenu(wxContextMenuEvent&) {
-  IconMenu m;
-  m.Append(ID_EDIT_CUT,    _("cut"),      _CONTEXT_MENU_("cut"),        _HELP_("cut keyword"));
-  m.Append(ID_EDIT_COPY,    _("copy"),      _CONTEXT_MENU_("copy"),        _HELP_("copy keyword"));
-  m.Append(ID_EDIT_PASTE,    _("paste"),      _CONTEXT_MENU_("paste"),      _HELP_("paste keyword"));
+  wxMenu m;
+  add_menu_item_tr(&m, ID_EDIT_CUT, "cut", "cut_keyword");
+  add_menu_item_tr(&m, ID_EDIT_COPY, "copy", "copy_keyword");
+  add_menu_item_tr(&m, ID_EDIT_PASTE, "paste", "paste_keyword");
   m.AppendSeparator();
-  m.Append(ID_KEYWORD_ADD,  _("keyword_add"),  _CONTEXT_MENU_("add keyword"),    _HELP_("add keyword"));
-  m.Append(ID_KEYWORD_REMOVE,  _("keyword_del"),  _CONTEXT_MENU_("remove keyword"),  _HELP_("remove keyword"));
+  add_menu_item_tr(&m, ID_KEYWORD_ADD, "keyword_add", "add_keyword");
+  add_menu_item_tr(&m, ID_KEYWORD_REMOVE, "keyword_del", "remove_keyword");
   PopupMenu(&m);
 }
 

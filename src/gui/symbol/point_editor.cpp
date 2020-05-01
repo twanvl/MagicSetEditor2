@@ -154,12 +154,12 @@ wxPen SymbolPointEditor::handlePen(WhichPen p, LockMode lock) {
 void SymbolPointEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
   // Initialize toolbar
   tb->AddSeparator();
-  tb->AddTool(ID_SEGMENT_LINE,  _TOOL_("line segment"),    load_resource_tool_image(_("line")),    wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("line segment"),    _HELP_("line segment"));
-  tb->AddTool(ID_SEGMENT_CURVE,  _TOOL_("curve segment"),  load_resource_tool_image(_("curve")),    wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("curve segment"),    _HELP_("curve segment"));
+  add_tool_tr(tb, ID_SEGMENT_LINE, "line", "line_segment", true, wxITEM_CHECK);
+  add_tool_tr(tb, ID_SEGMENT_CURVE, "curve", "curve_segment", true, wxITEM_CHECK);
   tb->AddSeparator();                                                          
-  tb->AddTool(ID_LOCK_FREE,    _TOOL_("free point"),    load_resource_tool_image(_("lock_free")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("free point"),    _HELP_("free point"));
-  tb->AddTool(ID_LOCK_DIR,    _TOOL_("smooth point"),    load_resource_tool_image(_("lock_dir")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("smooth point"),    _HELP_("smooth point"));
-  tb->AddTool(ID_LOCK_SIZE,    _TOOL_("symmetric point"),  load_resource_tool_image(_("lock_size")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("symmetric point"),  _HELP_("symmetric point"));
+  add_tool_tr(tb, ID_LOCK_FREE, "lock_free", "free_point", true, wxITEM_CHECK);
+  add_tool_tr(tb, ID_LOCK_DIR, "lock_dir", "smooth_point", true, wxITEM_CHECK);
+  add_tool_tr(tb, ID_LOCK_SIZE, "lock_size", "symmetric point", true, wxITEM_CHECK);
   tb->Realize();
   // TODO : menu bar
   //mb->Insert(2, curveMenu, _("&Curve"))

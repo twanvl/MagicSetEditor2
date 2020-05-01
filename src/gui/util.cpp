@@ -12,6 +12,7 @@
 #include <util/rotation.hpp>
 #include <wx/renderer.h>
 #include <wx/stdpaths.h>
+#include <gfx/gfx.hpp>
 
 #if wxUSE_UXTHEME && defined(__WXMSW__)
   #include <wx/msw/uxtheme.h>
@@ -131,7 +132,7 @@ void draw_checker(RotatedDC& dc, const RealRect& rect) {
 }
 
 
-// ----------------------------------------------------------------------------- : Image related
+// ----------------------------------------------------------------------------- : Seekable stream
 
 /// A wxInputStream in which we can seek, even if the underlying stream can't
 /** Seeking is used by the wxImage format detection code, to peek at the header.
@@ -214,6 +215,8 @@ private:
   size_t last_read = 0;
 };
 
+// ----------------------------------------------------------------------------- : Image related
+
 bool image_load_file(Image& image, wxInputStream &stream) {
   wxLogNull noLog; // prevent wx from showing popups about sRGB profiles and other notices
   if (!stream.IsSeekable()) {
@@ -227,6 +230,67 @@ bool image_load_file(Image& image, wxInputStream &stream) {
 bool image_load_file(Image& image, const wxString &name) {
   wxLogNull noLog;
   return image.LoadFile(name);
+}
+
+// ----------------------------------------------------------------------------- : Tool/menu bar
+
+Image generate_disabled_image(Image const& image) {
+  Image imgOut = image.ConvertToGreyscale();
+  set_alpha(imgOut, 0.33);
+  return imgOut;
+}
+
+void set_menu_item_image(wxMenuItem* item, const String& resource) {
+  Image bitmap = load_resource_tool_image(resource);
+  Image disabled_bitmap = generate_disabled_image(bitmap);
+  item->SetBitmaps(bitmap, bitmap);
+  item->SetDisabledBitmap(disabled_bitmap);
+}
+
+wxMenuItem* make_menu_item(wxMenu* menu, int id, const char* resource, const String& text, const String& help, wxItemKind kind, wxMenu* submenu) {
+  wxMenuItem* item = new wxMenuItem(menu, id, text, help, kind, submenu);
+  if (resource) set_menu_item_image(item, resource);
+  return item;
+}
+wxMenuItem* make_menu_item_tr(wxMenu* menu, int id, const char* resource, const String& locale_key, wxItemKind kind, wxMenu* submenu) {
+  wxMenuItem* item = new wxMenuItem(menu, id, tr(LOCALE_CAT_MENU, locale_key), tr(LOCALE_CAT_HELP, locale_key), kind, submenu);
+  if (resource) set_menu_item_image(item, resource);
+  return item;
+}
+wxMenuItem* add_menu_item(wxMenu* menu, int id, const char* resource, const String& text, const String& help, wxItemKind kind, wxMenu* submenu) {
+  wxMenuItem* item = make_menu_item(menu, id, resource, text, help, kind, submenu);
+  menu->Append(item);
+  return item;
+}
+wxMenuItem* add_menu_item_tr(wxMenu* menu, int id, const char* resource, const String& locale_key, wxItemKind kind, wxMenu* submenu) {
+  wxMenuItem* item = make_menu_item_tr(menu, id, resource, locale_key, kind, submenu);
+  menu->Append(item);
+  return item;
+}
+
+wxToolBarToolBase* add_tool(wxToolBar* toolbar, int id, const char* resource, const String& label, const String& tooltip, const String& help, wxItemKind kind) {
+  if (resource) {
+    // Note: the bitmap must match the toolbar bitmap size, otherwise disabled and normal bitmap look different
+    // if the size doesn't match, we center the image
+    auto size = toolbar->GetToolBitmapSize();
+    Image bitmap = load_resource_tool_image(resource);
+    if (bitmap.GetSize() != size) {
+      wxPoint pos((size.GetWidth() - bitmap.GetWidth()) / 2, (size.GetHeight() - bitmap.GetHeight()) / 2);
+      bitmap.Resize(size, pos);
+    }
+    Image disabled_bitmap = generate_disabled_image(bitmap);
+    auto tool = new wxToolBarToolBase(toolbar, id, label, bitmap, disabled_bitmap, kind, nullptr, tooltip, help);
+    toolbar->AddTool(tool);
+    return tool;
+  } else {
+    auto tool = new wxToolBarToolBase(toolbar, id, label, wxNullBitmap, wxNullBitmap, kind, nullptr, tooltip,  help);
+    toolbar->AddTool(tool);
+    return tool;
+  }
+}
+
+wxToolBarToolBase* add_tool_tr(wxToolBar* toolbar, int id, const char* resource, const String& locale_key, bool label, wxItemKind kind) {
+  return add_tool(toolbar, id, resource, label ? tr(LOCALE_CAT_TOOL,locale_key) : String(), tr(LOCALE_CAT_TOOLTIP, locale_key), tr(LOCALE_CAT_HELP, locale_key), kind);
 }
 
 // ----------------------------------------------------------------------------- : Resource related
@@ -293,12 +357,8 @@ wxIcon load_resource_icon(const String& name) {
   #endif
 }
 
-wxBitmap load_resource_tool_image(const String& name) {
-  #if defined(__WXMSW__) && !defined(__GNUC__)
-    return load_resource_image(_("tool/") + name);
-  #else
-    return load_resource_image(_("tool/") + name);
-  #endif
+wxImage load_resource_tool_image(const String& name) {
+  return load_resource_image(_("tool/") + name);
 }
 
 

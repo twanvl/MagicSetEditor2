@@ -16,7 +16,6 @@ class StatCategoryList;
 class StatDimensionList;
 class GraphControl;
 class FilteredCardList;
-class IconMenu;
 
 // Pick the style here:
 #define USE_DIMENSION_LISTS 1
@@ -57,7 +56,7 @@ class StatsPanel : public SetWindowPanel {
   #endif
   GraphControl*     graph;
   FilteredCardList* card_list;
-  IconMenu*         menuGraph;
+  wxMenu*           menuGraph;
   
   CardP card;      ///< Selected card
   bool up_to_date; ///< Are the graph and card list up to date?

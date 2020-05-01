@@ -37,6 +37,12 @@ sub make_comment {
   return $input;
 }
 
+sub normalize {
+  my $key = shift;
+  $key =~ s/_/ /g;
+  return $key;
+}
+
 # for each .cpp/.hpp file, collect locale calls
 sub gather_locale_keys {
   my $filename = $_;
@@ -74,25 +80,45 @@ sub find_locale_calls {
   while ($body =~ /_(COMMENT_)?(MENU|HELP|TOOL|TOOLTIP|LABEL|BUTTON|TITLE|TYPE|ACTION|ERROR)_(?:([1-9])_)?\(\s*\"([^\"]+)\"/g) {
     my $type = $2;
     my $argc = $3 ? $3 : 0;
-    my $key = $4;
+    my $key = normalize($4);
     if (defined($locale_keys{$type}{$key}{'argc'}) && $locale_keys{$type}{$key}{'argc'} != $argc) {
       die "ERROR: locale key _${type}_($key) used with different arities";
     }
     $locale_keys{$type}{$key}{'opt'}  = defined($locale_keys{$type}{$key}{'opt'}) ? ($locale_keys{$type}{$key}{'opt'} && $in_comment) : $in_comment;
     $locale_keys{$type}{$key}{'argc'} = $argc;
   }
-  # addPanel uses multiple types
-  while ($body =~ m{
-    ( addPanel \((?:[^,]+,){6} # gui/set/window.cpp
-    )
-    \s* _ \(\" ([^\"]+) \"\)
-  }xg) {
-    my $key = $2;
-    $key =~ s/_/ /g;
-    foreach my $type ("MENU","HELP","TOOL","TOOLTIP") {
-      $locale_keys{$type}{$key}{'opt'}  = $in_comment;
-      $locale_keys{$type}{$key}{'argc'} = 0;
+  # addPanel/add_menu_tr/add_tool_tr use multiple locale types
+  my $ARG = qr{[^,]+};
+  my $STRARG = qr{\s*(?:_\()?\"([^\"]+)\"\)?};
+  find_multi_locale_calls($body, $in_comment, qr{addPanel\s*\((?:$ARG,){6} $STRARG \)}x, ["MENU","HELP","TOOL","TOOLTIP"]);
+  find_multi_locale_calls($body, $in_comment, qr{menu_item_tr\s*\((?:$ARG,){3} $STRARG }x, ["MENU","HELP"]);
+  while ($body =~ m{add_tool_tr\s*\((?:$ARG,){3} $STRARG \s*,?\s*(true|false)?}gx) {
+    if ($2 eq 'true') {
+      add_locale_keys(["TOOL","TOOLTIP","HELP"], normalize($1), $in_comment);
+    } else {
+      add_locale_keys(["TOOLTIP","HELP"], normalize($1), $in_comment);
     }
+  }
+}
+
+sub add_locale_keys {
+  my $types = shift;
+  my $key = shift;
+  my $in_comment = shift;
+  foreach my $type (@{$types}) {
+    $locale_keys{$type}{$key}{'opt'} = $in_comment;
+    $locale_keys{$type}{$key}{'argc'} = 0;
+  }
+}
+
+sub find_multi_locale_calls {
+  my $body       = shift;
+  my $in_comment = shift;
+  my $re         = shift;
+  my $types      = shift;
+  while ($body =~ m{$re}g) {
+    my $key = normalize($1);
+    add_locale_keys($types, $key, $in_comment);
   }
 }
 
@@ -126,7 +152,7 @@ sub parse_locale {
       $type = uc $1;
       $key = undef;
     } elsif ($line =~ /^\t([^:\t]+):(.*)/) {
-      $key = $1;
+      $key = normalize($1);
       if (defined($locale{$type}{$key})) {
         die "Locale key already defined: $type: $key";
       }
@@ -149,14 +175,14 @@ sub validate_locale {
   my $ok = 1;
   foreach my $type (sort keys %locale_keys) {
     if (!defined($locale{$type})) {
-      print STDERR "Missing key in locale: $type\n have keys " . "[" . join(', ', keys %locale) . "]\n";
+      print "Missing key in locale: $type\n have keys " . "[" . join(', ', keys %locale) . "]\n";
       $ok = 0;
       next;
     }
     foreach my $key (sort keys %{$locale_keys{$type}}) {
       if (!defined($locale{$type}{$key})) {
         if (!$locale_keys{$type}{$key}{'opt'}) {
-          print STDERR "Missing key in locale: $type: $key\n";
+          print "Missing key in locale: $type: $key\n";
           $ok = 0;
         }
         next;
@@ -165,7 +191,7 @@ sub validate_locale {
       my @args = $locale{$type}{$key} =~ /%[sd]/g;
       my $argc = scalar(@args);
       if ($argc != $locale_keys{$type}{$key}{'argc'}) {
-        print STDERR "Incorrect number of arguments for $type: $key. Expected $locale_keys{$type}{$key}{'argc'}, got $argc\n";
+        print "Incorrect number of arguments for $type: $key. Expected $locale_keys{$type}{$key}{'argc'}, got $argc\n";
         $ok = 0;
       }
     }
@@ -173,13 +199,13 @@ sub validate_locale {
   foreach my $type (sort keys %locale) {
     next if $type eq 'PACKAGE'; # Ignore package specific locale keys
     if (!defined($locale_keys{$type})) {
-      print STDERR "Unknown key in locale: $type\n expected keys " . "[" . join(', ', keys %locale_keys) . "]\n";
+      print "Unknown key in locale: $type\n expected keys " . "[" . join(', ', keys %locale_keys) . "]\n";
       $ok = 0;
       next;
     }
     foreach my $key (sort keys %{$locale{$type}}) {
       if (!defined($locale_keys{$type}{$key})) {
-        print STDERR "Unknown key in locale: $type: $key\n";
+        print "Unknown key in locale: $type: $key\n";
         $ok = 0;
       }
     }

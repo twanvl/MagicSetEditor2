@@ -15,7 +15,6 @@ class wxSplitterWindow;
 class FilteredImageCardList;
 class DataEditor;
 class TextCtrl;
-class IconMenu;
 class HoverButton;
 class FindInfo;
 class FilterCtrl;
@@ -91,7 +90,7 @@ class CardsPanel : public SetWindowPanel {
   virtual bool Layout();
   
   // --------------------------------------------------- : Menus & tools
-  IconMenu* menuCard, *menuFormat;
+  wxMenu* menuCard, *menuFormat;
   wxToolBarToolBase* toolAddCard;
   wxMenuItem* insertSymbolMenu;    // owned by menuFormat, but submenu owned by SymbolFont
   wxMenuItem* insertManyCardsMenu; // owned my menuCard, but submenu can be changed

@@ -28,7 +28,6 @@
 #include <gui/images_export_window.hpp>
 #include <gui/html_export_window.hpp>
 #include <gui/auto_replace_window.hpp>
-#include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/window_id.hpp>
@@ -52,57 +51,55 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
   SetIcon(load_resource_icon(_("app")));
   
   // initialize menu bar
-  wxMenuBar* menuBar = new wxMenuBar();
-  IconMenu* menuFile = new IconMenu();
-    menuFile->Append(ID_FILE_NEW,    _("new"),    _MENU_("new set"),      _HELP_("new set"));
-    menuFile->Append(ID_FILE_OPEN,    _("open"),    _MENU_("open set"),      _HELP_("open set"));
-    menuFile->Append(ID_FILE_SAVE,    _("save"),    _MENU_("save set"),      _HELP_("save set"));
-    menuFile->Append(ID_FILE_SAVE_AS,          _MENU_("save set as"),    _HELP_("save set as"));
-    IconMenu* menuExport = makeExportMenu();
-    menuFile->Append(wxID_ANY,      _("export"),  _MENU_("export"),          _HELP_("export"), wxITEM_NORMAL, menuExport);
+  auto menuBar = new wxMenuBar();
+  auto menuFile = new wxMenu();
+    add_menu_item_tr(menuFile, ID_FILE_NEW, "new", "new_set");
+    add_menu_item_tr(menuFile, ID_FILE_OPEN, "open", "open_set");
+    add_menu_item_tr(menuFile, ID_FILE_SAVE, "save", "save_set");
+    add_menu_item_tr(menuFile, ID_FILE_SAVE_AS, nullptr, "save_set_as");
+    add_menu_item_tr(menuFile, wxID_ANY, "export", "export", wxITEM_NORMAL, makeExportMenu());
     menuFile->AppendSeparator();
-    menuFile->Append(ID_FILE_CHECK_UPDATES,  _MENU_("check updates"),  _HELP_("check updates"));
+    add_menu_item_tr(menuFile, ID_FILE_CHECK_UPDATES, nullptr, "check_updates");
     #if USE_SCRIPT_PROFILING
-    menuFile->Append(ID_FILE_PROFILER,    _MENU_("show profiler"),  _HELP_("show profiler"));
+    add_menu_item_tr(menuFile, ID_FILE_PROFILER, nullptr, "show_profiler");
     #endif
 //    menuFile->Append(ID_FILE_INSPECT,          _("Inspect Internal Data..."),  _("Shows a the data in the set using a tree structure"));
 //    menuFile->AppendSeparator();
-    menuFile->Append(ID_FILE_RELOAD,          _MENU_("reload data"),    _HELP_("reload data"));
+    add_menu_item_tr(menuFile, ID_FILE_RELOAD, nullptr, "reload_data");
     menuFile->AppendSeparator();
-    menuFile->Append(ID_FILE_PRINT_PREVIEW,  _("print_preview"),  _MENU_("print preview"),  _HELP_("print preview"));
-    menuFile->Append(ID_FILE_PRINT,      _("print"),      _MENU_("print"),      _HELP_("print"));
+    add_menu_item_tr(menuFile, ID_FILE_PRINT_PREVIEW, "print_preview", "print_preview");
+    add_menu_item_tr(menuFile, ID_FILE_PRINT, "print", "print");
     menuFile->AppendSeparator();
     // recent files go here
     menuFile->AppendSeparator();
-    menuFile->Append(ID_FILE_EXIT,            _MENU_("exit"),        _HELP_("exit"));
+    add_menu_item_tr(menuFile, ID_FILE_EXIT, nullptr, "exit");
   menuBar->Append(menuFile, _MENU_("file"));
   
-  IconMenu* menuEdit = new IconMenu();
-    menuEdit->Append(ID_EDIT_UNDO,    _("undo"),    _MENU_1_("undo",wxEmptyString),  _HELP_("undo"));
-    menuEdit->Append(ID_EDIT_REDO,    _("redo"),    _MENU_1_("redo",wxEmptyString),  _HELP_("redo"));
+  auto menuEdit = new wxMenu();
+    add_menu_item(menuEdit, ID_EDIT_UNDO, "undo", _MENU_1_("undo",wxEmptyString),  _HELP_("undo"));
+    add_menu_item(menuEdit, ID_EDIT_REDO, "redo", _MENU_1_("redo",wxEmptyString),  _HELP_("redo"));
     menuEdit->AppendSeparator();
-    menuEdit->Append(ID_EDIT_CUT,    _("cut"),    _MENU_("cut"),        _HELP_("cut"));
-    menuEdit->Append(ID_EDIT_COPY,    _("copy"),    _MENU_("copy"),        _HELP_("copy"));
-    menuEdit->Append(ID_EDIT_PASTE,    _("paste"),    _MENU_("paste"),      _HELP_("paste"));
+    add_menu_item_tr(menuEdit, ID_EDIT_CUT, "cut", "cut");
+    add_menu_item_tr(menuEdit, ID_EDIT_COPY, "copy", "copy");
+    add_menu_item_tr(menuEdit, ID_EDIT_PASTE, "paste", "paste");
     menuEdit->AppendSeparator();
-    menuEdit->Append(ID_EDIT_FIND,    _("find"),    _MENU_("find"),        _HELP_("find"));
-    menuEdit->Append(ID_EDIT_FIND_NEXT,          _MENU_("find next"),    _HELP_("find next"));
-    menuEdit->Append(ID_EDIT_REPLACE,          _MENU_("replace"),      _HELP_("replace"));
-    menuEdit->Append(ID_EDIT_AUTO_REPLACE,        _MENU_("auto replace"),    _HELP_("auto replace"));
+    add_menu_item_tr(menuEdit, ID_EDIT_FIND, "find", "find");
+    add_menu_item_tr(menuEdit, ID_EDIT_FIND_NEXT, nullptr, "find_next");
+    add_menu_item_tr(menuEdit, ID_EDIT_REPLACE, nullptr, "replace");
+    add_menu_item_tr(menuEdit, ID_EDIT_AUTO_REPLACE, nullptr, "auto_replace");
     menuEdit->AppendSeparator();
-    menuEdit->Append(ID_EDIT_PREFERENCES,        _MENU_("preferences"),    _HELP_("preferences"));
+    add_menu_item_tr(menuEdit, ID_EDIT_PREFERENCES, nullptr, "preferences");
   menuBar->Append(menuEdit, _MENU_("edit"));
   
-  IconMenu* menuWindow = new IconMenu();
-    menuWindow->Append(ID_WINDOW_NEW,          _MENU_("new window"),    _HELP_("new window"));
+  auto menuWindow = new wxMenu();
+    add_menu_item_tr(menuWindow, ID_WINDOW_NEW, nullptr, "new_window");
     menuWindow->AppendSeparator();
   menuBar->Append(menuWindow, _MENU_("window"));
   
-  IconMenu* menuHelp = new IconMenu();
-    menuHelp->Append(ID_HELP_INDEX,    _("help"),    _MENU_("index"),      _HELP_("index"));
-    menuHelp->Append(ID_HELP_WEBSITE,          _MENU_("website"),      _HELP_("website"));
-    menuHelp->AppendSeparator();
-    menuHelp->Append(ID_HELP_ABOUT,            _MENU_("about"),      _HELP_("about"));
+  auto menuHelp = new wxMenu();
+    add_menu_item_tr(menuHelp, ID_HELP_INDEX, "help", "index");
+    add_menu_item_tr(menuHelp, ID_HELP_WEBSITE, nullptr, "website");
+    add_menu_item_tr(menuHelp, ID_HELP_ABOUT, nullptr, "about");
   menuBar->Append(menuHelp, _MENU_("help"));
   
   SetMenuBar(menuBar);
@@ -113,24 +110,25 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
   
   // tool bar
   wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL);
-  tb->SetToolBitmapSize(wxSize(18,18));
-  tb->AddTool(ID_FILE_NEW,  _(""),  load_resource_tool_image(_("new")),    wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("new set"),  _HELP_("new set"));
-  tb->AddTool(ID_FILE_OPEN,  _(""),  load_resource_tool_image(_("open")),  wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("open set"),  _HELP_("open set"));
-  tb->AddTool(ID_FILE_SAVE,  _(""),  load_resource_tool_image(_("save")),  wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("save set"),  _HELP_("save set"));
+  tb->SetToolBitmapSize(wxSize(20,20));
+  add_tool_tr(tb, ID_FILE_NEW, "new", "new_set");
+  add_tool_tr(tb, ID_FILE_OPEN, "open", "open_set");
+  add_tool_tr(tb, ID_FILE_SAVE, "save", "save_set");
   tb->AddSeparator();
-  tb->AddTool(ID_FILE_EXPORT,  _(""),  load_resource_tool_image(_("export")),  wxNullBitmap, wxITEM_CHECK,  _TOOLTIP_("export"),  _HELP_("export"));
+  add_tool_tr(tb, ID_FILE_EXPORT, "export", "export");
   tb->AddSeparator();
-  tb->AddTool(ID_EDIT_CUT,  _(""),  load_resource_tool_image(_("cut")),    wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("cut"),    _HELP_("cut"));
-  tb->AddTool(ID_EDIT_COPY,  _(""),  load_resource_tool_image(_("copy")),  wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("copy"),    _HELP_("copy"));
-  tb->AddTool(ID_EDIT_PASTE,  _(""),  load_resource_tool_image(_("paste")),  wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("paste"),  _HELP_("paste"));
+  add_tool_tr(tb, ID_EDIT_CUT, "cut", "cut");
+  add_tool_tr(tb, ID_EDIT_COPY, "copy", "copy");
+  add_tool_tr(tb, ID_EDIT_PASTE, "paste", "paste");
   tb->AddSeparator();
-  tb->AddTool(ID_EDIT_UNDO,  _(""),  load_resource_tool_image(_("undo")),  wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_1_("undo",wxEmptyString));
-  tb->AddTool(ID_EDIT_REDO,  _(""),  load_resource_tool_image(_("redo")),  wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_1_("redo",wxEmptyString));
+  add_tool(tb, ID_EDIT_UNDO, "undo", {}, _TOOLTIP_1_("undo", {}), _HELP_("undo"));
+  add_tool(tb, ID_EDIT_REDO, "redo", {}, _TOOLTIP_1_("redo", {}), _HELP_("redo"));
   tb->AddSeparator();
   tb->Realize();
   
   // tab bar, sizer
   wxToolBar* tabBar = new wxToolBar(this, ID_TAB_BAR, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_HORZ_TEXT | wxTB_NOALIGN);
+  tabBar->SetToolBitmapSize(wxSize(18,18));
   wxSizer* s = new wxBoxSizer(wxVERTICAL);
   s->Add(tabBar, 0, wxEXPAND | wxBOTTOM, 0);
   SetSizer(s);
@@ -178,13 +176,13 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
   current_panel->Layout();
 }
 
-IconMenu* SetWindow::makeExportMenu() {
-  IconMenu* menuExport = new IconMenu();
-  menuExport->Append(ID_FILE_EXPORT_HTML, _("export_html"), _MENU_("export html"), _HELP_("export html"));
-  menuExport->Append(ID_FILE_EXPORT_IMAGE, _("export_image"), _MENU_("export image"), _HELP_("export image"));
-  menuExport->Append(ID_FILE_EXPORT_IMAGES, _("export_images"), _MENU_("export images"), _HELP_("export images"));
-  menuExport->Append(ID_FILE_EXPORT_APPR, _("export_apprentice"), _MENU_("export apprentice"), _HELP_("export apprentice"));
-  menuExport->Append(ID_FILE_EXPORT_MWS, _("export_mws"), _MENU_("export mws"), _HELP_("export mws"));
+wxMenu* SetWindow::makeExportMenu() {
+  auto menuExport = new wxMenu();
+  add_menu_item_tr(menuExport, ID_FILE_EXPORT_HTML, "export_html", "export_html");
+  add_menu_item_tr(menuExport, ID_FILE_EXPORT_IMAGE, "export_image", "export_image");
+  add_menu_item_tr(menuExport, ID_FILE_EXPORT_IMAGES, "export_images", "export_images");
+  add_menu_item_tr(menuExport, ID_FILE_EXPORT_APPR, "export_apprentice", "export_apprentice");
+  add_menu_item_tr(menuExport, ID_FILE_EXPORT_MWS, "export_mws", "export_mws");
   return menuExport;
 }
 
@@ -207,7 +205,7 @@ SetWindow::~SetWindow() {
 
 // ----------------------------------------------------------------------------- : Panel managment
 
-void SetWindow::addPanel(IconMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos, const String& image_name, const String& name) {
+void SetWindow::addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos, const String& image_name, const String& name) {
   // insert in list
   if (panels.size() <= pos) panels.resize(pos + 1);
   panels[pos] = panel;
@@ -221,7 +219,8 @@ void SetWindow::addPanel(IconMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel
   tabBar->AddTool(id, tab_name + _("   "), load_resource_tool_image(image_name), wxNullBitmap, wxITEM_CHECK, tab_help, description);
   tabBar->AddSeparator();
   // add to menu bar
-  windowMenu->Append(id, image_name, menu_name, description, wxITEM_CHECK);
+  auto menu_item = windowMenu->Append(id, menu_name, description, wxITEM_CHECK);
+  set_menu_item_image(menu_item, image_name);
   // add to sizer
   GetSizer()->Add(panel, 1, wxEXPAND);
 }
@@ -541,8 +540,8 @@ void SetWindow::updateRecentSets() {
       mb->SetLabel(ID_FILE_RECENT + i, String(_("&")) << (i+1) << _(" ") << file);
     } else {
       // add new item
-      int pos = i + FILE_MENU_SIZE_BEFORE_RECENT_SETS; // HUGE HACK, we should calculate the position to insert!
-      IconMenu* file_menu = static_cast<IconMenu*>(mb->GetMenu(0));
+      wxMenu* file_menu = mb->GetMenu(0);
+      size_t pos = file_menu->GetMenuItemCount() - 2; // last two items are separator and exit
       file_menu->Insert(pos, ID_FILE_RECENT + i, String(_("&")) << (i+1) << _(" ") << file, wxEmptyString);
     }
     i++;

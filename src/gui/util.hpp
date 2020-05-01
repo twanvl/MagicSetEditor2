@@ -47,6 +47,26 @@ bool image_load_file(Image& image, wxInputStream &stream);
 /// Proxy around Image.LoadFile that suppresses errors. 
 bool image_load_file(Image& image, const wxString &name);
 
+// ----------------------------------------------------------------------------- : Tool/menu bar
+
+/// Generate an image to use for the disabled state of menu and toolbar items
+Image generate_disabled_image(Image const& image);
+
+void set_menu_item_image(wxMenuItem* item, const String& resource);
+
+// menu items with images.
+// resource may be nullptr
+wxMenuItem* make_menu_item(wxMenu*, int id, const char* resource, const String& text, const String& help, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
+wxMenuItem* make_menu_item_tr(wxMenu*, int id, const char* resource, const String& locale_key, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
+wxMenuItem* add_menu_item(wxMenu*, int id, const char* resource, const String& text, const String& help, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
+wxMenuItem* add_menu_item_tr(wxMenu*, int id, const char* resource, const String& locale_key, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
+
+// toolbars with images loaded from resource
+// resource may be nullptr
+wxToolBarToolBase* add_tool(wxToolBar*, int id, const char* resource, const String& label, const String& tooltip, const String& help, wxItemKind kind = wxITEM_NORMAL);
+// add a tool to a toolbar, translate tooltip and help using locale
+wxToolBarToolBase* add_tool_tr(wxToolBar*, int id, const char* resource, const String& locale_key, bool label = false, wxItemKind kind = wxITEM_NORMAL);
+
 // ----------------------------------------------------------------------------- : Resource related
 
 /// Load an image from a resource
@@ -59,7 +79,7 @@ wxCursor load_resource_cursor(const String& name);
 wxIcon load_resource_icon(const String& name);
 
 /// Load an image for use in a toolbar (filename: tool/...) from a resource
-wxBitmap load_resource_tool_image(const String& name);
+wxImage load_resource_tool_image(const String& name);
 
 // ----------------------------------------------------------------------------- : Platform look
 

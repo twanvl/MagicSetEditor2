@@ -45,7 +45,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
   virtual void onMouseLeave(const RealPoint& pos, wxMouseEvent&);
   virtual bool onMouseWheel(const RealPoint& pos, wxMouseEvent&);
   
-  virtual bool onContextMenu(IconMenu& m, wxContextMenuEvent&);
+  virtual bool onContextMenu(wxMenu& m, wxContextMenuEvent&);
   virtual wxMenu* getMenu(int type) const;
   virtual bool onCommand(int);
   

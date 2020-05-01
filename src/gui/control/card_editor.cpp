@@ -9,7 +9,7 @@
 #include <util/prec.hpp>
 #include <gui/control/card_editor.hpp>
 #include <gui/value/editor.hpp>
-#include <gui/icon_menu.hpp>
+#include <gui/util.hpp>
 #include <data/field.hpp>
 #include <data/stylesheet.hpp>
 #include <data/settings.hpp>
@@ -424,10 +424,10 @@ void DataEditor::onChar(wxKeyEvent& ev) {
 
 void DataEditor::onContextMenu(wxContextMenuEvent& ev) {
   if (current_editor) {
-    IconMenu m;
-    m.Append(ID_EDIT_CUT,  _("cut"),  _MENU_("cut"),    _HELP_("cut"));
-    m.Append(ID_EDIT_COPY,  _("copy"),  _MENU_("copy"),    _HELP_("copy"));
-    m.Append(ID_EDIT_PASTE, _("paste"),  _MENU_("paste"),  _HELP_("paste"));
+    wxMenu m;
+    add_menu_item_tr(&m, ID_EDIT_CUT, "cut", "cut");
+    add_menu_item_tr(&m, ID_EDIT_COPY, "copy", "copy");
+    add_menu_item_tr(&m, ID_EDIT_PASTE, "paste", "paste");
     m.Enable(ID_EDIT_CUT,   canCut());
     m.Enable(ID_EDIT_COPY,  canCopy());
     m.Enable(ID_EDIT_PASTE, canPaste());

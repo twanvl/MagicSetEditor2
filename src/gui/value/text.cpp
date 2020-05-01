@@ -8,7 +8,6 @@
 
 #include <util/prec.hpp>
 #include <gui/value/text.hpp>
-#include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <gui/drop_down_list.hpp>
 #include <data/word_list.hpp>
@@ -552,12 +551,12 @@ void TextValueEditor::onLoseFocus() {
   //selection_start_i = selection_end_i = 0;
 }
 
-bool TextValueEditor::onContextMenu(IconMenu& m, wxContextMenuEvent& ev) {
+bool TextValueEditor::onContextMenu(wxMenu& m, wxContextMenuEvent& ev) {
   // in a keword? => "reminder text" option
   size_t kwpos = in_tag(value().value(), _("<kw-"), selection_start_i, selection_start_i);
   if (kwpos != String::npos) {
     m.InsertSeparator(0);
-    m.Insert(0,ID_FORMAT_REMINDER,  _("reminder"),    _MENU_("reminder text"),  _HELP_("reminder text"),  wxITEM_CHECK);
+    m.Insert(0, make_menu_item_tr(&m, ID_FORMAT_REMINDER, "reminder", "reminder_text", wxITEM_CHECK));
   }
   // in a spelling error? => show suggestions and "add to dictionary"
   size_t error_pos = in_tag(value().value(), _("<error-spelling"), selection_start_i, selection_start_i);

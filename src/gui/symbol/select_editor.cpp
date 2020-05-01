@@ -116,12 +116,12 @@ void SymbolSelectEditor::drawRotationCenter(DC& dc, const Vector2D& pos) {
 
 void SymbolSelectEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
   tb->AddSeparator();
-  tb->AddTool(ID_SYMBOL_COMBINE_MERGE,        _TOOL_("merge"),      load_resource_image(_("combine_or")),       wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("merge"),      _HELP_("merge"));
-  tb->AddTool(ID_SYMBOL_COMBINE_SUBTRACT,     _TOOL_("subtract"),   load_resource_image(_("combine_sub_dark")), wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("subtract"),   _HELP_("subtract"));
-  tb->AddTool(ID_SYMBOL_COMBINE_INTERSECTION, _TOOL_("intersect"),  load_resource_image(_("combine_and_dark")), wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("intersect"),  _HELP_("intersect"));
-  tb->AddTool(ID_SYMBOL_COMBINE_DIFFERENCE,   _TOOL_("difference"), load_resource_image(_("combine_xor")),      wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("difference"), _HELP_("difference"));
-  tb->AddTool(ID_SYMBOL_COMBINE_OVERLAP,      _TOOL_("overlap"),    load_resource_image(_("combine_over")),     wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("overlap"),    _HELP_("overlap"));
-  tb->AddTool(ID_SYMBOL_COMBINE_BORDER,       _TOOL_("border"),     load_resource_image(_("combine_border")),   wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("border"),     _HELP_("border"));
+  add_tool_tr(tb, ID_SYMBOL_COMBINE_MERGE, "combine_or", "merge", true, wxITEM_CHECK);
+  add_tool_tr(tb, ID_SYMBOL_COMBINE_SUBTRACT, "combine_sub_dark", "subtract", true, wxITEM_CHECK);
+  add_tool_tr(tb, ID_SYMBOL_COMBINE_INTERSECTION, "combine_and_dark", "intersect", true, wxITEM_CHECK);
+  add_tool_tr(tb, ID_SYMBOL_COMBINE_DIFFERENCE, "combine_xor", "difference", true, wxITEM_CHECK);
+  add_tool_tr(tb, ID_SYMBOL_COMBINE_OVERLAP, "combine_over", "overlap", true, wxITEM_CHECK);
+  add_tool_tr(tb, ID_SYMBOL_COMBINE_BORDER, "combine_border", "border", true, wxITEM_CHECK);
   tb->Realize();
 }
 void SymbolSelectEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {

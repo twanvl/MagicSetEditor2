@@ -10,7 +10,6 @@
 #include <gui/set/keywords_panel.hpp>
 #include <gui/control/keyword_list.hpp>
 #include <gui/control/text_ctrl.hpp>
-#include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <data/keyword.hpp>
 #include <data/game.hpp>
@@ -102,14 +101,14 @@ void KeywordsPanel::initControls() {
       s2->Add(list_inactive, 1, wxEXPAND);*/
   
   // init menus
-  menuKeyword = new IconMenu();
-    menuKeyword->Append(ID_KEYWORD_PREV,            _MENU_("previous keyword"),    _HELP_("previous keyword"));
-    menuKeyword->Append(ID_KEYWORD_NEXT,            _MENU_("next keyword"),      _HELP_("next keyword"));
+  menuKeyword = new wxMenu();
+    add_menu_item_tr(menuKeyword, ID_KEYWORD_PREV, nullptr, "previous_keyword");
+    add_menu_item_tr(menuKeyword, ID_KEYWORD_NEXT, nullptr, "next_keyword");
     menuKeyword->AppendSeparator();
-    menuKeyword->Append(ID_KEYWORD_ADD,    _("keyword_add"),  _MENU_("add keyword"),      _HELP_("add keyword"));
-                                  // NOTE: space after "Del" prevents wx from making del an accellerator
-                                  // otherwise we delete a card when delete is pressed inside the editor
-    menuKeyword->Append(ID_KEYWORD_REMOVE,  _("keyword_del"),  _MENU_("remove keyword")+_(" "),_HELP_("remove keyword"));
+    add_menu_item_tr(menuKeyword, ID_KEYWORD_ADD, "keyword_add", "add_keyword");
+    // NOTE: space after "Del" prevents wx from making del an accellerator
+    // otherwise we delete a card when delete is pressed inside the editor
+    add_menu_item(menuKeyword, ID_KEYWORD_REMOVE, "keyword_del",  _MENU_("remove_keyword")+_(" "), _HELP_("remove_keyword"));
 }
 
 KeywordsPanel::~KeywordsPanel() {
@@ -127,8 +126,8 @@ void KeywordsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
     onChangeSet();
   }
   // Toolbar
-  tb->AddTool(ID_KEYWORD_ADD,    _(""), load_resource_tool_image(_("keyword_add")),  wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("add keyword"),  _HELP_("add keyword"));
-  tb->AddTool(ID_KEYWORD_REMOVE,  _(""), load_resource_tool_image(_("keyword_del")),  wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("remove keyword"),_HELP_("remove keyword"));
+  add_tool_tr(tb, ID_KEYWORD_ADD, "keyword_add", "add_keyword");
+  add_tool_tr(tb, ID_KEYWORD_REMOVE, "keyword_del", "remove_keyword");
   // Filter/search textbox
   tb->AddSeparator();
   assert(!filter);

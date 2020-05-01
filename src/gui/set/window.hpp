@@ -13,7 +13,6 @@
 #include <wx/fdrepdlg.h>
 #include <gui/card_select_window.hpp>
 
-class IconMenu;
 class SetWindowPanel;
 class wxFindDialogEvent;
 struct CardSelectEvent;
@@ -42,7 +41,7 @@ private:
   // gui items
   vector<SetWindowPanel*> panels;        ///< All panels on this window
   SetWindowPanel*         current_panel;
-  IconMenu*               export_menu = nullptr;
+  wxMenu*                 export_menu = nullptr;
   
   /// Number of items in the recent sets list
   size_t number_of_recentSets;
@@ -56,7 +55,7 @@ private:
   /// Add a panel to the window, as well as to the menu and tab bar
   /** The position only determines the order in which events will be send.
    */
-  void addPanel(IconMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos, const String& image_name, const String& name);
+  void addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos, const String& image_name, const String& name);
   
   /// Select a panel, based on a tab id
   void selectPanel(int id);
@@ -113,7 +112,7 @@ private:
   UInt number_of_recent_sets;
   void updateRecentSets();
   
-  IconMenu* makeExportMenu();
+  wxMenu* makeExportMenu();
 
   // --------------------------------------------------- : Window events - menu - file
   void onFileNew             (wxCommandEvent&);
