@@ -98,18 +98,10 @@ typedef unsigned int  UInt;
 
 // ----------------------------------------------------------------------------- : Debugging fixes
 
-#ifdef _MSC_VER
-  //# pragma conform(forScope,on)    // in "for(int x=..);" x goes out of scope after the for
-  // somehow forScope pragma doesn't work in precompiled headers, use this hack instead:
-  #ifdef _DEBUG
-    #define for if(false);else for
-  #endif
-  
-  #if defined(_DEBUG) && defined(_CRT_WIDE)
-    // Use OutputDebugString/DebugBreak for assertions if in debug mode
-    void msvc_assert(const wchar_t*, const wchar_t*, const wchar_t*, unsigned);
-    #undef assert
-    #define assert(exp) (void)( (exp) || (msvc_assert(nullptr, _CRT_WIDE(#exp), _CRT_WIDE(__FILE__), __LINE__), 0) )
-  #endif
+#if defined(_MSC_VER) && defined(_DEBUG) && defined(_CRT_WIDE)
+  // Use OutputDebugString/DebugBreak for assertions if in debug mode
+  void msvc_assert(const wchar_t*, const wchar_t*, const wchar_t*, unsigned);
+  #undef assert
+  #define assert(exp) (void)( (exp) || (msvc_assert(nullptr, _CRT_WIDE(#exp), _CRT_WIDE(__FILE__), __LINE__), 0) )
 #endif
 
