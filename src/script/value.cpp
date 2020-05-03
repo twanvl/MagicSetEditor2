@@ -202,7 +202,9 @@ ScriptValueP rangeIterator(int start, int end) {
 
 // ----------------------------------------------------------------------------- : Integers
 
-#define USE_POOL_ALLOCATOR
+#ifdef USE_INTRUSIVE_PTR
+  #define USE_POOL_ALLOCATOR
+#endif
 
 // Integer values
 class ScriptInt : public ScriptValue {
