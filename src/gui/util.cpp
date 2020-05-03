@@ -290,13 +290,9 @@ wxToolBarToolBase* add_tool(wxToolBar* toolbar, int id, const char* resource, co
     #else
       Image disabled_bitmap = generate_disabled_image(bitmap);
     #endif
-    auto tool = new wxToolBarToolBase(toolbar, id, label, bitmap, disabled_bitmap, kind, nullptr, tooltip, help);
-    toolbar->AddTool(tool);
-    return tool;
+    return toolbar->AddTool(id, label, bitmap, disabled_bitmap, kind, tooltip, help);
   } else {
-    auto tool = new wxToolBarToolBase(toolbar, id, label, wxNullBitmap, wxNullBitmap, kind, nullptr, tooltip,  help);
-    toolbar->AddTool(tool);
-    return tool;
+    return toolbar->AddTool(id, label, wxNullBitmap, wxNullBitmap, kind, tooltip,  help);
   }
 }
 
