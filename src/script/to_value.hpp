@@ -408,7 +408,11 @@ inline ScriptValueP to_script(const IndexMap<K,V>* v) {
 }
 template <typename T>
 inline ScriptValueP to_script(const intrusive_ptr<T>& v) {
-  return make_intrusive<ScriptObject<intrusive_ptr<T>>>(v);
+  if (v) {
+    return make_intrusive<ScriptObject<intrusive_ptr<T>>>(v);
+  } else {
+    return script_nil;
+  }
 }
 template <typename T>
 inline ScriptValueP to_script(const Defaultable<T>& v) {
