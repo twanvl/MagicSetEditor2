@@ -185,17 +185,17 @@ void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
   add_tool_tr(tb, ID_FORMAT_SYMBOL, "symbol", "symbols", false, wxITEM_CHECK);
   add_tool_tr(tb, ID_FORMAT_REMINDER, "reminder", "reminder_text", false, wxITEM_CHECK);
   tb->AddSeparator();
-  toolAddCard = add_tool_tr(tb, ID_CARD_ADD, "card_add", "add_card", false, wxITEM_DROPDOWN);
-  toolAddCard->SetDropdownMenu(makeAddCardsSubmenu(true));
+  add_tool_tr(tb, ID_CARD_ADD, "card_add", "add_card", false, wxITEM_DROPDOWN);
+  tb->SetDropdownMenu(ID_CARD_ADD, makeAddCardsSubmenu(true));
   add_tool_tr(tb, ID_CARD_REMOVE, "card_del", "remove_card");
   tb->AddSeparator();
-  wxToolBarToolBase* rot = add_tool_tr(tb, ID_CARD_ROTATE, "card_rotate", "rotate_card", false, wxITEM_DROPDOWN);
+  add_tool_tr(tb, ID_CARD_ROTATE, "card_rotate", "rotate_card", false, wxITEM_DROPDOWN);
   auto menuRotate = new wxMenu();
     add_menu_item_tr(menuRotate, ID_CARD_ROTATE_0, "card_rotate_0", "rotate_0", wxITEM_CHECK);
     add_menu_item_tr(menuRotate, ID_CARD_ROTATE_270, "card_rotate_270", "rotate_270", wxITEM_CHECK);
     add_menu_item_tr(menuRotate, ID_CARD_ROTATE_180, "card_rotate_180", "rotate_180", wxITEM_CHECK);
     add_menu_item_tr(menuRotate, ID_CARD_ROTATE_90, "card_rotate_90", "rotate_90", wxITEM_CHECK);
-  rot->SetDropdownMenu(menuRotate);
+  tb->SetDropdownMenu(ID_CARD_ROTATE, menuRotate);
   // Filter/search textbox
   tb->AddSeparator();
   assert(!filter);
