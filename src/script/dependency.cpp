@@ -199,7 +199,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
           } else {
             // backward jump: just follow it, someone else (I_LOOP) will make sure
             // we don't go into an infinite loop
-            instr = &script.instructions[i.data];
+            instr = &script.instructions[0] + i.data;
           }
           break;
         }
@@ -239,7 +239,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
           } else {
             // we have been through the body once already
             stack.erase(stack.end() - 2); // remove iterator
-            instr = &script.instructions[i.data];
+            instr = &script.instructions[0] + i.data;
           }
           break;
         }
@@ -254,7 +254,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
             stack.push_back(key);
           } else {
             stack.erase(stack.end() - 2); // remove iterator
-            instr = &script.instructions[i.data];
+            instr = &script.instructions[0] + i.data;
           }
           break;
         }
