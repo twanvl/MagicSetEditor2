@@ -6,7 +6,15 @@
 .vs
 .vscode
 
-/data
+/data/*.mse-game
+/data/*.mse-style
+/data/*.mse-include
+/data/*.mse-symbol-font
+/data/*.mse-export-template
+/data/dictionaries
+/data/packages
+/data/old
+
 /build_*
 /build
 /out
