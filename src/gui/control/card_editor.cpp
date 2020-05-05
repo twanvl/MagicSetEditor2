@@ -322,7 +322,8 @@ void DataEditor::onMotion(wxMouseEvent& ev) {
   if (!HasCapture()) {
     // find editor under mouse
     ValueViewer* old_hovered_viewer = hovered_viewer;
-    hovered_viewer = mousedOverViewer(ev);
+    bool hovered_label = false;
+    hovered_viewer = mousedOverViewer(ev, &hovered_label);
     if (old_hovered_viewer && hovered_viewer != old_hovered_viewer) {
       ValueEditor* e = old_hovered_viewer->getEditor();
       RealPoint pos = mousePoint(ev, *old_hovered_viewer);
@@ -333,19 +334,23 @@ void DataEditor::onMotion(wxMouseEvent& ev) {
       if (draw_hover_borders) redraw(*hovered_viewer);
     }
     // change cursor and set status text
-    wxFrame* frame = dynamic_cast<wxFrame*>( wxGetTopLevelParent(this) );
-    if (hovered_viewer) {
+    if (hovered_viewer && !hovered_label) {
       ValueEditor* e = hovered_viewer->getEditor();
       RealPoint pos = mousePoint(ev, *hovered_viewer);
       wxCursor c;
       if (e) c = e->cursor(pos);
-      if (c.Ok()) SetCursor(c);
-      else        SetCursor(wxCURSOR_ARROW);
-      if (frame) frame->SetStatusText(hovered_viewer->getField()->description);
+      if (c.Ok()) {
+        SetCursor(c);
+      } else {
+        SetCursor(wxCURSOR_ARROW);
+      }
     } else {
-      // no field under cursor
       SetCursor(wxCURSOR_ARROW);
-      if (frame) frame->SetStatusText(wxEmptyString);
+    }
+    // set status text
+    wxFrame* frame = dynamic_cast<wxFrame*>( wxGetTopLevelParent(this) );
+    if (frame) {
+      frame->SetStatusText(hovered_viewer ? hovered_viewer->getField()->description : String());
     }
   }
 }
@@ -404,13 +409,19 @@ RealPoint DataEditor::mousePoint(const wxMouseEvent& ev, const ValueViewer& view
   return rot.trInv(RealPoint(ev.GetX(), ev.GetY()));
 }
 
-ValueViewer* DataEditor::mousedOverViewer(const wxMouseEvent& ev) const {
+ValueViewer* DataEditor::mousedOverViewer(const wxMouseEvent& ev, bool* over_label_out) const {
   FOR_EACH_EDITOR_REVERSE{ // find high z index fields first
-    int y;
-    if (v->getField()->editable && (v->containsPoint(mousePoint(ev,*v)) ||
-            (nativeLook() && (y = ev.GetY() + GetScrollPos(wxVERTICAL)) >= v->getStyle()->top
-                          && y < v->getStyle()->bottom))) {
-      return v.get();
+    if (v->getField()->editable) {
+      if (v->containsPoint(mousePoint(ev,*v))) {
+        if (over_label_out) *over_label_out = false;
+        return v.get();
+      } else if (nativeLook()) {
+        int y = ev.GetY() + GetScrollPos(wxVERTICAL);
+        if (y >= v->getStyle()->top && y < v->getStyle()->bottom) {
+          if (over_label_out) *over_label_out = true;
+          return v.get();
+        }
+      }
     }
   }
   return nullptr;

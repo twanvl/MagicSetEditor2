@@ -127,7 +127,7 @@ class DataEditor : public CardViewer {
   /// Convert mouse coordinates to internal coordinates
   RealPoint mousePoint(const wxMouseEvent&, const ValueViewer& viewer) const;
   /// Field under the mouse cursor, or nullptr if there is none
-  ValueViewer* mousedOverViewer(const wxMouseEvent&) const;
+  ValueViewer* mousedOverViewer(const wxMouseEvent&, bool* over_label_out=nullptr) const;
   
   /// Select a field found by tab order, can be viewers.end()
   bool selectWithTab(vector<ValueViewerP>::iterator const&);
