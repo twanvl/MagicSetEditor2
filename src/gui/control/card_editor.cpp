@@ -125,22 +125,16 @@ struct CompareTabOrder {
     if (as.tab_index < as.tab_index) return true;
     if (as.tab_index > as.tab_index) return false;
     // otherwise look at the positions
-    // TODO: does this actually give a total order?
-    double vertical_overlap   = min(bs.bottom - as.top, as.bottom - bs.top);
-    double horizontal_overlap = min(bs.right - as.left, as.right - bs.left);
-    if (vertical_overlap > 0 && vertical_overlap > horizontal_overlap) {
-      // fields overlap (mostly) vertically
-      // the fields are almost on the same 'row'
-      // compare horizontally first
-      if (as.left < bs.left) return true; // horizontal sorting
-      if (as.left > bs.left) return false;
-      if (as.top  < bs.top)  return true; // vertical sorting
-    } else {
-      // compare vertically first
-      if (as.top  < bs.top)  return true; // vertical sorting
-      if (as.top  > bs.top)  return false;
-      if (as.left < bs.left) return true; // horizontal sorting
-    }
+    // To get a total order, we look at the viewer center.
+    // Not completely (y,x), because for viewers that are almost at the same y we prefer to sort by x
+    double ax = 2*as.left + as.right; // bias a bit to the left
+    double bx = 2*bs.left + bs.right;
+    double ay = as.top + as.bottom + 0.1*ax; // a bit of x, so that dominates when y is approximately equal
+    double by = bs.top + bs.bottom + 0.1*bx;
+    if (ay < by) return true;
+    if (ay > by) return false;
+    if (ax < bx) return true;
+    if (ax > bx) return false;
     // arbitrary order otherwise
     return a < b;
   }
@@ -203,25 +197,50 @@ void DataEditor::onInit() {
   current_viewer = nullptr;
   current_editor = nullptr;
   hovered_viewer = nullptr;
+  viewers_in_search_order.clear();
   // hide caret if it is shown
   wxCaret* caret = GetCaret();
   if (caret->IsVisible()) caret->Hide();
 }
 // ----------------------------------------------------------------------------- : Search / replace
 
-bool DataEditor::search(FindInfo& find, bool from_start) {
-  bool include = from_start;
-  for (size_t i = 0 ; i < by_tab_index.size() ; ++i) {
-    ValueViewer& viewer = *by_tab_index[find.forward() ? i : by_tab_index.size() - i - 1];
-    if (&viewer == current_viewer) include = true;
-    if (include && viewer.getField()->editable && viewer.getStyle()->isVisible()) {
-      ValueEditor* editor = viewer.getEditor();
-      if (editor && editor->search(find, from_start || &viewer != current_viewer)) {
-        return true; // done
+template <typename Iterator>
+bool DataEditor::search(Iterator it, Iterator end, FindInfo& find, bool from_start) {
+  bool include = from_start || current_viewer == nullptr;
+  for (;it != end; ++it) {
+    ValueViewer* viewer = *it;
+    if (viewer == current_viewer) include = true;
+    if (include && viewer->getField()->editable && viewer->getStyle()->isVisible()) {
+      ValueEditor* editor = viewer->getEditor();
+      if (editor) {
+        if (editor && editor->search(find, from_start || viewer != current_viewer)) {
+          selectViewer(viewer);
+          return true; // done
+        }
       }
     }
   }
-  return false; // not done
+  return false;
+}
+
+vector<ValueViewer*> init_search_order(vector<ValueViewerP> const& viewers) {
+  vector<ValueViewer*> in_order;
+  for (auto const& v : viewers) {
+    if (v->getEditor()) in_order.push_back(v.get());
+  }
+  stable_sort(in_order.begin(), in_order.end(), CompareTabOrder());
+  return in_order;
+}
+
+bool DataEditor::search(FindInfo& find, bool from_start) {
+  if (viewers_in_search_order.empty()) {
+    viewers_in_search_order = init_search_order(viewers);
+  }
+  if (find.forward()) {
+    return search(viewers_in_search_order.begin(), viewers_in_search_order.end(), find, from_start);
+  } else {
+    return search(viewers_in_search_order.rbegin(), viewers_in_search_order.rend(), find, from_start);
+  }
 }
 
 // ----------------------------------------------------------------------------- : Clipboard & Formatting
@@ -261,7 +280,7 @@ void DataEditor::onLeftDown(wxMouseEvent& ev) {
   ev.Skip(); // for focus
   CaptureMouse();
   // change selection?
-  selectField(ev, &ValueEditor::onLeftDown);
+  selectViewer(ev, &ValueEditor::onLeftDown);
 }
 void DataEditor::onLeftUp(wxMouseEvent& ev) {
   if (HasCapture()) ReleaseMouse();
@@ -283,7 +302,7 @@ void DataEditor::onLeftDClick(wxMouseEvent& ev) {
 void DataEditor::onRightDown(wxMouseEvent& ev) {
   ev.Skip(); // for context menu
   // change selection?
-  selectField(ev, &ValueEditor::onRightDown);
+  selectViewer(ev, &ValueEditor::onRightDown);
 }
 void DataEditor::onMouseWheel(wxMouseEvent& ev) {
   if (current_editor && current_viewer) {
@@ -303,16 +322,10 @@ void DataEditor::onMotion(wxMouseEvent& ev) {
   if (!HasCapture()) {
     // find editor under mouse
     ValueViewer* old_hovered_viewer = hovered_viewer;
-    FOR_EACH_REVERSE(v,viewers) { // find high z index fields first
-      RealPoint pos = mousePoint(ev, *v);
-      if (v->containsPoint(pos) && v->getField()->editable) {
-        hovered_viewer = v.get();
-        break;
-      }
-    }
+    hovered_viewer = mousedOverViewer(ev);
     if (old_hovered_viewer && hovered_viewer != old_hovered_viewer) {
       ValueEditor* e = old_hovered_viewer->getEditor();
-      RealPoint pos = mousePoint(ev, *hovered_viewer);
+      RealPoint pos = mousePoint(ev, *old_hovered_viewer);
       if (e) e->onMouseLeave(pos, ev);
       if (draw_hover_borders) redraw(*old_hovered_viewer);
     }
@@ -350,15 +363,26 @@ void DataEditor::onMouseLeave(wxMouseEvent& ev) {
   if (frame) frame->SetStatusText(wxEmptyString);
 }
 
-void DataEditor::selectField(wxMouseEvent& ev, bool (ValueEditor::*event)(const RealPoint&, wxMouseEvent&)) {
-  // change viewer/editor
+bool DataEditor::selectViewer(ValueViewer* v) {
+  if (!v) return false;
+  ValueEditor* e = v->getEditor();
+  if (!e) return false;
   ValueEditor* old_editor = current_editor;
-  selectFieldNoEvents(ev);
+  current_editor = e;
+  current_viewer = v;
   if (old_editor != current_editor) {
     // selection has changed, send focus events
     if (old_editor)     old_editor->onLoseFocus();
     if (current_editor) current_editor->onFocus();
+    return true;
   }
+  return false;
+}
+
+void DataEditor::selectViewer(wxMouseEvent& ev, bool (ValueEditor::*event)(const RealPoint&, wxMouseEvent&)) {
+  // change viewer/editor
+  ValueViewer* viewer = mousedOverViewer(ev);
+  bool changed = viewer && selectViewer(viewer);
   // pass event
   if (current_editor && current_viewer) {
     RealPoint pos = mousePoint(ev, *current_viewer);
@@ -367,29 +391,29 @@ void DataEditor::selectField(wxMouseEvent& ev, bool (ValueEditor::*event)(const 
     }
   }
   // refresh?
-  if (old_editor != current_editor) {
+  if (changed) {
     // selection has changed, refresh viewers
     // NOTE: after passing mouse down event, otherwise opening combo box produces flicker
     onChange();
   }
 }
-void DataEditor::selectFieldNoEvents(const wxMouseEvent& ev) {
-  FOR_EACH_EDITOR_REVERSE { // find high z index fields first
-    int y;
-    if (v->getField()->editable && (v->containsPoint(mousePoint(ev,*v)) ||
-            (nativeLook() && (y = ev.GetY() + GetScrollPos(wxVERTICAL)) >= v->getStyle()->top
-                          && y < v->getStyle()->bottom) )) {
-      current_viewer = v.get();
-      current_editor = e;
-      return;
-    }
-  }
-}
 
-RealPoint DataEditor::mousePoint(const wxMouseEvent& ev, const ValueViewer& viewer) {
+RealPoint DataEditor::mousePoint(const wxMouseEvent& ev, const ValueViewer& viewer) const {
   Rotation rot = getRotation();
   Rotater r(rot,viewer.getRotation());
   return rot.trInv(RealPoint(ev.GetX(), ev.GetY()));
+}
+
+ValueViewer* DataEditor::mousedOverViewer(const wxMouseEvent& ev) const {
+  FOR_EACH_EDITOR_REVERSE{ // find high z index fields first
+    int y;
+    if (v->getField()->editable && (v->containsPoint(mousePoint(ev,*v)) ||
+            (nativeLook() && (y = ev.GetY() + GetScrollPos(wxVERTICAL)) >= v->getStyle()->top
+                          && y < v->getStyle()->bottom))) {
+      return v.get();
+    }
+  }
+  return nullptr;
 }
 
 void DataEditor::onLoseCapture(wxMouseCaptureLostEvent&) {

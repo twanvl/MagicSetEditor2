@@ -93,7 +93,7 @@ class DataEditor : public CardViewer {
   ValueViewer* current_viewer;  ///< The currently selected viewer
   ValueEditor* current_editor;  ///< The currently selected editor, corresponding to the viewer
   ValueViewer* hovered_viewer;  ///< The editor under the mouse cursor
-  vector<ValueViewer*> by_tab_index;  ///< The editable viewers, sorted by tab index
+  vector<ValueViewer*> viewers_in_search_order;  ///< The editable viewers, sorted by tab index, for find/replace
   
   private:
   // --------------------------------------------------- : Events
@@ -118,17 +118,22 @@ class DataEditor : public CardViewer {
   void onLoseFocus(wxFocusEvent&);
   
   // --------------------------------------------------- : Functions
-  
-  /// Changes the selection to the field at the specified coordinates
+
+  /// Changes the selection to the given field, returns true if selection changed
+  bool selectViewer(ValueViewer*);
   /** Sends an event to the event function of the current viewer */
-  void selectField(wxMouseEvent& ev, bool (ValueEditor::*event)(const RealPoint&, wxMouseEvent&));
-  // selectField, but don't send events
-  void selectFieldNoEvents(const wxMouseEvent&);
+  /// Changes the selection to the field at the specified coordinates
+  void selectViewer(wxMouseEvent& ev, bool (ValueEditor::* event)(const RealPoint&, wxMouseEvent&));
   /// Convert mouse coordinates to internal coordinates
-  RealPoint mousePoint(const wxMouseEvent&, const ValueViewer& viewer);
+  RealPoint mousePoint(const wxMouseEvent&, const ValueViewer& viewer) const;
+  /// Field under the mouse cursor, or nullptr if there is none
+  ValueViewer* mousedOverViewer(const wxMouseEvent&) const;
   
   /// Select a field found by tab order, can be viewers.end()
   bool selectWithTab(vector<ValueViewerP>::iterator const&);
+
+  template <typename Iterator>
+  bool search(Iterator begin, Iterator end, FindInfo& find, bool from_start);
 };
 
 /// By default a DataEditor edits cards
