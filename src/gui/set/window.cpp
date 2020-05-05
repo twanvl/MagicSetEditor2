@@ -44,7 +44,6 @@
 SetWindow::SetWindow(Window* parent, const SetP& set)
   : wxFrame(parent, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE)
   , current_panel(nullptr)
-  , find_dialog(nullptr)
   , find_data(wxFR_DOWN)
   , number_of_recent_sets(0)
 {
@@ -169,7 +168,6 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
     // if we don't destroy the panel we could crash in ~CardsPanel, since it expected
     // the insertSymbolMenu to be removed by destroyUI but not deleted.
     current_panel->destroyUI(GetToolBar(), GetMenuBar());
-    delete find_dialog;
     set_windows.erase(remove(set_windows.begin(), set_windows.end(), this));
     throw;
   }
@@ -197,7 +195,6 @@ SetWindow::~SetWindow() {
   // destroy ui of selected panel
   current_panel->destroyUI(GetToolBar(), GetMenuBar());
   // cleanup (see find stuff)
-  delete find_dialog;
   delete export_menu;
   // remove from list of set windows
   set_windows.erase(remove(set_windows.begin(), set_windows.end(), this));
@@ -740,16 +737,15 @@ void SetWindow::onEditPaste(wxCommandEvent&) {
 }
 
 void SetWindow::onEditFind(wxCommandEvent&) {
-  delete find_dialog;
-  find_dialog = new wxFindReplaceDialog(this, &find_data, _("Find"));
+  find_dialog = make_unique<wxFindReplaceDialog>(this, &find_data, _("Find"));
   find_dialog->Show();
+  find_dialog->SetPosition(this->GetPosition());
 }
 void SetWindow::onEditFindNext(wxCommandEvent&) {
   current_panel->doFind(find_data);
 }
 void SetWindow::onEditReplace(wxCommandEvent&) {
-  delete find_dialog;
-  find_dialog = new wxFindReplaceDialog(this, &find_data, _("Replace"), wxFR_REPLACEDIALOG);
+  find_dialog = make_unique<wxFindReplaceDialog>(this, &find_data, _("Replace"), wxFR_REPLACEDIALOG);
   find_dialog->Show();
 }
 

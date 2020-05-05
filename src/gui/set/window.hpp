@@ -47,7 +47,7 @@ private:
   size_t number_of_recentSets;
   
   // data for find/replace
-  wxDialog* find_dialog;
+  unique_ptr<wxDialog> find_dialog;
   wxFindReplaceData find_data;
   
   // --------------------------------------------------- : Panel managment
