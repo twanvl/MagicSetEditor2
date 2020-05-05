@@ -71,9 +71,9 @@ public:
   GetMember(const String& name);
   
   /// Tell the reflection code we are getting a member for scripting purposes
-  static constexpr bool isReading = true;
+  static constexpr bool isReading = false;
   static constexpr bool isWriting = false;
-  static constexpr bool isScripting = false;
+  static constexpr bool isScripting = true;
   inline bool isCompound() const { return true; }
   inline Version formatVersion() const { return app_version; }
 
