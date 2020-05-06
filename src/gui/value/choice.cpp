@@ -14,10 +14,13 @@
 #include <script/image.hpp>
 #include <wx/imaglist.h>
 
+const int thumbnail_size = 18;
+const double min_item_size = thumbnail_size;
+
 // ----------------------------------------------------------------------------- : ChoiceThumbnailRequest
 
 class ChoiceThumbnailRequest : public ThumbnailRequest {
-  public:
+public:
   ChoiceThumbnailRequest(ValueViewer* cve, int id, bool from_disk, bool thread_safe);
   virtual Image generate();
   virtual void store(const Image&);
@@ -47,44 +50,16 @@ Image ChoiceThumbnailRequest::generate() {
   String name = canonical_name_form(s.field().choices->choiceName(id));
   ScriptableImage& img = s.choice_images[name];
   return img.isReady()
-    ? img.generate(GeneratedImage::Options(16,16, &viewer().getStylePackage(), &viewer().getLocalPackage(), ASPECT_BORDER, true))
+    ? img.generate(GeneratedImage::Options(thumbnail_size, thumbnail_size, &viewer().getStylePackage(), &viewer().getLocalPackage(), ASPECT_BORDER, true))
     : wxImage();
 }
 
 void ChoiceThumbnailRequest::store(const Image& img) {
-  ChoiceStyle& s = style();
-  wxImageList* il = s.thumbnails;
-  while (id > il->GetImageCount()) {
-    il->Add(wxBitmap(16,16),*wxBLACK);
-  }
   if (img.Ok()) {
-    #ifdef __WXMSW__
-      // for some reason windows doesn't like completely transparent images if they do not have a mask
-      // HACK:
-      if (img.HasAlpha() && img.GetWidth() == 16 && img.GetHeight() == 16) {
-        // is the image empty?
-        bool empty = true;
-        int* b = (int*)img.GetAlpha();
-        int* e = b + 16*16/sizeof(int);
-        while (b != e) {
-          if (*b++) {
-            empty = false;
-            break;
-          }
-        }
-        // if so, use a mask instead
-        if (empty) {
-          const_cast<Image&>(img).ConvertAlphaToMask();
-        }
-      }
-      // Hack ends here
-    #endif
-    if (id == il->GetImageCount()) {
-      il->Add(img);
-    } else {
-      il->Replace(id, img);
-    }
-    s.thumbnails_status[id] = THUMB_OK;
+    ChoiceThumbnail& thumbnail = style().thumbnails[id];
+    ChoiceThumbnailLock lock(thumbnail.mutex);
+    thumbnail.bitmap = img;
+    thumbnail.status = THUMB_OK;
   }
 }
 
@@ -96,9 +71,9 @@ DropDownChoiceListBase::DropDownChoiceListBase
   , cve(cve)
   , group(group)
 {
-  icon_size.width  = 16;
-  icon_size.height = 16;
-  item_size.height = max(16., item_size.height);
+  icon_size.width  = min_item_size;
+  icon_size.height = min_item_size;
+  item_size.height = max(min_item_size, item_size.height);
 }
 
 void DropDownChoiceListBase::onShow() {
@@ -151,9 +126,6 @@ DropDownList* DropDownChoiceListBase::submenu(size_t item) const {
 }
 
 void DropDownChoiceListBase::drawIcon(DC& dc, int x, int y, size_t item, bool selected) const {
-  // imagelist to use
-  wxImageList* il = style().thumbnails;
-  assert(il);
   // find the image for the item
   int image_id;
   if (isFieldDefault(item)) {
@@ -162,22 +134,21 @@ void DropDownChoiceListBase::drawIcon(DC& dc, int x, int y, size_t item, bool se
     image_id = getChoice(item)->first_id;
   }
   // draw image
-  if (image_id < il->GetImageCount()) {
-    il->Draw(image_id, dc, x, y, itemEnabled(item) ? wxIMAGELIST_DRAW_NORMAL : wxIMAGELIST_DRAW_TRANSPARENT);
+  if (image_id < style().thumbnails.size()) {
+    auto const& thumbnail = style().thumbnails[image_id];
+    if (thumbnail.status == THUMB_OK)
+    dc.DrawBitmap(thumbnail.bitmap, x, y);
+    //il->Draw(image_id, dc, x, y, itemEnabled(item) ? wxIMAGELIST_DRAW_NORMAL : wxIMAGELIST_DRAW_TRANSPARENT);
   }
 }
 
 void DropDownChoiceListBase::generateThumbnailImages() {
   if (!isRoot()) return;
-  if (!style().thumbnails) {
-    style().thumbnails = new wxImageList(16,16);
-  }
-  int image_count = style().thumbnails->GetImageCount();
-  int end = group->lastId();
   // init choice images
   Context& ctx = cve.viewer.getContext();
   if (style().choice_images.empty() && style().image.isScripted()) {
-    for (int i = 0 ; i < end ; ++i) {
+    int n = field().choices->lastId();
+    for (int i = 0 ; i < n; ++i) {
       try {
         String name = canonical_name_form(field().choices->choiceName(i));
         ctx.setVariable(_("input"), to_script(name));
@@ -188,21 +159,26 @@ void DropDownChoiceListBase::generateThumbnailImages() {
       }
     }
   }
+  // init thumbnail vector
+  if (style().thumbnails.empty()) {
+    style().thumbnails.resize(field().choices->lastId());
+  }
+  assert(style().thumbnails.size() == field().choices->lastId());
   // request thumbnails
-  style().thumbnails_status.resize(end, THUMB_NOT_MADE);
-  for (int i = 0 ; i < end ; ++i) {
-    ThumbnailStatus& status = style().thumbnails_status[i];
-    if (i >= image_count || status != THUMB_OK) {
+  int end = group->lastId();
+  for (int i = group->first_id ; i < end ; ++i) {
+    auto& thumbnail = style().thumbnails[i];
+    ChoiceThumbnailLock lock(thumbnail.mutex);
+    if (thumbnail.status != THUMB_OK) {
       // update image
-      ChoiceStyle& s = style();
-      String name = canonical_name_form(s.field().choices->choiceName(i));
-      ScriptableImage& img = s.choice_images[name];
-      if (!img.update(ctx) && status == THUMB_CHANGED) {
-        status = THUMB_OK; // no need to rebuild
+      String name = canonical_name_form(field().choices->choiceName(i));
+      ScriptableImage& img = style().choice_images[name];
+      if (!img.update(ctx) && thumbnail.status == THUMB_CHANGED) {
+        thumbnail.status = THUMB_OK; // no need to rebuild
       } else if (img.isReady()) {
         // request this thumbnail
         thumbnail_thread.request(make_intrusive<ChoiceThumbnailRequest>(
-            &cve, i, status == THUMB_NOT_MADE && !img.local(), img.threadSafe()
+            &cve, i, thumbnail.status == THUMB_NOT_MADE && !img.local(), img.threadSafe()
           ));
       }
     }

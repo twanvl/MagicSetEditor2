@@ -20,7 +20,7 @@ class DropDownHider;
 /// A popup/drop down window displaying a list of items
 /** This class is an abstract base for various drop down lists */
 class DropDownList : public wxPopupWindow {
-  public:
+public:
   ~DropDownList();
   /// Create a drop down list, possibly a sub menu
   /** the viewer will be notified to redraw its drop down icon */
@@ -40,7 +40,7 @@ class DropDownList : public wxPopupWindow {
   /// Takes a mouse event from the parent, show/hide as appropriate
   bool onMouseInParent(wxMouseEvent&, bool open_in_place);
   
-  protected:
+protected:
   
   /// Prepare for showing the list
   virtual void onShow() {}
@@ -85,7 +85,7 @@ class DropDownList : public wxPopupWindow {
   RealSize item_size;  ///< Size of an item;
   RealSize icon_size;  ///< Size of icons;
   
-  private:
+private:
   // --------------------------------------------------- : Data
   
   size_t         selected_item;      ///< The item that is selected, or NO_SELECTION
@@ -124,7 +124,7 @@ class DropDownList : public wxPopupWindow {
   void draw(DC& dc);
   void drawItem(DC& dc, int y, size_t item);
   
-  protected:
+protected:
   virtual void redrawArrowOnParent(); // allow override
 };
 

@@ -141,8 +141,7 @@ void ThumbnailThread::request(const ThumbnailRequestP& request) {
       worker->Create();
       worker->Run();
     }
-  }
-  else {
+  } else {
     Image img;
     try {
       img = request->generate();

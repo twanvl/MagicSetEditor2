@@ -221,9 +221,9 @@ void DropDownWordList::drawIcon(DC& dc, int x, int y, size_t item, bool selected
     dc.DrawRectangle(x,y,16,16);
     wxRect rect = RealRect(x+2,y+2,12,12);
     if (radio) {
-      draw_radiobox(nullptr, dc, rect, items[item].active(), itemEnabled(item));
+      draw_radiobox(this, dc, rect, items[item].active(), itemEnabled(item));
     } else {
-      draw_checkbox(nullptr, dc, rect, items[item].active(), itemEnabled(item));
+      draw_checkbox(this, dc, rect, items[item].active(), itemEnabled(item));
     }
   }
 }

@@ -16,23 +16,23 @@
 
 /// A drop down list of color choices
 class DropDownMultipleChoiceList : public DropDownChoiceListBase {
-  public:
+public:
   DropDownMultipleChoiceList(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group);
   
-  protected:
-  virtual void   onShow();
-  virtual void   select(size_t item);
-  virtual size_t selection() const;
-  virtual bool stayOpen(size_t selection) const { return true; }
-  virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const;
-  virtual void drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
+protected:
+  void onShow() override;
+  void select(size_t item) override;
+  size_t selection() const override;
+  bool stayOpen(size_t selection) const override { return true; }
+  DropDownList* createSubMenu(ChoiceField::ChoiceP group) const override;
+  void drawIcon(DC& dc, int x, int y, size_t item, bool selected) const override;
 };
 
 DropDownMultipleChoiceList::DropDownMultipleChoiceList
     (Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group)
   : DropDownChoiceListBase(parent, is_submenu, cve, group)
 {
-  icon_size.width += 16;
+  icon_size.width += icon_size.height; // make room for checkbox
 }
 
 void DropDownMultipleChoiceList::select(size_t item) {
@@ -59,17 +59,15 @@ void DropDownMultipleChoiceList::drawIcon(DC& dc, int x, int y, size_t item, boo
     active = dynamic_cast<MultipleChoiceValueEditor&>(cve).value().value.isDefault();
   }
   // draw checkbox
-  dc.SetPen(*wxTRANSPARENT_PEN);
-  dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-  dc.DrawRectangle(x,y,16,16);
-  wxRect rect = RealRect(x+2,y+2,12,12);
+  int size = (int)icon_size.height;
+  wxRect rect = RealRect(x+1,y+1,size-2,size-2);
   if (radio) {
-    draw_radiobox(nullptr, dc, rect, active, itemEnabled(item));
+    draw_radiobox(this, dc, rect, active, itemEnabled(item));
   } else {
-    draw_checkbox(nullptr, dc, rect, active, itemEnabled(item));
+    draw_checkbox(this, dc, rect, active, itemEnabled(item));
   }
   // draw icon
-  DropDownChoiceListBase::drawIcon(dc, x + 16, y, item, selected);
+  DropDownChoiceListBase::drawIcon(dc, x + size, y, item, selected);
 }
 
 void DropDownMultipleChoiceList::onShow() {
@@ -104,7 +102,7 @@ DropDownList& MultipleChoiceValueEditor::initDropDown() {
 void MultipleChoiceValueEditor::determineSize(bool force_fit) {
   if (!nativeLook()) return;
   // item height
-  item_height = 16;
+  item_height = 18;
   // height depends on number of items and item height
   int item_count = field().choices->lastId();
   style().height = item_count * item_height;

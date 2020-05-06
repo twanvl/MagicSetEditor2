@@ -116,7 +116,7 @@ String ChoiceField::Choice::choiceName(int id) const {
       }
     }
   }
-  return _("");
+  return String();
 }
 
 String ChoiceField::Choice::choiceNameNice(int id) const {
@@ -165,13 +165,8 @@ ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
   , choice_images_initialized(false)
   , combine(COMBINE_NORMAL)
   , alignment(ALIGN_STRETCH)
-  , thumbnails(nullptr)
   , content_width(0.0), content_height(0.0)
 {}
-
-ChoiceStyle::~ChoiceStyle() {
-  delete thumbnails;
-}
 
 void ChoiceStyle::initImage() {
   if (image.isSet() || choice_images.empty()) return;
@@ -234,10 +229,9 @@ void ChoiceStyle::checkContentDependencies(Context& ctx, const Dependency& dep) 
 void ChoiceStyle::invalidate() {
   // TODO : this is also done in update(), once should be enough
   // Update choice images and thumbnails
-  int end = field().choices->lastId();
-  thumbnails_status.resize(end, THUMB_NOT_MADE);
-  for (int i = 0 ; i < end ; ++i) {
-    if (thumbnails_status[i] == THUMB_OK) thumbnails_status[i] = THUMB_CHANGED;
+  for (auto& thumbnail : thumbnails) {
+    ChoiceThumbnailLock lock(thumbnail.mutex);
+    if (thumbnail.status == THUMB_OK) thumbnail.status = THUMB_CHANGED;
   }
   tellListeners(CHANGE_OTHER);
 }

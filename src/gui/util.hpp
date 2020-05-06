@@ -97,10 +97,10 @@ void draw_menu_arrow(Window* win, DC& dc, const wxRect& rect, bool active);
 void draw_drop_down_arrow(Window* win, DC& dc, const wxRect& rect, bool active);
 
 /// Draws a check box
-void draw_checkbox(Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled = true);
+void draw_checkbox(const Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled = true);
 
 /// Draws a radio button
-void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled = true);
+void draw_radiobox(const Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled = true);
 
 /// Draws a (fancy) selection rectangle
 void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool selected = true, bool focused = true, bool hot = false);

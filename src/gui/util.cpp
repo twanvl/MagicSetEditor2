@@ -382,6 +382,17 @@ wxImage load_resource_tool_image(const String& name) {
 
 // ----------------------------------------------------------------------------- : Platform look
 
+#if wxUSE_UXTHEME && defined(__WXMSW__)
+RECT msw_rect(wxRect const& rect, int dl = 0, int dt = 0, int dr = 0, int db=0) {
+  RECT r;
+  r.left = rect.x - dl;
+  r.top = rect.y - dt;
+  r.right = rect.x + rect.width + dr;
+  r.bottom = rect.y + rect.height + db;
+  return r;
+}
+#endif
+
 // Draw a basic 3D border
 void draw3DBorder(DC& dc, int x1, int y1, int x2, int y2) {
   dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
@@ -400,14 +411,10 @@ void draw3DBorder(DC& dc, int x1, int y1, int x2, int y2) {
 
 void draw_control_box(Window* win, DC& dc, const wxRect& rect, bool focused, bool enabled) {
   #if wxUSE_UXTHEME && defined(__WXMSW__)
-    RECT r;
+    RECT r = msw_rect(rect, 1,1,1,1);
     if (wxUxThemeIsActive()) {
-      HTHEME hTheme = (HTHEME)::OpenThemeData(GetHwndOf(win), L"EDIT");
+      HTHEME hTheme = (HTHEME)::OpenThemeData(GetHwndOf(win), VSCLASS_EDIT);
       if (hTheme) {
-        r.left = rect.x -1;
-        r.top = rect.y  -1;
-        r.right = rect.x + rect.width + 1;
-        r.bottom = rect.y + rect.height + 1;
         ::DrawThemeBackground(
           hTheme,
           (HDC)dc.GetHDC(),
@@ -478,25 +485,34 @@ void draw_drop_down_arrow(Window* win, DC& dc, const wxRect& rect, bool active) 
     , active ? wxCONTROL_PRESSED : 0);
 }
 
-void draw_checkbox(Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled) {
-  #if wxUSE_UXTHEME && defined(__WXMSW__)
-    // TODO: Windows version?
+void draw_checkbox(const Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled) {
+  #if defined(__WXMSW__)
+    if (win == nullptr) win = dc.GetWindow();
   #endif
-  // portable version
-  if (checked) {
-    dc.DrawCheckMark(wxRect(rect.x-1,rect.y-1,rect.width+2,rect.height+2));
+  if (win) {
+    wxRendererNative& rn = wxRendererNative::GetDefault();
+    rn.DrawCheckBox(const_cast<wxWindow*>(win), dc, rect, (checked ? wxCONTROL_CHECKED : 0) | (enabled ? 0 : wxCONTROL_DISABLED));
+    return;
+  } else {
+    // portable version
+    if (checked) {
+      dc.DrawCheckMark(wxRect(rect.x+1,rect.y+1,rect.width-2,rect.height-2));
+    }
+    dc.SetPen(wxSystemSettings::GetColour(enabled ? wxSYS_COLOUR_WINDOWTEXT: wxSYS_COLOUR_GRAYTEXT));
+    dc.SetBrush(*wxTRANSPARENT_BRUSH);
+    dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
   }
-  dc.SetPen(wxSystemSettings::GetColour(enabled ? wxSYS_COLOUR_WINDOWTEXT: wxSYS_COLOUR_GRAYTEXT));
-  dc.SetBrush(*wxTRANSPARENT_BRUSH);
-  dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
 }
 
-void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled) {
-  #if wxUSE_UXTHEME && defined(__WXMSW__) && TODO_FIX_THEME_ENGINE
-    // TODO: Windows version?
+void draw_radiobox(const Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled) {
+  #if defined(__WXMSW__)
+    if (win == nullptr) win = dc.GetWindow();
   #endif
-  // portable version
-  #if 1
+  if (win) {
+    wxRendererNative& rn = wxRendererNative::GetDefault();
+    rn.DrawRadioBitmap(const_cast<wxWindow*>(win), dc, rect, (checked ? wxCONTROL_CHECKED : 0) | (enabled ? 0 : wxCONTROL_DISABLED));
+    return;
+  } else {
     // circle drawing on windows looks absolutely horrible
     // so use rounded rectangles instead
     dc.SetPen(wxSystemSettings::GetColour(enabled ? wxSYS_COLOUR_WINDOWTEXT: wxSYS_COLOUR_GRAYTEXT));
@@ -509,25 +525,14 @@ void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool e
       //dc.DrawEllipse(rect.x+2,rect.y+2,rect.width-4,rect.height-4);
       dc.DrawRoundedRectangle(rect.x+3, rect.y+3, rect.width-6, rect.height-6, rect.width*0.5-4);
     }
-  #endif
+  }
 }
 
 void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool selected, bool focused, bool hot) {
   #if wxUSE_UXTHEME && defined(__WXMSW__)
-    #if !defined(NTDDI_LONGHORN) || NTDDI_VERSION < NTDDI_LONGHORN
-      #define LISS_NORMAL LIS_NORMAL
-      #define LISS_SELECTED LIS_SELECTED
-      #define LISS_SELECTEDNOTFOCUS LIS_SELECTEDNOTFOCUS
-      #define LISS_HOT LISS_NORMAL
-      #define LISS_HOTSELECTED LISS_SELECTED
-    #endif
-    HTHEME hTheme = (HTHEME)::OpenThemeData(GetHwndOf(win), L"LISTVIEW");
+    HTHEME hTheme = (HTHEME)::OpenThemeData(GetHwndOf(win), VSCLASS_LISTVIEW);
     if (hTheme) {
-      RECT r;
-      r.left = rect.x;
-      r.top = rect.y;
-      r.right = rect.x + rect.width;
-      r.bottom = rect.y + rect.height;
+      RECT r = msw_rect(rect);
       ::DrawThemeBackground(
         hTheme,
         (HDC)dc.GetHDC(),

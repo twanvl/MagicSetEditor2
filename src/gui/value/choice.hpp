@@ -44,22 +44,22 @@ class ChoiceValueEditor : public ChoiceValueViewer, public ValueEditor {
 /// A drop down list of choices
 /** This is a base class, used for single and multiple choice fields */
 class DropDownChoiceListBase : public DropDownList {
-  public:
+public:
   DropDownChoiceListBase(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group);
   
-  protected:
-  virtual void          onShow();
-  virtual size_t        itemCount() const;
-  virtual bool          lineBelow(size_t item) const;
-  virtual bool          itemEnabled(size_t item) const;
-  virtual String        itemText(size_t item) const;
-  virtual void          drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
-  virtual DropDownList* submenu(size_t item) const;
+protected:
+  void          onShow() override;
+  size_t        itemCount() const override;
+  bool          lineBelow(size_t item) const override;
+  bool          itemEnabled(size_t item) const override;
+  String        itemText(size_t item) const override;
+  void          drawIcon(DC& dc, int x, int y, size_t item, bool selected) const override;
+  DropDownList* submenu(size_t item) const override;
   
-  protected:
+protected:
   virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const = 0;
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   ValueViewer& cve;        ///< Editor this list belongs to

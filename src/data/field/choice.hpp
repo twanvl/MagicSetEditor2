@@ -16,7 +16,7 @@
 #include <script/scriptable.hpp>
 #include <script/image.hpp>
 #include <wx/image.h>
-class wxImageList;
+#include <mutex>
 
 // ----------------------------------------------------------------------------- : ChoiceField
 
@@ -134,12 +134,30 @@ enum ThumbnailStatus
 ,  THUMB_CHANGED  // there is an image, but it may need to be updated
 };
 
+class ChoiceThumbnail {
+public:
+  ThumbnailStatus status = THUMB_NOT_MADE;
+  wxBitmap bitmap;
+  std::recursive_mutex mutex;
+};
+using ChoiceThumbnailLock = std::lock_guard<std::recursive_mutex>;
+
+// vector of thumbnails without a copy constructor
+class ChoiceThumbnails : public std::vector<ChoiceThumbnail> {
+public:
+  ChoiceThumbnails() {}
+  ChoiceThumbnails(ChoiceThumbnails const&) {} // don't copy
+  inline void resize(size_t n) {
+    // rebuilds the vector in one go, doesn't require move or copy constructor
+    std::vector<ChoiceThumbnail>::operator = (std::vector<ChoiceThumbnail>(n));
+  }
+};
+
 /// The Style for a ChoiceField
 class ChoiceStyle : public Style {
-  public:
+public:
   ChoiceStyle(const ChoiceFieldP& field);
   DECLARE_STYLE_TYPE(Choice);
-  ~ChoiceStyle();
   
   ChoicePopupStyle            popup_style;        ///< Style of popups/menus
   ChoiceRenderStyle           render_style;       ///< Style of rendering
@@ -149,8 +167,7 @@ class ChoiceStyle : public Style {
   bool                        choice_images_initialized;
   ImageCombine                combine;            ///< Combining mode for drawing the images
   Alignment                   alignment;          ///< Alignment of images
-  wxImageList*                thumbnails;         ///< Thumbnails for the choices
-  vector<ThumbnailStatus>     thumbnails_status;  ///< Which thumbnails are up to date?
+  ChoiceThumbnails            thumbnails;         ///< Thumbnails for the choices
   // information from image rendering
   double content_width, content_height;    ///< Size of the rendered image/text
   
