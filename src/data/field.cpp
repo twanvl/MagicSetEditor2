@@ -125,7 +125,7 @@ IMPLEMENT_REFLECTION(Style) {
 }
 
 void init_object(const FieldP& field, StyleP& style) {
-  if (!style) style = field->newStyle(field);
+  if (!style) style = field->newStyle();
 }
 template <> StyleP read_new<Style>(Reader&) {
   throw InternalError(_("IndexMap contains nullptr StyleP the application should have crashed already"));
@@ -290,7 +290,7 @@ void Value::updateSortValue(Context& ctx) {
 
 void init_object(const FieldP& field, ValueP& value) {
   if (!value)
-    value = field->newValue(field);
+    value = field->newValue();
 }
 template <> ValueP read_new<Value>(Reader&) {
   throw InternalError(_("IndexMap contains nullptr ValueP the application should have crashed already"));

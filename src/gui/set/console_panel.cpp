@@ -504,7 +504,7 @@ void ConsolePanel::exec(String const& command) {
     ScriptType type = result->type();
     if (type == SCRIPT_IMAGE) {
       GeneratedImage::Options options(0,0, set->stylesheet.get(), set.get());
-      wxImage image = result->toImage(result)->generate(options);
+      wxImage image = result->toImage()->generate(options);
       message->bitmap = wxBitmap(image);
     } else if (type == SCRIPT_COLOR) {
       message->text = result->toCode();

@@ -70,7 +70,7 @@ public:
   /// Convert this value to a wxDateTime
   virtual wxDateTime toDateTime() const;
   /// Convert this value to an image
-  virtual GeneratedImageP toImage(const ScriptValueP& thisP) const;
+  virtual GeneratedImageP toImage() const;
 
   /// Script code to generate this value
   virtual String toCode() const;
@@ -99,10 +99,7 @@ public:
   virtual ScriptValueP simplifyClosure(ScriptClosure&) const;
 
   /// Return an iterator for the current collection, an iterator is a value that has next()
-  /** thisP is a shared_ptr for this collection, needed for the iterator to take ownership of it.
-    * It can be null if the iterator always lives shorter than the collection.
-    */
-  virtual ScriptValueP makeIterator(const ScriptValueP& thisP = ScriptValueP()) const;
+  virtual ScriptValueP makeIterator() const;
   /// Return the next item for this iterator, or ScriptValueP() if there is no such item
   /** If key_out != nullptr, then it will receive the key of the item
    *  If index_out != nullptr, then it will receive to index of the item if it is in an indexable container

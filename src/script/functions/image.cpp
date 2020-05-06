@@ -23,10 +23,6 @@ void parse_enum(const String&, ImageCombine& out);
 
 // ----------------------------------------------------------------------------- : Utility
 
-template <> inline GeneratedImageP from_script<GeneratedImageP>(const ScriptValueP& value) {
-  return image_from_script(value);
-}
-
 SCRIPT_FUNCTION(to_image) {
   SCRIPT_PARAM_C(GeneratedImageP, input);
   return input;

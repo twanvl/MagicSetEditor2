@@ -34,7 +34,7 @@ DataEditor::DataEditor(Window* parent, int id, long style)
 }
 
 ValueViewerP DataEditor::makeViewer(const StyleP& style) {
-  return style->makeEditor(*this, style);
+  return style->makeEditor(*this);
 }
 
 // ----------------------------------------------------------------------------- : Utility for ValueViewers

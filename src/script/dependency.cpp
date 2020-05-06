@@ -49,8 +49,8 @@ public:
   ScriptValueP dependencies(Context& ctx, const Dependency& dep) const override {
     return unified( a->dependencies(ctx,dep), b->dependencies(ctx,dep));
   }
-  ScriptValueP makeIterator(const ScriptValueP& thisP) const override {
-    return unified(a->makeIterator(a), b->makeIterator(b));
+  ScriptValueP makeIterator() const override {
+    return unified(a->makeIterator(), b->makeIterator());
   }
   ScriptValueP dependencyMember(const String& name, const Dependency& dep) const override {
     return unified(a->dependencyMember(name,dep), b->dependencyMember(name,dep));
@@ -307,7 +307,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
           ScriptValueP& a = stack.back();
           switch (i.instr1) {
             case I_ITERATOR_C:
-              a = a->makeIterator(a); // as normal
+              a = a->makeIterator(); // as normal
               break;
             default:
               a = dependency_dummy;

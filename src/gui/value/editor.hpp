@@ -144,9 +144,8 @@ class ValueEditor {
     public:
 
 #define IMPLEMENT_VALUE_EDITOR(Type) \
-  ValueViewerP Type##Style::makeEditor(DataEditor& parent, const StyleP& thisP) { \
-    assert(thisP.get() == this); \
-    return ValueViewerP(new Type##ValueEditor(parent, static_pointer_cast<Type##Style>(thisP))); \
+  ValueViewerP Type##Style::makeEditor(DataEditor& parent) { \
+    return ValueViewerP(new Type##ValueEditor(parent, static_pointer_cast<Type##Style>(intrusive_from_this()))); \
   } \
   Type##ValueEditor::Type##ValueEditor(DataEditor& parent, const Type##StyleP& style) \
     : Type##ValueViewer(parent, style)

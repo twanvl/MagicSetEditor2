@@ -152,7 +152,7 @@ void DropDownChoiceListBase::generateThumbnailImages() {
       try {
         String name = canonical_name_form(field().choices->choiceName(i));
         ctx.setVariable(_("input"), to_script(name));
-        GeneratedImageP img = image_from_script(style().image.getValidScriptP()->eval(ctx));
+        GeneratedImageP img = style().image.getValidScriptP()->eval(ctx)->toImage();
         style().choice_images.insert(make_pair(name, ScriptableImage(img)));
       } catch (const Error& e) {
         handle_error(Error(e.what() + _("\n  while generating choice images for drop down list")));

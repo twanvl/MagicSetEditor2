@@ -29,12 +29,38 @@ using std::make_unique;
   class Type; \
   typedef shared_ptr<Type> Type##P;
 
-// ----------------------------------------------------------------------------- : Intrusive pointers
+// ----------------------------------------------------------------------------- : Shared pointers
 
 #define DECLARE_POINTER_TYPE DECLARE_SHARED_POINTER_TYPE
 
-template <typename T> class IntrusivePtrBase {};
 template <typename T> using intrusive_ptr = shared_ptr<T>;
+
+/// Base class for types that can be pointed to
+template <typename T> class IntrusivePtrBase {};
+
+/// IntrusivePtrBase with a virtual destructor
+class IntrusivePtrVirtualBase : public IntrusivePtrBase<IntrusivePtrVirtualBase> {
+public:
+  virtual ~IntrusivePtrVirtualBase() {}
+};
+
+class IntrusivePtrBaseWithDelete : public IntrusivePtrBase<IntrusivePtrBaseWithDelete> {
+public:
+  virtual ~IntrusivePtrBaseWithDelete() {}
+protected:
+  /// Delete this object
+  virtual void destroy() {
+    delete this;
+  }
+};
+
+template <typename T>
+class IntrusiveFromThis : public std::enable_shared_from_this<T> {
+protected:
+  inline intrusive_ptr<T> intrusive_from_this() {
+    return shared_from_this();
+  }
+};
 
 /// Allocate an object of type T and store it in a new intrusive_ptr, similar to std::make_shared
 template <typename T, class... Args>
@@ -42,22 +68,8 @@ inline intrusive_ptr<T> make_intrusive(Args&&... args) {
   return std::make_shared<T>(std::forward<Args>(args)...);
 }
 
-/// IntrusivePtrBase with a virtual destructor
-class IntrusivePtrVirtualBase : public IntrusivePtrBase<IntrusivePtrVirtualBase> {
-  public:
-  virtual ~IntrusivePtrVirtualBase() {}
-};
-
-class IntrusivePtrBaseWithDelete : public IntrusivePtrBase<IntrusivePtrBaseWithDelete> {
-  public:
-  virtual ~IntrusivePtrBaseWithDelete() {}
-  protected:
-  /// Delete this object
-  virtual void destroy() {
-    delete this;
-  }
-};
-
 /// Pointer to 'anything'
 typedef intrusive_ptr<IntrusivePtrVirtualBase> VoidP;
+
+// ----------------------------------------------------------------------------- : Intrusive pointers
 

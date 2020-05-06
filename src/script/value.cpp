@@ -35,7 +35,7 @@ Color ScriptValue::toColor() const {
 wxDateTime ScriptValue::toDateTime() const {
   throw ScriptErrorConversion(typeName(), _TYPE_("date"));
 }
-GeneratedImageP ScriptValue::toImage(const ScriptValueP&) const {
+GeneratedImageP ScriptValue::toImage() const {
   throw ScriptErrorConversion(typeName(), _TYPE_("image"   ));
 }
 String ScriptValue::toCode() const {
@@ -49,7 +49,7 @@ ScriptValueP ScriptValue::eval(Context&, bool) const {
 ScriptValueP ScriptValue::next(ScriptValueP* key_out, int* index_out) {
   throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator"));
 }
-ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const {
+ScriptValueP ScriptValue::makeIterator() const {
   return delay_error(ScriptErrorConversion(typeName(), _TYPE_("collection")));
 }
 int ScriptValue::itemCount() const {
@@ -150,7 +150,7 @@ public:
   bool toBool() const override { throw error; }
   Color toColor() const override { throw error; }
   wxDateTime toDateTime() const override { throw error; }
-  GeneratedImageP toImage(const ScriptValueP& thisP) const override { throw error; }
+  GeneratedImageP toImage() const override { throw error; }
   int itemCount() const override { throw error; }
   CompareWhat compareAs(String&, void const*&) const override { throw error; }
 
@@ -158,7 +158,7 @@ public:
   ScriptValueP getMember(const String& name) const override { return delay_error(error); }
   ScriptValueP dependencyMember(const String& name, const Dependency&) const override { return delay_error(error); }
   ScriptValueP dependencies(Context&, const Dependency&) const override { return delay_error(error); }
-  ScriptValueP makeIterator(const ScriptValueP&) const override { return delay_error(error); }
+  ScriptValueP makeIterator() const override { return delay_error(error); }
   ScriptValueP eval(Context&, bool openScope) const override { return delay_error(error); }
 
 private:
@@ -171,10 +171,18 @@ ScriptValueP delay_error(const ScriptError& error) {
 
 // ----------------------------------------------------------------------------- : Iterators
 
-ScriptType ScriptIterator::type() const { return SCRIPT_ITERATOR; }
-String ScriptIterator::typeName() const { return _("iterator"); }
-CompareWhat ScriptIterator::compareAs(String&, void const*&) const { return COMPARE_NO; }
-ScriptValueP ScriptIterator::makeIterator(const ScriptValueP& thisP) const { return thisP; }
+ScriptType ScriptIterator::type() const {
+  return SCRIPT_ITERATOR;
+}
+String ScriptIterator::typeName() const {
+  return _("iterator");
+}
+CompareWhat ScriptIterator::compareAs(String&, void const*&) const {
+  return COMPARE_NO;
+}
+ScriptValueP ScriptIterator::makeIterator() const {
+  return const_cast<ScriptIterator*>(this)->intrusive_from_this();
+}
 
 // Iterator over a range of integers
 class ScriptRangeIterator : public ScriptIterator {
@@ -357,7 +365,7 @@ public:
     }
     return date;
   }
-  GeneratedImageP toImage(const ScriptValueP&) const override {
+  GeneratedImageP toImage() const override {
     if (value.empty()) {
       return make_intrusive<BlankImage>();
     } else {
@@ -437,8 +445,8 @@ public:
   double toDouble() const override { return 0.0; }
   int toInt() const override { return 0; }
   bool toBool() const override { return false; }
-  Color toColor() const override { return wxTransparentColour; }
-  GeneratedImageP toImage(const ScriptValueP&) const {
+  Color toColor() const override { return Color(); }
+  GeneratedImageP toImage() const override {
     return make_intrusive<BlankImage>();
   }
   String toCode() const override {
@@ -479,8 +487,8 @@ String ScriptCollectionBase::toCode() const {
 // Iterator over a custom collection
 class ScriptCustomCollectionIterator : public ScriptIterator {
 public:
-  ScriptCustomCollectionIterator(ScriptCustomCollection const* col, ScriptValueP const& col_owned)
-    : col(col), col_owned(col_owned), pos(0), it(col->key_value.begin()) {}
+  ScriptCustomCollectionIterator(intrusive_ptr<ScriptCustomCollection const> const& col)
+    : col(col), pos(0), it(col->key_value.begin()) {}
   ScriptValueP next(ScriptValueP* key_out, int* index_out) override {
     if (pos < col->value.size()) {
       if (key_out) *key_out = to_script((int)pos);
@@ -495,8 +503,7 @@ public:
     }
   }
 private:
-  ScriptCustomCollection const* col;
-  ScriptValueP col_owned; // own the collection so it doesn't get deleted
+  intrusive_ptr<ScriptCustomCollection const> col;
   size_t pos;
   map<String,ScriptValueP>::const_iterator it;
 };
@@ -516,8 +523,8 @@ ScriptValueP ScriptCustomCollection::getIndex(int index) const {
     return ScriptValue::getIndex(index);
   }
 }
-ScriptValueP ScriptCustomCollection::makeIterator(const ScriptValueP& thisP) const {
-  return make_intrusive<ScriptCustomCollectionIterator>(this, thisP);
+ScriptValueP ScriptCustomCollection::makeIterator() const {
+  return make_intrusive<ScriptCustomCollectionIterator>(const_cast<ScriptCustomCollection*>(this)->intrusive_from_this());
 }
 
 // ----------------------------------------------------------------------------- : Concat collection
@@ -560,8 +567,8 @@ ScriptValueP ScriptConcatCollection::getIndex(int index) const {
     return b->getIndex(index - itemsInA);
   }
 }
-ScriptValueP ScriptConcatCollection::makeIterator(const ScriptValueP& thisP) const {
-  return make_intrusive<ScriptConcatCollectionIterator>(a->makeIterator(a), b->makeIterator(b));
+ScriptValueP ScriptConcatCollection::makeIterator() const {
+  return make_intrusive<ScriptConcatCollectionIterator>(a->makeIterator(), b->makeIterator());
 }
 
 // ----------------------------------------------------------------------------- : Default arguments / closure

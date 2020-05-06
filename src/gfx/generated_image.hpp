@@ -23,7 +23,7 @@ class Package;
 /// An image that is generated from a script.
 /** The actual generation is independend of the script execution
  */
-class GeneratedImage : public ScriptValue {
+class GeneratedImage : public ScriptValue, public IntrusiveFromThis<GeneratedImage> {
   public:
   /// Options for generating the image
   struct Options {
@@ -62,7 +62,7 @@ class GeneratedImage : public ScriptValue {
   
   ScriptType type() const override;
   String typeName() const override;
-  GeneratedImageP toImage(const ScriptValueP& thisP) const override;
+  GeneratedImageP toImage() const override;
 };
 
 /// Resize an image to conform to the options

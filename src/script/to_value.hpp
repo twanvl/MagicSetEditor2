@@ -69,14 +69,14 @@ inline ScriptValueP delay_error(const String& m) {
 // ----------------------------------------------------------------------------- : Iterators
 
 // Iterator over a collection
-struct ScriptIterator : public ScriptValue {
+struct ScriptIterator : public ScriptValue, public IntrusiveFromThis<ScriptIterator> {
   ScriptType type() const override;
   String typeName() const override;
   CompareWhat compareAs(String&, void const*&) const override;
 
   /// Return the next item for this iterator, or ScriptValueP() if there is no such item
   ScriptValueP next(ScriptValueP* key_out = nullptr, int* index_out = nullptr) override = 0;
-  ScriptValueP makeIterator(const ScriptValueP& thisP) const override;
+  ScriptValueP makeIterator() const override;
 };
 
 // make an iterator over a range
@@ -127,7 +127,7 @@ public:
       return ScriptValue::getIndex(index);
     }
   }
-  ScriptValueP makeIterator(const ScriptValueP& thisP) const override {
+  ScriptValueP makeIterator() const override {
     return make_intrusive<ScriptCollectionIterator<Collection>>(value);
   }
   int itemCount() const override {
@@ -193,11 +193,11 @@ private:
 // ----------------------------------------------------------------------------- : Collections : from script
 
 /// Script value containing a custom collection, returned from script functions
-class ScriptCustomCollection : public ScriptCollectionBase {
+class ScriptCustomCollection : public ScriptCollectionBase, public IntrusiveFromThis<ScriptCustomCollection>{
 public:
   ScriptValueP getMember(const String& name) const override;
   ScriptValueP getIndex(int index) const override;
-  ScriptValueP makeIterator(const ScriptValueP& thisP) const override;
+  ScriptValueP makeIterator() const override;
   int itemCount() const override {
     return (int)(value.size() + key_value.size());
   }
@@ -223,7 +223,7 @@ public:
   inline ScriptConcatCollection(ScriptValueP a, ScriptValueP b) : a(a), b(b) {}
   ScriptValueP getMember(const String& name) const override;
   ScriptValueP getIndex(int index) const override;
-  ScriptValueP makeIterator(const ScriptValueP& thisP) const override;
+  ScriptValueP makeIterator() const override;
   int itemCount() const override { return a->itemCount() + b->itemCount(); }
   /// Collections can be compared by comparing pointers
   CompareWhat compareAs(String&, void const*& compare_ptr) const override {
@@ -263,8 +263,8 @@ public:
   String toCode() const override {
     ScriptValueP d = getDefault(); return d ? d->toCode() : to_code(*value);
   }
-  GeneratedImageP toImage(const ScriptValueP& thisP) const override {
-    ScriptValueP d = getDefault(); return d ? d->toImage(d) : ScriptValue::toImage(thisP);
+  GeneratedImageP toImage() const override {
+    ScriptValueP d = getDefault(); return d ? d->toImage() : ScriptValue::toImage();
   }
   ScriptValueP getMember(const String& name) const override {
     #if USE_SCRIPT_PROFILING
@@ -295,12 +295,12 @@ public:
   void dependencyThis(const Dependency& dep) override {
     mark_dependency_value(*value, dep);
   }
-  ScriptValueP makeIterator(const ScriptValueP& thisP) const override {
+  ScriptValueP makeIterator() const override {
     ScriptValueP it = make_iterator(*value);
     if (it) return it;
     ScriptValueP d = getDefault();
-    if (d) return d->makeIterator(d);
-    return ScriptValue::makeIterator(thisP);
+    if (d) return d->makeIterator();
+    return ScriptValue::makeIterator();
   }
   int itemCount() const override {
     int i = item_count(*value);
@@ -436,4 +436,5 @@ template <> inline double       from_script<double>      (const ScriptValueP& va
 template <> inline bool         from_script<bool>        (const ScriptValueP& value) { return value->toBool(); }
 template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return value->toColor(); }
 template <> inline wxDateTime   from_script<wxDateTime>  (const ScriptValueP& value) { return value->toDateTime(); }
+template <> inline GeneratedImageP from_script<GeneratedImageP>(const ScriptValueP& value) { return value->toImage(); }
 

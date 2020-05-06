@@ -15,13 +15,6 @@
 #include <gfx/generated_image.hpp>
 #include <data/field/image.hpp>
 
-// ----------------------------------------------------------------------------- : Utility
-
-// convert any script value to a GeneratedImageP
-GeneratedImageP image_from_script(const ScriptValueP& value) {
-  return value->toImage(value);
-}
-
 // ----------------------------------------------------------------------------- : ScriptableImage
 
 Image ScriptableImage::generate(const GeneratedImage::Options& options) const {
@@ -50,7 +43,7 @@ ImageCombine ScriptableImage::combine() const {
 
 bool ScriptableImage::update(Context& ctx) {
   if (!isScripted()) return false;
-  GeneratedImageP new_value = image_from_script(script.invoke(ctx));
+  GeneratedImageP new_value = script.invoke(ctx)->toImage();
   if (!new_value || !value || *new_value != *value) {
     value = new_value;
     return true;

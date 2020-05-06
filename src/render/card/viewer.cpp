@@ -198,7 +198,7 @@ void DataViewer::setData(IndexMap<FieldP,ValueP>& values, IndexMap<FieldP,ValueP
 
 
 ValueViewerP DataViewer::makeViewer(const StyleP& style) {
-  return style->makeViewer(*this, style);
+  return style->makeViewer(*this);
 }
 
 void DataViewer::onAction(const Action& action, bool undone) {

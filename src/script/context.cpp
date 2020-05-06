@@ -362,7 +362,7 @@ void Context::closeScope(size_t scope) {
 void instrUnary(UnaryInstructionType i, ScriptValueP& a) {
   switch (i) {
     case I_ITERATOR_C:
-      a = a->makeIterator(a);
+      a = a->makeIterator();
       break;
     case I_NEGATE: {
       ScriptType at = a->type();

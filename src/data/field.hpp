@@ -36,7 +36,7 @@ DECLARE_DYNAMIC_ARG(Value*, value_being_updated);
 // ----------------------------------------------------------------------------- : Field
 
 /// Information on how to store a value
-class Field : public IntrusivePtrVirtualBase {
+class Field : public IntrusivePtrVirtualBase, public IntrusiveFromThis<Field> {
   public:
   Field();
   virtual ~Field();
@@ -61,11 +61,9 @@ class Field : public IntrusivePtrVirtualBase {
   Dependencies dependent_scripts; ///< Scripts that depend on values of this field
   
   /// Creates a new Value corresponding to this Field
-  /** thisP is a smart pointer to this */
-  virtual ValueP newValue(const FieldP& thisP) const = 0;
+  virtual ValueP newValue() = 0;
   /// Creates a new Style corresponding to this Field
-  /** thisP is a smart pointer to this */
-  virtual StyleP newStyle(const FieldP& thisP) const = 0;
+  virtual StyleP newStyle() = 0;
   /// Type of this field
   virtual String typeName() const = 0;
   
@@ -95,7 +93,7 @@ inline String type_name(const Field&) {
 // ----------------------------------------------------------------------------- : Style
 
 /// Style information needed to display a Value in a Field.
-class Style : public IntrusivePtrVirtualBase {
+class Style : public IntrusivePtrVirtualBase, public IntrusiveFromThis<Style> {
   public:
   Style(const FieldP&);
   virtual ~Style();
@@ -134,11 +132,9 @@ class Style : public IntrusivePtrVirtualBase {
   virtual StyleP clone() const = 0;
   
   /// Make a viewer object for values using this style
-  /** thisP is a smart pointer to this */
-  virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP) = 0;
+  virtual ValueViewerP makeViewer(DataViewer& parent) = 0;
   /// Make an editor object for values using this style
-  /** thisP is a smart pointer to this */
-  virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP) = 0;
+  virtual ValueViewerP makeEditor(DataEditor& parent) = 0;
   
   /// Update scripted values of this style, return nonzero if anything has changed.
   /** The caller should tellListeners()
@@ -264,20 +260,19 @@ inline String type_name(const Value&) {
 // ----------------------------------------------------------------------------- : Utilities
 
 #define DECLARE_FIELD_TYPE(Type) \
-  DECLARE_REFLECTION_OVERRIDE(); public: \
-  virtual ValueP newValue(const FieldP& thisP) const; \
-  virtual StyleP newStyle(const FieldP& thisP) const; \
-  virtual String typeName() const
+  DECLARE_REFLECTION_OVERRIDE(); \
+  public: \
+  virtual ValueP newValue() override; \
+  virtual StyleP newStyle() override; \
+  virtual String typeName() const override
 
 // implement newStyle and newValue
 #define IMPLEMENT_FIELD_TYPE(Type, NAME) \
-  StyleP Type ## Field::newStyle(const FieldP& thisP) const { \
-    assert(thisP.get() == this); \
-    return make_intrusive<Type ## Style>(static_pointer_cast<Type ## Field>(thisP)); \
+  StyleP Type ## Field::newStyle() { \
+    return make_intrusive<Type ## Style>(static_pointer_cast<Type ## Field>(intrusive_from_this())); \
   } \
-  ValueP Type ## Field::newValue(const FieldP& thisP) const { \
-    assert(thisP.get() == this); \
-    return make_intrusive<Type ## Value>(static_pointer_cast<Type ## Field>(thisP)); \
+  ValueP Type ## Field::newValue() { \
+    return make_intrusive<Type ## Value>(static_pointer_cast<Type ## Field>(intrusive_from_this())); \
   } \
   StyleP Type ## Style::clone() const { \
     return make_intrusive<Type ## Style>(*this); \
@@ -290,17 +285,19 @@ inline String type_name(const Value&) {
   }
 
 #define DECLARE_STYLE_TYPE(Type) \
-  DECLARE_REFLECTION_OVERRIDE(); public: \
+  DECLARE_REFLECTION_OVERRIDE(); \
+  public: \
   DECLARE_HAS_FIELD(Type) \
-  virtual StyleP clone() const; \
-  virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP); \
-  virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP)
+  StyleP clone() const override; \
+  ValueViewerP makeViewer(DataViewer& parent) override; \
+  ValueViewerP makeEditor(DataEditor& parent) override
 
 #define DECLARE_VALUE_TYPE(Type,ValueType_) \
-  DECLARE_REFLECTION_OVERRIDE(); public: \
+  DECLARE_REFLECTION_OVERRIDE(); \
+  public: \
   DECLARE_HAS_FIELD(Type) \
-  virtual ValueP clone() const; \
-  virtual String toString() const; \
+  ValueP clone() const override; \
+  String toString() const override; \
   typedef ValueType_ ValueType
 
 // implement field() which returns a field with the right (derived) type

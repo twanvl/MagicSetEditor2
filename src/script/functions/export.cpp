@@ -417,7 +417,7 @@ SCRIPT_FUNCTION(write_image_file) {
   if (card) {
     image = conform_image(export_bitmap(ei.set, card->getValue()).ConvertToImage(), options);
   } else {
-    image = image_from_script(input)->generateConform(options);
+    image = input->toImage()->generateConform(options);
   }
   if (!image.Ok()) throw Error(_("Unable to generate image for file ") + file);
   // write

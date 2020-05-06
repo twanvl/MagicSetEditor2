@@ -70,9 +70,6 @@ class ScriptableImage {
 /// Missing for now
 inline ScriptValueP to_script(const ScriptableImage&) { return script_nil; }
 
-/// Convert a script value to a GeneratedImageP
-GeneratedImageP image_from_script(const ScriptValueP& value);
-
 // ----------------------------------------------------------------------------- : CachedScriptableImage
 
 /// A version of ScriptableImage that does caching
