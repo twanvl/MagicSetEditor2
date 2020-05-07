@@ -49,6 +49,11 @@ class CardsPanel : public SetWindowPanel {
   virtual void doCopy();
   virtual void doPaste();
   
+  // --------------------------------------------------- : Text selection
+
+  bool canSelectAll() const override;
+  void doSelectAll() override;
+
   // --------------------------------------------------- : Searching (find/replace)
 
   virtual bool canFind()    const { return true; }

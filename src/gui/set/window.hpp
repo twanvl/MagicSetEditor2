@@ -141,6 +141,7 @@ private:
   void onEditCut             (wxCommandEvent&);
   void onEditCopy            (wxCommandEvent&);
   void onEditPaste           (wxCommandEvent&);
+  void onEditSelectAll       (wxCommandEvent&);
   void onEditFind            (wxCommandEvent&);
   void onEditFindNext        (wxCommandEvent&);
   void onEditReplace         (wxCommandEvent&);

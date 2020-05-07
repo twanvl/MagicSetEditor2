@@ -91,6 +91,9 @@ class ValueEditor {
   
   // --------------------------------------------------- : Selection
   
+  virtual bool canSelectAll() const { return false; }
+  virtual void doSelectAll() {}
+
   /// Select the specified range (if it makes sense)
   virtual void select(size_t start, size_t end) {}
   /// Determine the selected range

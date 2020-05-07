@@ -1165,6 +1165,15 @@ bool TextValueEditor::isWordBoundary(size_t pos_i) const {
   }
 }
 
+void TextValueEditor::doSelectAll() {
+  size_t old_selection_start_i = selection_start_i;
+  size_t old_selection_end_i = selection_end_i;
+  selection_start_i = 0;
+  selection_end_i = value().value().size();
+  fixSelection(TYPE_INDEX);
+  redrawSelection(old_selection_start_i, old_selection_end_i, dropDownShown());
+}
+
 void TextValueEditor::select(size_t start, size_t end) {
   selection_start = start;
   selection_end   = end;

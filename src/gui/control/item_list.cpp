@@ -40,6 +40,9 @@ bool ItemList::canSelectPrevious() const {
 bool ItemList::canSelectNext() const {
   return selected_item_pos >= 0 && static_cast<size_t>(selected_item_pos + 1) < sorted_list.size();
 }
+bool ItemList::canSelectAll() const {
+  return sorted_list.size() > 0 && !(GetWindowStyle() & wxLC_SINGLE_SEL);
+}
 void ItemList::selectPrevious() {
   assert(selected_item_pos >= 1);
   focusNone();
@@ -53,6 +56,12 @@ void ItemList::selectNext() {
 void ItemList::selectFirst() {
   if (sorted_list.empty()) return;
   selectItemPos(0, true);
+}
+void ItemList::doSelectAll() {
+  long count = GetItemCount();
+  for (long pos = 0; pos < count; ++pos) {
+    Select(pos,true);
+  }
 }
 
 bool ItemList::doCut() {

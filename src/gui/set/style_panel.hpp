@@ -33,9 +33,11 @@ class StylePanel : public SetWindowPanel {
   virtual bool canCut() const;
   virtual bool canCopy() const;
   virtual bool canPaste() const;
+  virtual bool canSelectAll() const;
   virtual void doCut();
   virtual void doCopy();
   virtual void doPaste();
+  virtual void doSelectAll();
   
   // --------------------------------------------------- : Selection
   virtual void selectCard(const CardP& card);

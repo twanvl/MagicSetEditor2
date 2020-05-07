@@ -250,11 +250,13 @@ bool DataEditor::canCopy()           const { return current_editor && current_ed
 bool DataEditor::canPaste()          const { return current_editor && current_editor->canPaste();      }
 bool DataEditor::canFormat(int type) const { return current_editor && current_editor->canFormat(type); }
 bool DataEditor::hasFormat(int type) const { return current_editor && current_editor->hasFormat(type); }
+bool DataEditor::canSelectAll()      const { return current_editor && current_editor->canSelectAll();  }
 
 void DataEditor::doCut()                   { if    (current_editor)   current_editor->doCut();         }
 void DataEditor::doCopy()                  { if    (current_editor)   current_editor->doCopy();        }
 void DataEditor::doPaste()                 { if    (current_editor)   current_editor->doPaste();       }
 void DataEditor::doFormat(int type)        { if    (current_editor)   current_editor->doFormat(type);  }
+void DataEditor::doSelectAll()             { if    (current_editor)   current_editor->doSelectAll();   }
 
 
 wxMenu* DataEditor::getMenu(int type) const {

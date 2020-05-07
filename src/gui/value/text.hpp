@@ -71,7 +71,9 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
   virtual void doFormat(int type);
   
   // --------------------------------------------------- : Selection
-  
+
+  virtual bool canSelectAll() const { return true; }
+  virtual void doSelectAll();
   virtual void select(size_t start, size_t end);
   virtual size_t selectionStart() const { return selection_start; }
   virtual size_t selectionEnd()   const { return selection_end; }

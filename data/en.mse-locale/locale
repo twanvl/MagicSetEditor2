@@ -36,6 +36,7 @@ menu:
 	paste:				&Paste	Ctrl+V
 	paste card:		&Paste	Ctrl+V
 	paste keyword:	&Paste	Ctrl+V
+	select all:				Select &All	Ctrl+A
 	find:				&Find	Ctrl+F
 	find next:			Find &Next	F3
 	replace:			R&eplace	Ctrl+H
@@ -148,6 +149,7 @@ help:
 	paste:				Inserts the text from the clipboard
 	paste card:			Inserts the card from the clipboard
 	paste keyword:		Inserts the keyword from the clipboard
+	select all:				Select all text
 	find:				Search the card texts
 	find next:			Find the next match
 	replace:			Replace in the card texts

@@ -28,12 +28,14 @@ class SetInfoPanel : public SetWindowPanel {
   
   // --------------------------------------------------- : Clipboard
   
-  virtual bool canCut()   const;
-  virtual bool canCopy()  const;
+  virtual bool canCut() const;
+  virtual bool canCopy() const;
   virtual bool canPaste() const;
+  virtual bool canSelectAll() const;
   virtual void doCut();
   virtual void doCopy();
   virtual void doPaste();
+  virtual void doSelectAll();
   
   protected:
   virtual void onChangeSet();

@@ -82,6 +82,8 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
     add_menu_item_tr(menuEdit, ID_EDIT_COPY, "copy", "copy");
     add_menu_item_tr(menuEdit, ID_EDIT_PASTE, "paste", "paste");
     menuEdit->AppendSeparator();
+    add_menu_item_tr(menuEdit, ID_EDIT_SELECT_ALL, nullptr, "select_all");
+    menuEdit->AppendSeparator();
     add_menu_item_tr(menuEdit, ID_EDIT_FIND, "find", "find");
     add_menu_item_tr(menuEdit, ID_EDIT_FIND_NEXT, nullptr, "find_next");
     add_menu_item_tr(menuEdit, ID_EDIT_REPLACE, nullptr, "replace");
@@ -510,6 +512,7 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
     case ID_EDIT_CUT       : ev.Enable(current_panel->canCut());  break;
     case ID_EDIT_COPY      : ev.Enable(current_panel->canCopy());  break;
     case ID_EDIT_PASTE     : ev.Enable(current_panel->canPaste());  break;
+    case ID_EDIT_SELECT_ALL: ev.Enable(current_panel->canSelectAll()); break;
     case ID_EDIT_FIND      : ev.Enable(current_panel->canFind());  break;
     case ID_EDIT_FIND_NEXT : ev.Enable(current_panel->canFind());  break;
     case ID_EDIT_REPLACE   : ev.Enable(current_panel->canReplace());break;
@@ -736,6 +739,10 @@ void SetWindow::onEditPaste(wxCommandEvent&) {
   current_panel->doPaste();
 }
 
+void SetWindow::onEditSelectAll(wxCommandEvent&) {
+  current_panel->doSelectAll();
+}
+
 void SetWindow::onEditFind(wxCommandEvent&) {
   find_dialog = make_unique<wxFindReplaceDialog>(this, &find_data, _("Find"));
   find_dialog->Show();
@@ -849,6 +856,7 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
   EVT_MENU      (ID_EDIT_CUT,      SetWindow::onEditCut)
   EVT_MENU      (ID_EDIT_COPY,      SetWindow::onEditCopy)
   EVT_MENU      (ID_EDIT_PASTE,      SetWindow::onEditPaste)
+  EVT_MENU      (ID_EDIT_SELECT_ALL, SetWindow::onEditSelectAll)
   EVT_MENU      (ID_EDIT_FIND,      SetWindow::onEditFind)
   EVT_MENU      (ID_EDIT_FIND_NEXT,    SetWindow::onEditFindNext)
   EVT_MENU      (ID_EDIT_REPLACE,    SetWindow::onEditReplace)

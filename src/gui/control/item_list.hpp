@@ -32,12 +32,16 @@ class ItemList : public wxListView {
   bool canSelectPrevious() const;
   /// Is there a next item to select?
   bool canSelectNext() const;
+  /// Can we select all?
+  bool canSelectAll() const;
   /// Move the selection to the previous item (if possible)
   void selectPrevious();
   /// Move the selection to the next item (if possible)
   void selectNext();
   /// Move the selection to the first item (if possible)
   void selectFirst();
+  /// Select all items
+  void doSelectAll();
   
   // --------------------------------------------------- : Clipboard
   

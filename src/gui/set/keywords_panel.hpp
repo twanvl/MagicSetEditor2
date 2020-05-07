@@ -43,7 +43,10 @@ class KeywordsPanel : public SetWindowPanel {
   virtual void doCut();
   virtual void doCopy();
   virtual void doPaste();
-  
+
+  virtual bool canSelectAll() const;
+  virtual void doSelectAll();
+
   private:
   DECLARE_EVENT_TABLE();
   

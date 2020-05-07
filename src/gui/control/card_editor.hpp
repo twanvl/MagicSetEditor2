@@ -65,7 +65,12 @@ class DataEditor : public CardViewer {
   wxMenu* getMenu(int type) const;
   /// A menu item from getMenu was selected
   void onCommand(int id);
-  
+
+  // --------------------------------------------------- : Text selection
+
+  bool canSelectAll() const;
+  void doSelectAll();
+
   // --------------------------------------------------- : Search/replace
     
   /// Do a search or replace action for the given FindInfo

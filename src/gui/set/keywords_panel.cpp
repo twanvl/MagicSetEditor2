@@ -273,6 +273,16 @@ void KeywordsPanel::doCopy()         { CUT_COPY_PASTE(doCopy,   return (void), f
 void KeywordsPanel::doCut()          { CUT_COPY_PASTE(doCut,    return (void), !list->getKeyword() || list->getKeyword()->fixed) }
 void KeywordsPanel::doPaste()        { CUT_COPY_PASTE(doPaste,  return (void), !list->getKeyword() || list->getKeyword()->fixed) }
 
+// ----------------------------------------------------------------------------- : Text selection
+
+bool KeywordsPanel::canSelectAll() const {
+  CUT_COPY_PASTE(canSelectAll, return, false)
+}
+
+void KeywordsPanel::doSelectAll() {
+  CUT_COPY_PASTE(doSelectAll, return (void), false)
+}
+
 // ----------------------------------------------------------------------------- : Events
 
 void KeywordsPanel::onChangeSet() {

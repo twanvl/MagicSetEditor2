@@ -156,6 +156,8 @@ bool StylePanel::canPaste() const { CUT_COPY_PASTE(canPaste, return) }
 void StylePanel::doCopy()         { CUT_COPY_PASTE(doCopy,   return (void)) }
 void StylePanel::doCut()          { CUT_COPY_PASTE(doCut,    return (void)) }
 void StylePanel::doPaste()        { CUT_COPY_PASTE(doPaste,  return (void)) }
+bool StylePanel::canSelectAll() const { CUT_COPY_PASTE(canSelectAll, return) }
+void StylePanel::doSelectAll()        { CUT_COPY_PASTE(doSelectAll,  return (void)) }
 
 // ----------------------------------------------------------------------------- : Events
 

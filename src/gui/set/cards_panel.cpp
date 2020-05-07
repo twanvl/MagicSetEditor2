@@ -399,6 +399,16 @@ void CardsPanel::doPaste() {
   }
 }
 
+// ----------------------------------------------------------------------------- : Text selection
+
+bool CardsPanel::canSelectAll() const {
+  CUT_COPY_PASTE(canSelectAll, return)
+}
+
+void CardsPanel::doSelectAll() {
+  CUT_COPY_PASTE(doSelectAll, return (void))
+}
+
 // ----------------------------------------------------------------------------- : Searching
 
 class CardsPanel::SearchFindInfo : public FindInfo {

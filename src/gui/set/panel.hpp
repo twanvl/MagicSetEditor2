@@ -60,7 +60,11 @@ class SetWindowPanel : public wxPanel, public SetView {
   virtual void doPaste()  {}              ///< Paste the contents of the clipboard
   virtual void doCopy()   {}              ///< Copy the selection to the clipboard
   virtual void doCut()    {}              ///< Cut the selection to the clipboard
-  
+
+  // --------------------------------------------------- : Selecting
+  virtual bool canSelectAll() const { return false; }
+  virtual void doSelectAll() {}
+
   // --------------------------------------------------- : Searching (find/replace)
   virtual bool canFind()    const { return false; }        ///< Is finding possible?
   virtual bool canReplace() const { return false; }        ///< Is replacing possible?

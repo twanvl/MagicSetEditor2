@@ -9,6 +9,7 @@
 Features:
  * In the quick search box you can specify which field to search in,
    for example `type:Wizard` searches for cards with Wizard in the type.
+ * Added "Select All" function (#19)
 
 Bug fixes:
  * card variable in console panel now refers to the selected card

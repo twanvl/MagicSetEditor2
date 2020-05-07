@@ -87,3 +87,5 @@ bool SetInfoPanel::canPaste() const { return editor->canPaste(); }
 void SetInfoPanel::doCut()          {        editor->doCut();    }
 void SetInfoPanel::doCopy()         {        editor->doCopy();   }
 void SetInfoPanel::doPaste()        {        editor->doPaste();  }
+bool SetInfoPanel::canSelectAll() const { return editor->canSelectAll(); }
+void SetInfoPanel::doSelectAll()        { editor->doSelectAll(); }
