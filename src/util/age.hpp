@@ -10,14 +10,17 @@
 
 #include <util/prec.hpp>
 #include <util/dynamic_arg.hpp>
-#include <util/atomic.hpp>
+#include <cstdint>
+#include <atomic>
 
 // ----------------------------------------------------------------------------- : Age
 
 /// Represents the age of a value, higher values are newer
 /** Age is counted using a global variable */
 class Age {
-  public:
+public:
+  typedef uint_fast64_t age_t;
+
   /// Construct a new age value
   Age() {
     update();
@@ -27,7 +30,7 @@ class Age {
    *  1: before 'beginning of time', the age conceptually just before program start
    *  2..: normal ages
    */
-  Age(AtomicIntEquiv age) : age(age) {}
+  Age(age_t age) : age(age) {}
   
   /// Update the age to become the newest one
   inline void update() {
@@ -40,13 +43,13 @@ class Age {
   inline bool operator == (Age a) const { return age == a.age; }
   
   /// A number corresponding to the age
-  inline AtomicIntEquiv get() const { return age; }
+  inline age_t get() const { return age; }
   
-  private:
+private:
   /// This age
-  AtomicIntEquiv age;
+  age_t age;
   /// Global age counter, value of the last age created
-  static AtomicInt new_age;
+  static atomic<age_t> new_age;
 };
 
 
@@ -56,5 +59,5 @@ class Age {
  *  if last_update_age >  0 they return whether the image is still up to date
  *  if last_update_age == 0 they generate the image
  */
-DECLARE_DYNAMIC_ARG  (AtomicIntEquiv, last_update_age);
+DECLARE_DYNAMIC_ARG(Age::age_t, last_update_age);
 

@@ -13,6 +13,6 @@
 
 // what a waste of a source file...
 
-AtomicInt Age::new_age(2);
+atomic<Age::age_t> Age::new_age(2);
 
-IMPLEMENT_DYNAMIC_ARG(AtomicIntEquiv, last_update_age, 0);
+IMPLEMENT_DYNAMIC_ARG(Age::age_t, last_update_age, 0);
