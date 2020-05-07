@@ -13,6 +13,7 @@
 #include <gui/util.hpp>
 #include <util/window_id.hpp>
 #include <data/stylesheet.hpp>
+#include <data/card.hpp>
 #include <wx/splitter.h>
 #include <wx/dcbuffer.h>
 #include <wx/clipbrd.h>

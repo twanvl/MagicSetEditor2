@@ -210,8 +210,8 @@ ScriptValueP rangeIterator(int start, int end) {
 
 // ----------------------------------------------------------------------------- : Integers
 
-#ifdef USE_INTRUSIVE_PTR
-  #define USE_POOL_ALLOCATOR
+#if defined(USE_INTRUSIVE_PTR) && !defined(USE_POOL_ALLOCATOR)
+  #define USE_POOL_ALLOCATOR 0 // disabled by default
 #endif
 
 // Integer values
@@ -224,8 +224,8 @@ public:
   double toDouble() const override { return value; }
   int toInt()       const override { return value; }
 protected:
-#ifdef USE_POOL_ALLOCATOR
-  virtual void destroy() {
+#if USE_POOL_ALLOCATOR
+  void destroy() const override {
     boost::singleton_pool<ScriptValue, sizeof(ScriptInt)>::free(this);
   }
 #endif
@@ -233,7 +233,7 @@ private:
   int value;
 };
 
-#if defined(USE_POOL_ALLOCATOR) && !defined(USE_INTRUSIVE_PTR)
+#if USE_POOL_ALLOCATOR && !USE_INTRUSIVE_PTR
   // deallocation function for pool allocated integers
   void destroy_value(ScriptInt* v) {
     boost::singleton_pool<ScriptValue, sizeof(ScriptInt)>::free(v);
@@ -241,8 +241,8 @@ private:
 #endif
 
 ScriptValueP to_script(int v) {
-#ifdef USE_POOL_ALLOCATOR
-  #ifdef USE_INTRUSIVE_PTR
+#if USE_POOL_ALLOCATOR
+  #if USE_INTRUSIVE_PTR
     return ScriptValueP(
         new(boost::singleton_pool<ScriptValue, sizeof(ScriptInt)>::malloc())
           ScriptInt(v));
