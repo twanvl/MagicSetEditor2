@@ -47,8 +47,8 @@ protected:
   }
 private:
   mutable std::atomic<unsigned int> ref_count = 0;
-  template <typename T> friend void intrusive_ptr_add_ref(const IntrusivePtrBase<T>* ptr);
-  template <typename T> friend void intrusive_ptr_release(const IntrusivePtrBase<T>* ptr);
+  template <typename U> friend void intrusive_ptr_add_ref(const IntrusivePtrBase<U>* ptr);
+  template <typename U> friend void intrusive_ptr_release(const IntrusivePtrBase<U>* ptr);
 };
 
 template <typename T> void intrusive_ptr_add_ref(const IntrusivePtrBase<T>* ptr) {
@@ -87,7 +87,7 @@ template <typename T>
 class IntrusiveFromThis : public std::enable_shared_from_this<T> {
 public:
   inline intrusive_ptr<T> intrusive_from_this() {
-    return shared_from_this();
+    return this->shared_from_this();
   }
 };
 
