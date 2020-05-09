@@ -110,6 +110,11 @@ struct Instruction {
   };
 };
 
+/// An address/position in a script
+struct Addr {
+  unsigned int addr;
+};
+
 // ----------------------------------------------------------------------------- : Variables
 
 // for faster lookup from code
@@ -170,9 +175,11 @@ public:
   ScriptValueP dependencies(Context& ctx, const Dependency&) const override;
   
   /// Add a jump instruction, later comeFrom should be called on the returned value
-  unsigned int addInstruction(InstructionType t);
+  Addr addInstruction(InstructionType t);
   /// Add an instruction with integer data
   void addInstruction(InstructionType t, unsigned int d);
+  /// Add an instruction with integer data
+  void addInstruction(InstructionType t, Addr d);
   /// Add an instruction with constant data
   void addInstruction(InstructionType t, const ScriptValueP& c);
   /// Add an instruction with string data
@@ -182,9 +189,9 @@ public:
   /** The instruction at pos must be a jumping instruction, it is changed so the current position
    *  'comes from' pos (in addition to other control flow).
    */
-  void comeFrom(unsigned int pos);
+  void comeFrom(Addr pos);
   /// Get the current instruction position
-  unsigned int getLabel() const;
+  Addr getLabel() const;
   
   /// Get access to the vector of instructions
   inline vector<Instruction>& getInstructions() { return instructions; }

@@ -381,11 +381,12 @@ enum Precedence
 ,  PREC_NONE
 };
 
-/// Type of expressions. Broadly: LHS/exprssion/statement
+/// Type of expressions. Broadly: LHS/expression/statement
+/// Lower is more restrictive
 enum ExprType
 {  EXPR_VAR       // A single variable, which could be converted to the left hand side of an assignment
-,  EXPR_STATEMENT // A 'statement', i.e. an expression that doesn't produce a result, and shouldn't be the last one in a block
 ,  EXPR_OTHER
+,  EXPR_STATEMENT // A 'statement', i.e. an expression that doesn't produce a result, and shouldn't be the last one in a block
 ,  EXPR_FAILED
 };
 
@@ -508,10 +509,10 @@ ExprType parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
     } else if (token == _("if")) {
       // if AAA then BBB else CCC
       parseOper(input, script, PREC_AND);                       // AAA
-      unsigned jmpElse = script.addInstruction(I_JUMP_IF_NOT);  //    jnz lbl_else
+      Addr jmpElse = script.addInstruction(I_JUMP_IF_NOT);      //    jnz lbl_else
       expectToken(input, _("then"));                            // then
       ExprType type1 = parseOper(input, script, PREC_SET);      // BBB
-      unsigned jmpEnd = script.addInstruction(I_JUMP);          //    jump lbl_end
+      Addr jmpEnd = script.addInstruction(I_JUMP);              //    jump lbl_end
       script.comeFrom(jmpElse);                                 //    lbl_else:
       ExprType type2 = EXPR_STATEMENT;
       if (input.peek() == _("else")) {                          // else
@@ -520,8 +521,49 @@ ExprType parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
       } else {
         script.addInstruction(I_PUSH_CONST, script_nil);
       }
-      script.comeFrom(jmpEnd);                  //    lbl_end:
+      script.comeFrom(jmpEnd);                                  //    lbl_end:
       return type1 == EXPR_STATEMENT || type2 == EXPR_STATEMENT ? EXPR_STATEMENT : EXPR_OTHER;
+    } else if (token == _("case")) {
+      // case AAA of BBB: CCC[,] DDD: EEE ... else FFF
+      parseOper(input, script, PREC_AND);
+      expectToken(input, _("of"));
+      vector<Addr> jmpsEnd;
+      bool wasElse = false;
+      ExprType type = EXPR_OTHER;
+      Token t = input.peek();
+      while (t != TOK_RPAREN && t != TOK_EOF) {
+        Addr jmp;
+        if (input.peek() == _("else")) {
+          // else:
+          wasElse = true;
+          input.read();
+          expectToken(input, _(":"));
+        } else {
+          parseOper(input, script, PREC_AND);
+          expectToken(input, _(":"));
+          script.addInstruction(I_DUP, 1);
+          script.addInstruction(I_BINARY, I_EQ);
+          jmp = script.addInstruction(I_JUMP_IF_NOT);
+        }
+        script.addInstruction(I_POP);
+        ExprType type1 = parseOper(input, script, PREC_SET);
+        type = max(type, type1);
+        if (wasElse) {
+          break;
+        } else {
+          if (input.peek() == _(",")) input.read(); // optional comma
+          jmpsEnd.push_back(script.addInstruction(I_JUMP));
+          script.comeFrom(jmp);
+        }
+        t = input.peek();
+      }
+      if (!wasElse) {
+        type = max(type, EXPR_STATEMENT);
+        script.addInstruction(I_POP);
+        script.addInstruction(I_PUSH_CONST, script_nil);
+      }
+      for (Addr jmp : jmpsEnd) script.comeFrom(jmp);
+      return type;
     } else if (token == _("for")) {
       // the loop body should have a net stack effect of 0, but the entire expression of +1
       // solution: add all results from the body, start with nil
@@ -565,7 +607,7 @@ ExprType parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
         script.addInstruction(I_BINARY, I_ITERATOR_R);      //    iterator_range
       }
       script.addInstruction(I_PUSH_CONST, script_nil);      //    push nil
-      unsigned lblStart = script.addInstruction(with_key
+      Addr lblStart = script.addInstruction(with_key
                   ? I_LOOP_WITH_KEY                         //    lbl_start: loop_with_key lbl_end
                   : I_LOOP);                                //    lbl_start: loop lbl_end
       expectToken(input, _("do"));                          // do
@@ -713,7 +755,7 @@ ExprType parseOper(TokenIterator& input, Script& script, Precedence minPrec, Ins
       //   I_JUMP_SC_AND after     # if top==false then goto after else pop
       //   YYY
       //   after:
-      unsigned jmpSC = script.addInstruction(I_JUMP_SC_AND);
+      Addr jmpSC = script.addInstruction(I_JUMP_SC_AND);
       parseOper(input, script, PREC_CMP);
       script.comeFrom(jmpSC);
     }
@@ -725,7 +767,7 @@ ExprType parseOper(TokenIterator& input, Script& script, Precedence minPrec, Ins
         parseOper(input, script, PREC_ADD, I_BINARY, I_OR_ELSE);
       } else {
         // short-circuiting or
-        unsigned jmpSC = script.addInstruction(I_JUMP_SC_OR);
+        Addr jmpSC = script.addInstruction(I_JUMP_SC_OR);
         parseOper(input, script, PREC_CMP);
         script.comeFrom(jmpSC);
       }

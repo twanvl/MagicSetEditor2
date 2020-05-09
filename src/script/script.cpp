@@ -97,7 +97,7 @@ ScriptValueP Script::dependencies(Context& ctx, const Dependency& dep) const {
 
 static const unsigned int INVALID_ADDRESS = 0x03FFFFFF;
 
-unsigned int Script::addInstruction(InstructionType t) {
+Addr Script::addInstruction(InstructionType t) {
   assert( t == I_JUMP
        || t == I_JUMP_IF_NOT
        || t == I_JUMP_SC_AND
@@ -107,7 +107,7 @@ unsigned int Script::addInstruction(InstructionType t) {
        || t == I_POP);
   Instruction i = {t, {INVALID_ADDRESS}};
   instructions.push_back(i);
-  return getLabel() - 1;
+  return Addr{getLabel().addr - 1};
 }
 void Script::addInstruction(InstructionType t, unsigned int d) {
   // Don't optimize ...I_PUSH_CONST x; I_MEMBER... to I_MEMBER_C
@@ -121,6 +121,9 @@ void Script::addInstruction(InstructionType t, unsigned int d) {
   Instruction i = {t, {d}};
   instructions.push_back(i);
 }
+void Script::addInstruction(InstructionType t, Addr d) {
+  addInstruction(t, d.addr);
+}
 void Script::addInstruction(InstructionType t, const ScriptValueP& c) {
   constants.push_back(c);
   Instruction i = {t, {(unsigned int)constants.size() - 1}};
@@ -132,19 +135,19 @@ void Script::addInstruction(InstructionType t, const String& s) {
   instructions.push_back(i);
 }
 
-void Script::comeFrom(unsigned int pos) {
-  assert( instructions.at(pos).instr == I_JUMP
-       || instructions.at(pos).instr == I_JUMP_IF_NOT
-       || instructions.at(pos).instr == I_JUMP_SC_AND
-       || instructions.at(pos).instr == I_JUMP_SC_OR
-       || instructions.at(pos).instr == I_LOOP
-       || instructions.at(pos).instr == I_LOOP_WITH_KEY);
-  assert( instructions.at(pos).data == INVALID_ADDRESS );
-  instructions.at(pos).data = (unsigned int)instructions.size();
+void Script::comeFrom(Addr pos) {
+  assert( instructions.at(pos.addr).instr == I_JUMP
+       || instructions.at(pos.addr).instr == I_JUMP_IF_NOT
+       || instructions.at(pos.addr).instr == I_JUMP_SC_AND
+       || instructions.at(pos.addr).instr == I_JUMP_SC_OR
+       || instructions.at(pos.addr).instr == I_LOOP
+       || instructions.at(pos.addr).instr == I_LOOP_WITH_KEY);
+  assert( instructions.at(pos.addr).data == INVALID_ADDRESS );
+  instructions.at(pos.addr).data = (unsigned int)instructions.size();
 }
 
-unsigned int Script::getLabel() const {
-  return (unsigned int)instructions.size();
+Addr Script::getLabel() const {
+  return Addr{ (unsigned int)instructions.size() };
 }
 
 #ifdef _DEBUG // debugging
@@ -223,6 +226,7 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
   switch (i.instr) {
     case I_PUSH_CONST: case I_MEMBER_C:              // const
       ret += _("\t") + constants[i.data]->typeName();
+      ret += _("\t") + constants[i.data]->toCode();
       break;
     case I_JUMP: case I_JUMP_IF_NOT: case I_JUMP_SC_AND: case I_JUMP_SC_OR:
     case I_LOOP: case I_LOOP_WITH_KEY:

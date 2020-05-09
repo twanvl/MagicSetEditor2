@@ -42,6 +42,26 @@ To use multiple statements in the then or else branches you must use parentheses
 >     y := z
 > )
 
+--Case analysis (@case of@)--
+
+To compare multiple alternatives, you can use a case expression
+
+> case thing of alt1: result1, alt2: result2, alt3: result3, else: otherwise
+
+The expression @thing@ is compared against all the alternatives, and if it is equal to one then the corresponding result is returned
+
+For example:
+> case 1+1 of
+>   1: "one",
+>   2: "two",
+>   3: "three",
+>   else: "big"
+Will evaluate to @"two"@.
+
+Like if-then-else, case-of is an expression, and it can be used almost everywhere.
+
+To use multiple statements in the casess you must use parentheses.
+
 --Loop statement (@for each@)--
 
 To iterate over all elements in a [[type:list]] the @for each@ construct can be used
