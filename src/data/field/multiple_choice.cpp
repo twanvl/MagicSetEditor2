@@ -40,9 +40,10 @@ IMPLEMENT_REFLECTION(MultipleChoiceStyle) {
 }
 
 int MultipleChoiceStyle::update(Context& ctx) {
-  return ChoiceStyle::update(ctx)
-       | direction.update(ctx) * CHANGE_OTHER
-       | spacing.update(ctx) * CHANGE_OTHER;
+  int changes = ChoiceStyle::update(ctx);
+  changes |= direction.update(ctx) * CHANGE_OTHER;
+  changes |= spacing.update(ctx) * CHANGE_OTHER;
+  return changes;
 }
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValue

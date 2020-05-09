@@ -27,8 +27,9 @@ IMPLEMENT_REFLECTION(ImageStyle) {
 }
 
 int ImageStyle::update(Context& ctx) {
-  return Style       ::update(ctx)
-       | default_image.update(ctx) * CHANGE_DEFAULT;
+  int changes = Style::update(ctx);
+  changes |= default_image.update(ctx) * CHANGE_DEFAULT;
+  return changes;
 }
 
 // ----------------------------------------------------------------------------- : ImageValue

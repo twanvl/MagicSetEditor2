@@ -38,8 +38,9 @@ InfoStyle::InfoStyle(const InfoFieldP& field)
 {}
 
 int InfoStyle::update(Context& ctx) {
-  return Style     ::update(ctx)
-       | font       .update(ctx) * CHANGE_OTHER;
+  int changes = Style::update(ctx);
+  changes |= font.update(ctx) * CHANGE_OTHER;
+  return changes;
 }
 void InfoStyle::initDependencies(Context& ctx, const Dependency& dep) const {
   Style     ::initDependencies(ctx, dep);

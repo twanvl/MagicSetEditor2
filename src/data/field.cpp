@@ -139,16 +139,16 @@ inline bool is_setw(const Scriptable<double>& x) {
 }
 
 int Style::update(Context& ctx) {
-  int changed =
-       ( left   .update(ctx)
-       | width  .update(ctx)
-       | right  .update(ctx)
-       | top    .update(ctx)
-       | height .update(ctx)
-       | bottom .update(ctx)
-       | angle  .update(ctx) ) * CHANGE_SIZE
-       | visible.update(ctx)   * CHANGE_OTHER
-       | mask   .update(ctx)   * CHANGE_MASK;
+  int changed = 0;
+  changed |= left   .update(ctx) * CHANGE_SIZE;
+  changed |= width  .update(ctx) * CHANGE_SIZE;
+  changed |= right  .update(ctx) * CHANGE_SIZE;
+  changed |= top    .update(ctx) * CHANGE_SIZE;
+  changed |= height .update(ctx) * CHANGE_SIZE;
+  changed |= bottom .update(ctx) * CHANGE_SIZE;
+  changed |= angle  .update(ctx) * CHANGE_SIZE;
+  changed |= visible.update(ctx) * CHANGE_OTHER;
+  changed |= mask   .update(ctx) * CHANGE_MASK;
   // determine automatic_side and attachment of rotation point
   if (automatic_side == AUTO_UNKNOWN) {
     if      (!is_set (right))  automatic_side = (AutomaticSide)(automatic_side | AUTO_RIGHT);

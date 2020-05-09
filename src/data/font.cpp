@@ -25,15 +25,15 @@ Font::Font()
 {}
 
 bool Font::update(Context& ctx) {
-  bool changes
-       = name        .update(ctx)
-       | italic_name .update(ctx)
-       | size        .update(ctx)
-       | weight      .update(ctx)
-       | style       .update(ctx)
-       | underline   .update(ctx)
-       | color       .update(ctx)
-       | shadow_color.update(ctx);
+  bool changes = false;
+  changes |= name        .update(ctx);
+  changes |= italic_name .update(ctx);
+  changes |= size        .update(ctx);
+  changes |= weight      .update(ctx);
+  changes |= style       .update(ctx);
+  changes |= underline   .update(ctx);
+  changes |= color       .update(ctx);
+  changes |= shadow_color.update(ctx);
   flags = (flags & ~FONT_BOLD & ~FONT_ITALIC)
         | (weight() == _("bold")   ? FONT_BOLD   : FONT_NORMAL)
         | (style()  == _("italic") ? FONT_ITALIC : FONT_NORMAL);
