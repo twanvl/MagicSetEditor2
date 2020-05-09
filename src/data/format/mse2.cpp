@@ -23,12 +23,13 @@ class MSE2FileFormat : public FileFormat {
   virtual bool canExport(const Game&) { return true; }
   virtual SetP importSet(const String& filename) {
     wxString set_name = filename;
-    // Strip "/set" from the end, newer wx versions have a function for this:
-    //   filename.EndsWith(_("/set"), &set_name);
-    if (filename.size() > 4 && filename.substr(filename.size()-4) == _("/set")) {
-      set_name = filename.substr(0, filename.size()-4);
+    // Strip "/set" or "/set.mset-set" from the end, this allows opening directories as set files
+    if (filename.EndsWith(_(".mse-set/set")) || filename.EndsWith(_(".mse-set\\set"))) {
+      set_name = filename.substr(0, filename.size() - 4);
+    } else if (filename.EndsWith(_(".mse-set/set.mse-set")) || filename.EndsWith(_(".mse-set\\set.mse-set"))) {
+      set_name = filename.substr(0, filename.size() - 12);
     }
-    SetP set(new Set);
+    SetP set = make_intrusive<Set>();
     set->open(set_name);
     settings.addRecentFile(set_name);
     return set;

@@ -124,7 +124,7 @@ class Package : public IntrusivePtrVirtualBase {
   void save(bool remove_unused = true);
 
   /// Saves the package under a different filename
-  void saveAs(const String& package, bool remove_unused = true);
+  void saveAs(const String& package, bool remove_unused = true, bool as_directory = false);
 
   /// Saves the package under a different filename, but keep the old one open
   void saveCopy(const String& package);
@@ -279,7 +279,7 @@ class Packaged : public Package {
   /// Ensure the package is fully loaded.
   void loadFully();
   void save();
-  void saveAs(const String& package, bool remove_unused = true);
+  void saveAs(const String& package, bool remove_unused = true, bool as_directory = false);
   void saveCopy(const String& package);
 
   /// Check if this package lists a dependency on the given package

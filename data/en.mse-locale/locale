@@ -1,7 +1,7 @@
-mse version: 2.0.0
+mse version: 2.0.2
 installer group: translations/English
 full name: English
-version: 2011-01-22
+version: 2029-05-09
 icon: usgb.png
 
 ############################################################## Menu items
@@ -11,6 +11,7 @@ menu:
 	open set:			&Open...	Ctrl+O
 	save set:			&Save	Ctrl+S
 	save set as:		Save &As...	F12
+	save set as directory:		Save As Directory...
 	export:				&Export
 	export html:			&HTML...
 	export image:			Card &Image...
@@ -124,6 +125,7 @@ help:
 	last opened set:	Open '%s'
 	save set:			Save the set
 	save set as:		Save the set with a new name
+	save set as directory:		Save the set as a directory with separate files for each card
 	export:				Export the set...
 	export html:			Export the set to a web page
 	export image:			Export the selected card to an image file
@@ -642,6 +644,7 @@ title:
 	new set:			New Set
 	open set:			Open Set
 	save set:			Save Set As
+	save set as directory:	Save Set As Directory
 	save image:			Save Image
 	updates available:	Updates Available
 	save changes:		Save Changes?

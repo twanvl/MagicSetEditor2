@@ -56,6 +56,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
     add_menu_item_tr(menuFile, ID_FILE_OPEN, "open", "open_set");
     add_menu_item_tr(menuFile, ID_FILE_SAVE, "save", "save_set");
     add_menu_item_tr(menuFile, ID_FILE_SAVE_AS, nullptr, "save_set_as");
+    add_menu_item_tr(menuFile, ID_FILE_SAVE_AS_DIRECTORY, nullptr, "save_set_as_directory");
     add_menu_item_tr(menuFile, wxID_ANY, "export", "export", wxITEM_NORMAL, makeExportMenu());
     menuFile->AppendSeparator();
     add_menu_item_tr(menuFile, ID_FILE_CHECK_UPDATES, nullptr, "check_updates");
@@ -446,7 +447,7 @@ bool SetWindow::askSaveAndContinue() {
     try {
       if (set->needSaveAs()) {
         // need save as
-        wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, clean_filename(set->short_name), export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+        wxFileDialog dlg(this, _TITLE_("save_set"), settings.default_set_dir, clean_filename(set->short_name), export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
         if (dlg.ShowModal() == wxID_OK) {
           settings.default_set_dir = dlg.GetDirectory();
           export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
@@ -561,7 +562,7 @@ void SetWindow::onFileNew(wxCommandEvent&) {
 
 void SetWindow::onFileOpen(wxCommandEvent&) {
   if (!settings.open_sets_in_new_window && isOnlyWithSet() && !askSaveAndContinue()) return;
-  wxFileDialog dlg(this, _TITLE_("open set"), settings.default_set_dir, _(""), import_formats(), wxFD_OPEN);
+  wxFileDialog dlg(this, _TITLE_("open_set"), settings.default_set_dir, _(""), import_formats(), wxFD_OPEN);
   if (dlg.ShowModal() == wxID_OK) {
     settings.default_set_dir = dlg.GetDirectory();
     wxBusyCursor busy;
@@ -582,10 +583,22 @@ void SetWindow::onFileSave(wxCommandEvent& ev) {
 }
 
 void SetWindow::onFileSaveAs(wxCommandEvent&) {
-  wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, clean_filename(set->short_name), export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+  wxFileDialog dlg(this, _TITLE_("save_set"), settings.default_set_dir, clean_filename(set->short_name), export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
   if (dlg.ShowModal() == wxID_OK) {
     settings.default_set_dir = dlg.GetDirectory();
     export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
+    updateTitle(); // title may depend on filename
+  }
+}
+
+void SetWindow::onFileSaveAsDirectory(wxCommandEvent&) {
+  wxFileDialog dlg(this, _TITLE_("save_set_as_directory"), settings.default_set_dir, clean_filename(set->short_name), "Magic Set Editor sets (*.mse-set)|*.mse-set", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+  if (dlg.ShowModal() == wxID_OK) {
+    String filename = dlg.GetPath();
+    settings.default_set_dir = dlg.GetDirectory();
+    set->saveAs(filename, true, true);
+    settings.addRecentFile(filename);
+    set->actions.setSavePoint();
     updateTitle(); // title may depend on filename
   }
 }
@@ -835,6 +848,7 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
   EVT_MENU      (ID_FILE_OPEN,      SetWindow::onFileOpen)
   EVT_MENU      (ID_FILE_SAVE,      SetWindow::onFileSave)
   EVT_MENU      (ID_FILE_SAVE_AS,    SetWindow::onFileSaveAs)
+  EVT_MENU      (ID_FILE_SAVE_AS_DIRECTORY, SetWindow::onFileSaveAsDirectory)
   EVT_MENU      (ID_FILE_EXPORT,    SetWindow::onFileExportMenu)
   EVT_MENU      (ID_FILE_EXPORT_IMAGE,  SetWindow::onFileExportImage)
   EVT_MENU      (ID_FILE_EXPORT_IMAGES,  SetWindow::onFileExportImages)

@@ -119,6 +119,7 @@ private:
   void onFileOpen            (wxCommandEvent&);
   void onFileSave            (wxCommandEvent&);
   void onFileSaveAs          (wxCommandEvent&);
+  void onFileSaveAsDirectory (wxCommandEvent&);
 //  void onFileInspect         (wxCommandEvent&);
   void onFileExportMenu      (wxCommandEvent&);
   void onFileExportImage     (wxCommandEvent&);

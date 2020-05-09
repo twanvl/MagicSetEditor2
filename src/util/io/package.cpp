@@ -97,9 +97,9 @@ void Package::save(bool remove_unused) {
   saveAs(filename, remove_unused);
 }
 
-void Package::saveAs(const String& name, bool remove_unused) {
+void Package::saveAs(const String& name, bool remove_unused, bool as_directory) {
   // type of package
-  if (wxDirExists(name)) {
+  if (wxDirExists(name) || as_directory) {
     saveToDirectory(name, remove_unused, false);
   } else {
     saveToZipfile  (name, remove_unused, false);
@@ -355,6 +355,7 @@ Package::FileInfo::~FileInfo() {
 }
 
 void Package::loadZipStream() {
+  files.clear();
   while (true) {
     wxZipEntry* entry = zipStream->GetNextEntry();
     if (!entry) break;
@@ -391,9 +392,7 @@ void Package::openSubdir(const String& name) {
 }
 
 void Package::openZipfile() {
-  // close old streams
-  zipStream.reset();
-  // open streams
+  // open stream
   zipStream = make_unique<ZipFileInputStream>(filename);
   if (!zipStream->IsOk())  throw PackageError(_ERROR_1_("package not found", filename));
   // read zip entries
@@ -401,30 +400,43 @@ void Package::openZipfile() {
 }
 
 void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_copy) {
+  // create directory?
+  wxMkdir(saveAs);
   // write to a directory
   VCSP vcs = getVCS();
   FOR_EACH(f, files) {
+    String f_out_path = saveAs + _("/") + f.first;
     if (!f.second.keep && remove_unused) {
       // remove files that are not to be kept
       // ignore failure (new file that is not kept)
-      vcs->removeFile(saveAs+_("/")+f.first);
-    } else if (f.second.wasWritten()) {
+      vcs->removeFile(f_out_path);
+      continue;
+    }
+    // TODO: create subdirectory?
+    // write file
+    if (f.second.wasWritten()) {
       // move files that were updated
-      remove_file(saveAs+_("/")+f.first);
-      if (!(is_copy ? wxCopyFile  (f.second.tempName, saveAs+_("/")+f.first)
-                    : wxRenameFile(f.second.tempName, saveAs+_("/")+f.first))) {
+      remove_file(f_out_path);
+      if (!(is_copy ? wxCopyFile  (f.second.tempName, f_out_path)
+                    : wxRenameFile(f.second.tempName, f_out_path))) {
         throw PackageError(_ERROR_("unable to store file"));
       }
       if (f.second.created) {
-        vcs->addFile(saveAs+_("/")+f.first);
+        vcs->addFile(f_out_path);
         f.second.created = false;
       }
     } else if (filename != saveAs) {
       // save as, copy old filess
-      if (!wxCopyFile(filename+_("/")+f.first, saveAs+_("/")+f.first)) {
-        throw PackageError(_ERROR_("unable to store file"));
+      if (isZipfile()) {
+        auto in_stream  = openIn(f.first);
+        wxFileOutputStream out(f_out_path);
+        out.Write(*in_stream);
+      } else {
+        if (!wxCopyFile(filename+_("/")+f.first, f_out_path)) {
+          throw PackageError(_ERROR_("unable to store file"));
+        }
       }
-      vcs->addFile(saveAs+_("/")+f.first);
+      vcs->addFile(f_out_path);
     } else {
       // old file, just keep it
     }
@@ -475,6 +487,8 @@ void Package::saveToZipfile(const String& saveAs, bool remove_unused, bool is_co
     wxRenameFile(saveAs, saveAs + _(".bak"));
   }
   wxRenameFile(tempFile, saveAs);
+  // re-open zip file
+  openZipfile();
 }
 
 
@@ -590,11 +604,11 @@ void Packaged::save() {
   referenceFile(typeName());
   Package::save();
 }
-void Packaged::saveAs(const String& package, bool remove_unused) {
+void Packaged::saveAs(const String& package, bool remove_unused, bool as_directory) {
   WITH_DYNAMIC_ARG(writing_package, this);
   writeFile(typeName(), *this, fileVersion());
   referenceFile(typeName());
-  Package::saveAs(package, remove_unused);
+  Package::saveAs(package, remove_unused, as_directory);
 }
 void Packaged::saveCopy(const String& package) {
   WITH_DYNAMIC_ARG(writing_package, this);
