@@ -196,6 +196,8 @@ template <typename T>
 inline void after_reading(intrusive_ptr<T>& x, Version ver) {
   after_reading(*x, ver);
 }
+inline void after_reading(GameP&, Version) {}
+inline void after_reading(StyleSheetP&, Version) {}
 
 // ----------------------------------------------------------------------------- : Container types
 

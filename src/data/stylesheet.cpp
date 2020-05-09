@@ -35,6 +35,7 @@ StyleSheetP StyleSheet::byGameAndName(const Game& game, const String& name) {
       return package_manager.open<StyleSheet>(full_name);
     }
   } catch (PackageNotFoundError& e) {
+    queue_message(MESSAGE_ERROR, _("Missing stylesheet: ") + full_name);
     if (stylesheet_for_reading()) {
       // we already have a stylesheet higher up, so just return a null pointer
       return StyleSheetP();
