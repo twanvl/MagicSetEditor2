@@ -51,7 +51,7 @@
     {
       "name": "x86-Release-static",
       "generator": "Ninja",
-      "configurationType": "RelWithDebInfo",
+      "configurationType": "Release",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "-DVCPKG_TARGET_TRIPLET=x86-windows-static",
