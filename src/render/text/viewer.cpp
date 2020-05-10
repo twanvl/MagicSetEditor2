@@ -344,23 +344,54 @@ void TextViewer::prepareElements(const String& text, const TextStyle& style, Con
 
 // ----------------------------------------------------------------------------- : Layout
 
+
+void update_size(LineLayout& layout, TextViewer::Line const& l) {
+  layout.width = max(layout.width, l.width());
+  layout.height = max(layout.height, l.bottom() - layout.top);
+}
+
+TextLayoutP TextViewer::extractLayoutInfo() const {
+  // store information about the content/layout
+  TextLayoutP layout = make_intrusive<TextLayout>();
+  LineBreak last_break = BREAK_LINE;
+  LineLayoutP paragraph, block;
+  for (auto const& l : lines) {
+    LineLayoutP line = make_intrusive<LineLayout>(l.width(), l.top, l.line_height, LineLayout::Type::LINE);
+    if (!block) {
+      block = make_intrusive<LineLayout>(*line);
+      block->type = LineLayout::Type::BLOCK;
+      layout->blocks.push_back(block);
+    }
+    if (!paragraph) {
+      paragraph = make_intrusive<LineLayout>(*line);
+      paragraph->type = LineLayout::Type::PARAGRAPH;
+      block->paragraphs.push_back(paragraph);
+      layout->paragraphs.push_back(paragraph);
+    }
+    paragraph->lines.push_back(line);
+    block->lines.push_back(line);
+    layout->lines.push_back(line);
+    if (l.line_height > 0) {
+      update_size(*paragraph, l);
+      update_size(*block, l);
+      update_size(*layout, l);
+    }
+    if (l.break_after == BREAK_LINE) {
+      paragraph = block = nullptr;
+    } else if (l.break_after == BREAK_HARD) {
+      paragraph = nullptr;
+    }
+  }
+  for (size_t i=0; i+1 < layout->blocks.size() ; ++i) {
+    layout->separators.push_back((layout->blocks[i]->bottom() + layout->blocks[i]->top)/2);
+  }
+  return layout;
+}
+
 void TextViewer::prepareLines(RotatedDC& dc, const String& text, TextStyle& style, Context& ctx) {
   vector<CharInfo> chars;
   prepareLinesTryScales(dc, text, style, chars);
   assert(!lines.empty());
-  
-  // store information about the content/layout, allow this to change alignment
-  style.content_width  = 0;
-  FOR_EACH(l, lines) {
-    style.content_width = max(style.content_width, l.width());
-  }
-  style.content_height = 0;
-  FOR_EACH_REVERSE(l, lines) {
-    style.content_height = l.top + l.line_height;
-    if (l.line_height) break; // not an empty line
-  }
-  style.content_lines = (int)lines.size();
-  style.alignment.update(ctx); // allow this to affect the alignment
   
   // no text, find a dummy height for the single line we have
   if (lines.size() == 1 && lines[0].width() < 0.0001) {
@@ -370,6 +401,12 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, TextStyle& styl
       dc.SetFont(style.font, scale);
       lines[0].line_height = dc.GetCharHeight();
     }
+  }
+  
+  // store information about the content/layout, allow this to change alignment
+  if (style.alignment.isScripted()) {
+    style.layout = extractLayoutInfo();
+    style.alignment.update(ctx); // allow this to affect the alignment
   }
   
   // align
@@ -382,6 +419,9 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, TextStyle& styl
     lines[0].line_height =  h;
     lines[0].top         -= h;
   }
+
+  // make layout available to scripts
+  style.layout = extractLayoutInfo();
 }
 
 // bound on max_scale, given that scale fits and produces the given lines
@@ -465,7 +505,7 @@ void TextViewer::prepareLinesTryScales(RotatedDC& dc, const String& text, const 
     max_scale = min(max_scale, bound_on_max_scale(dc,style,lines,scale));
   }
   
-  // The common case optimization fialed, try a binary search
+  // The common case optimization failed, try a binary search
   // Invariant:
   //    a. The text fits at min_scale (or we force it anyway)
   //    b. but not at max_scale

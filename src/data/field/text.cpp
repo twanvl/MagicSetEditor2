@@ -97,11 +97,38 @@ void TextStyle::checkContentDependencies(Context& ctx, const Dependency& dep) co
   alignment.initDependencies(ctx, dep);
 }
 
-template <typename T> void reflect_content(T& handler,         const TextStyle& ts) {}
-template <>           void reflect_content(GetMember& handler, const TextStyle& ts) {
-  REFLECT_N("content_width",  ts.content_width);
-  REFLECT_N("content_height", ts.content_height);
-  REFLECT_N("content_lines",  ts.content_lines);
+template <typename T> void reflect_layout(T& handler,         const TextStyle& ts) {}
+template <>           void reflect_layout(GetMember& handler, const TextStyle& ts) {
+  REFLECT(ts.layout);
+  if (ts.layout) {
+    REFLECT_N("content_width",  ts.layout->width);
+    REFLECT_N("content_height", ts.layout->height);
+    REFLECT_N("content_lines",  ts.layout->lines.size());
+  } else {
+    REFLECT_N("content_width", 0.);
+    REFLECT_N("content_height", 0.);
+    REFLECT_N("content_lines", 0);
+  }
+}
+
+template <> void GetMember::handle(LineLayout const& obj) { obj.reflect(*this); }
+template <> void GetDefaultMember::handle(LineLayout const& obj) {}
+void LineLayout::reflect(GetMember& handler) const {
+  REFLECT(width);
+  REFLECT(top);
+  REFLECT(height);
+  REFLECT_N("bottom", bottom());
+  REFLECT_N("middle", top + height/2);
+  if (type > Type::LINE) REFLECT(lines);
+  if (type > Type::PARAGRAPH) REFLECT(paragraphs);
+  if (type > Type::BLOCK) REFLECT(blocks);
+}
+
+template <> void GetMember::handle(TextLayout const& obj) { obj.reflect(*this); }
+template <> void GetDefaultMember::handle(TextLayout const& obj) {}
+void TextLayout::reflect(GetMember& handler) const {
+  REFLECT_BASE(LineLayout);
+  REFLECT(separators);
 }
 
 IMPLEMENT_REFLECTION(TextStyle) {
@@ -127,7 +154,7 @@ IMPLEMENT_REFLECTION(TextStyle) {
   REFLECT(line_height_line_max);
   REFLECT(paragraph_height);
   REFLECT(direction);
-  reflect_content(handler, *this);
+  reflect_layout(handler, *this);
 }
 
 // ----------------------------------------------------------------------------- : TextValue

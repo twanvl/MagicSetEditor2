@@ -145,6 +145,9 @@ class TextViewer {
   /// Align the lines of a single paragraph (a set of lines)
   void alignParagraph(size_t start_line, size_t end_line, const vector<CharInfo>& chars, const TextStyle& style, const RealRect& box);
   
+  /// Make layout info available to scripts
+  TextLayoutP extractLayoutInfo() const;
+
   /// Find the line the given index is on, returns the first line if the index is not found
   const Line& findLine(size_t index) const;
   

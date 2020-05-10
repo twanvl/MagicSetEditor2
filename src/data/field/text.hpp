@@ -25,6 +25,8 @@ DECLARE_POINTER_TYPE(TextField);
 DECLARE_POINTER_TYPE(TextStyle);
 DECLARE_POINTER_TYPE(TextValue);
 DECLARE_POINTER_TYPE(TextBackground);
+DECLARE_POINTER_TYPE(TextLayout);
+DECLARE_POINTER_TYPE(LineLayout);
 
 /// A field for values containing tagged text
 class TextField : public Field {
@@ -43,6 +45,26 @@ class TextField : public Field {
 };
 
 // ----------------------------------------------------------------------------- : TextStyle
+
+// information coming from text rendering
+class LineLayout : public IntrusivePtrVirtualBase {
+public:
+  double width, top, height;
+  enum class Type { LINE, PARAGRAPH, BLOCK, ALL } type;
+  vector<LineLayoutP> lines, paragraphs, blocks;
+
+  LineLayout() {}
+  LineLayout(double width, double top, double height, Type type) : width(width), top(top), height(height), type(type) {}
+  inline double bottom() const { return top+height; }
+  void reflect(GetMember& gm) const;
+};
+
+class TextLayout : public LineLayout {
+public:
+  vector<double> separators;
+  TextLayout() : LineLayout(0,0,0,Type::ALL) {}
+  void reflect(GetMember& gm) const;
+};
 
 /// The Style for a TextField
 class TextStyle : public Style {
@@ -69,6 +91,7 @@ class TextStyle : public Style {
       paragraph_height;                       ///< Fixed height of paragraphs
   Direction direction;                        ///< In what direction is text layed out?
   // information from text rendering
+  TextLayoutP layout;
   double content_width, content_height;       ///< Size of the rendered text
   int    content_lines;                       ///< Number of rendered lines
   

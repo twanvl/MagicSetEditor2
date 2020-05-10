@@ -1,0 +1,28 @@
+Data type: text layout info
+
+DOC_MSE_VERSION: since 2.0.2
+
+This type contains information on rendered text.
+
+The text is devided into 'lines', 'paragraphs' and 'blocks.
+A line is a line on the screen.
+A paragraph is one or more lines, ending in an explicit line break, a "\n" in the text.
+A block is one or more paragraphs, ending in a line, "<line>\n</line>".
+
+It is possible to dig deeper into blocks, for example
+
+> card_style.text.layout.blocks[1].lines[0].middle
+
+Is the middle of the first line of the second block.
+
+--Properties--
+! Property	Type					Description
+| @width@		[[type:double]]		Width of this line or group of lines in pixels.
+| @height@	[[type:double]]		Height of this line or group of lines in pixels.
+| @top@			[[type:double]]		Top y coordinate
+| @middle@	[[type:double]]		Middle y coordinate
+| @bottom@	[[type:double]]		Bottom y coordinate
+| @lines@				[[type:list]] of [[type:text layout]]s	The lines in this part of the text.
+| @paragraphs@	[[type:list]] of [[type:text layout]]s	The paragraphs in this part of the text.
+| @blocks@			[[type:list]] of [[type:text layout]]s	The blocks in this part of the text.
+| @separators@	[[type:list]] of [[type:double]]s	The y coordinates of separators between blocks.

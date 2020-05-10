@@ -110,9 +110,10 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 		 			 			 		<img src="style-text-mask.png" alt=""/><br/>
 		 			 			 		The same mask image is also used to determine the size and shape of the box.
 		 			 			 		To include a certain pixel in the size/shape but not allow text to be placed there, it can be made dark gray (a value less than 128).
-| ^^^		@content width@		[[type:double]]		''automatic''	When read from a script, gives the width of the current content in this box.
-| ^^^		@content height@	[[type:double]]		''automatic''	When read from a script, gives the height of the current content in this box.
-| ^^^		@content lines@		[[type:int]]		''automatic''	When read from a script, gives the number of lines of the current content in this box.
+| ^^^		@layout@		[[type:text layout]]		''automatic''	When read from a script, gives information on the layout of text in this box.
+| ^^^		@content width@		[[type:double]]		''automatic''	When read from a script, gives the width of the current content in this box. Equivalent to @layout.width@
+| ^^^		@content height@	[[type:double]]		''automatic''	When read from a script, gives the height of the current content in this box. Equivalent to @layout.height@
+| ^^^		@content lines@		[[type:int]]		''automatic''	When read from a script, gives the number of lines of the current content in this box. Equivalent to @length(layout.lines)@
 	
 !	<<<	<<<	<<<	<<<
 | @"choice"@,<br/>@"multiple choice"@,<br/>@"boolean"@
