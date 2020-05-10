@@ -58,5 +58,26 @@ endif()
 # visual studio debugger
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT magicseteditor)
 
+# Static linking on windows
+if (${VCPKG_TARGET_TRIPLET} MATCHES ".*-static")
+  message("Static linking")
+  set(CompilerFlags CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_RELWITHDEBINFO CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE)
+  foreach(CompilerFlag ${CompilerFlags})
+    string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+  endforeach()
+  # Need explicit dependencies on wx's dependencies
+  find_package(png REQUIRED)
+  find_package(tiff REQUIRED)
+  find_package(jpeg REQUIRED)
+  find_package(zlib REQUIRED)
+  target_link_libraries(${PROJECT_NAME} ${PNG_LIBRARIES})
+  target_link_libraries(${PROJECT_NAME} ${JPEG_LIBRARIES})
+  target_link_libraries(${PROJECT_NAME} ${ZLIB_LIBRARIES})
+  target_link_libraries(${PROJECT_NAME} ${TIFF_LIBRARIES})
+  # Defines
+  add_definitions(-DSTATIC)
+  add_definitions(-DHUNSPELL_STATIC)
+endif()
+
 # Test suite
 include(test/tests.cmake)
