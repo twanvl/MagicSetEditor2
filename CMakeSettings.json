@@ -59,6 +59,18 @@
       "ctestCommandArgs": "",
       "inheritEnvironments": [ "msvc_x86" ],
       "variables": []
+    },
+    {
+      "name": "x64-Release-static",
+      "generator": "Ninja",
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\out\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install\\${name}",
+      "cmakeCommandArgs": "-DVCPKG_TARGET_TRIPLET=x64-windows-static",
+      "buildCommandArgs": "-v",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "variables": []
     }
   ]
 }
