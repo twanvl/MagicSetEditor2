@@ -42,14 +42,12 @@ class ConsoleMessage : public IntrusivePtrBase<ConsoleMessage> {
   {}
 };
 
-class MessageCtrl : public wxScrolledWindow {
+class MessageCtrl : public wxPanel {
   public:
   MessageCtrl(wxWindow* parent, int id)
-    : wxScrolledWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME)
+    : wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME | wxVSCROLL)
   {
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-    SetScrollRate(0, 1);
-    EnableScrolling(false,true);
     // icons
     BOOST_STATIC_ASSERT(MESSAGE_TYPE_MAX == 6);
     icons[MESSAGE_INPUT]   = wxBitmap(load_resource_image(_("message_input")));
@@ -64,6 +62,8 @@ class MessageCtrl : public wxScrolledWindow {
     colors[MESSAGE_INFO]    = wxColour(0,0,255);
     colors[MESSAGE_WARNING] = wxColour(255,255,0);
     colors[MESSAGE_ERROR]   = colors[MESSAGE_FATAL_ERROR] = wxColour(255,0,0);
+    // scrollbar
+    update_scrollbar();
   }
   
   void add_message(ConsoleMessageP const& msg) {
@@ -73,6 +73,7 @@ class MessageCtrl : public wxScrolledWindow {
     selection = messages.size();
     // refresh
     ensure_visible(*messages.back());
+    update_scrollbar();
     Refresh(false);
   }
   void add_message(MessageType type, String const& text, bool joined_to_previous = false) {
@@ -122,8 +123,7 @@ class MessageCtrl : public wxScrolledWindow {
   }
   
   void onLeftDown(wxMouseEvent& ev) {
-    int ystart; GetViewStart(nullptr,&ystart);
-    select( find_point(ystart + ev.GetY()) );
+    select(find_point(view_start + ev.GetY()));
     ev.Skip(); // for focus
   }
   
@@ -146,8 +146,9 @@ class MessageCtrl : public wxScrolledWindow {
     }
   }
   
-  void onFocus(wxFocusEvent&) {
+  void onFocus(wxFocusEvent& ev) {
     if (selection < messages.size()) Refresh(false);
+    ev.Skip();
   }
   
   size_t find_point(int y) {
@@ -159,17 +160,67 @@ class MessageCtrl : public wxScrolledWindow {
   }
   
   void ensure_visible(ConsoleMessage const& msg) {
-    int ystart; GetViewStart(nullptr,&ystart);
     int height = GetClientSize().y;
-    if (msg.top < ystart) {
-      Scroll(0, msg.top);
-    } else if (msg.bottom() > ystart + height) {
-      Scroll(0, msg.bottom() - height);
+    if (msg.top < view_start) {
+      scroll_to(msg.top);
+    } else if (msg.bottom() > view_start + height) {
+      scroll_to(msg.bottom() - height);
     }
   }
-  
+
+  // --------------------------------------------------- : Scrolling
+  int view_start = 0; // y coordinate where the view starts
+
+  void scroll_to(int new_view_start, bool update_scrollbar = true) {
+    int bottom = messages.empty() ? 0 : messages.back()->bottom() - GetClientSize().y;
+    view_start = new_view_start;
+    view_start = min(bottom, view_start);
+    view_start = max(0, view_start);
+    if (update_scrollbar) {
+      // update actual scrollbar
+      this->update_scrollbar();
+      // scroll actual window content
+      Refresh(false);
+    }
+  }
+
+  void update_scrollbar() {
+    int screen_height = GetClientSize().y;
+    int total_height = messages.empty() ? 0 : messages.back()->bottom();
+    SetScrollbar(wxVERTICAL, view_start, screen_height, total_height);
+  }
+
+  void onScroll(wxScrollWinEvent& ev) {
+    wxEventType type = ev.GetEventType();
+    if (type == wxEVT_SCROLLWIN_TOP) {
+      scroll_to(0);
+    } else if (type == wxEVT_SCROLLWIN_BOTTOM) {
+      scroll_to(INT_MAX);
+    } else if (type == wxEVT_SCROLLWIN_LINEUP) {
+      scroll_to(view_start - MIN_ITEM_HEIGHT);
+    } else if (type == wxEVT_SCROLLWIN_LINEDOWN) {
+      scroll_to(view_start + MIN_ITEM_HEIGHT);
+    } else if (type == wxEVT_SCROLLWIN_PAGEUP) {
+      scroll_to(view_start - GetClientSize().y*3/4);
+    } else if (type == wxEVT_SCROLLWIN_PAGEDOWN) {
+      scroll_to(view_start + GetClientSize().y*3/4);
+    } else {
+      scroll_to(ev.GetPosition());
+    }
+  }
+
+  void onMouseWheel(wxMouseEvent& ev) {
+    scroll_to(view_start - MIN_ITEM_HEIGHT * ev.GetWheelRotation() / ev.GetWheelDelta());
+  }
+
+  void onSize(wxSizeEvent&) {
+    update_scrollbar();
+    Refresh(false);
+  }
+
   // --------------------------------------------------- : Drawing
-  
+
+  void onEraseBackground(wxEraseEvent&) {}
   void onPaint(wxPaintEvent& ev) {
     wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
@@ -178,6 +229,7 @@ class MessageCtrl : public wxScrolledWindow {
   void draw(wxDC& dc) const {
     clearDC(dc, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     dc.SetFont(*wxNORMAL_FONT);
+    int height = GetClientSize().y;
     FOR_EACH_CONST(msg, messages) {
       draw(dc, *msg);
     }
@@ -187,9 +239,11 @@ class MessageCtrl : public wxScrolledWindow {
   }
   
   void draw(wxDC& dc, ConsoleMessage const& msg) const {
+    auto client_size = GetClientSize();
+    if (msg.bottom() < view_start || msg.top > view_start + client_size.y) return; // out of view
     int left = 0;
-    int top  = msg.top;
-    int width = GetClientSize().x;
+    int top  = msg.top - view_start;
+    int width = client_size.x;
     wxColour color = colors[msg.type];
     wxColour bg, fg;
     if (selection < messages.size() && messages[selection].get() == &msg) {
@@ -322,6 +376,10 @@ BEGIN_EVENT_TABLE(MessageCtrl,wxScrolledWindow)
   EVT_CHAR(MessageCtrl::onChar)
   EVT_SET_FOCUS(MessageCtrl::onFocus)
   EVT_KILL_FOCUS(MessageCtrl::onFocus)
+  EVT_SCROLLWIN(MessageCtrl::onScroll)
+  EVT_MOUSEWHEEL(MessageCtrl::onMouseWheel)
+  EVT_ERASE_BACKGROUND(MessageCtrl::onEraseBackground)
+  EVT_SIZE(MessageCtrl::onSize)
 END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------- : TextCtrl with history
