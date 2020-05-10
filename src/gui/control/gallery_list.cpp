@@ -134,11 +134,11 @@ void GalleryList::scrollTo(int top, bool update_scrollbar) {
 
 void GalleryList::updateScrollbar() {
   scrollTo(visible_start, false);
-    // how many lines fit on the screen?
-    int screen_height = mainSize(GetClientSize());
+  // how many lines fit on the screen?
+  int screen_height = mainSize(GetClientSize());
   int total_height  = itemEnd(itemCount() - 1);
   // set the scrollbar parameters to reflect this
-    SetScrollbar(direction, visible_start, screen_height, total_height);
+  SetScrollbar(direction, visible_start, screen_height, total_height);
 }
 
 void GalleryList::RefreshItem(size_t item) {
