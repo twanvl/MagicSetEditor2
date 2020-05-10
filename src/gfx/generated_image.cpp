@@ -84,6 +84,7 @@ Image BlankImage::generate(const Options& opt) const {
   int w = max(1, opt.width >= 0  ? opt.width  : opt.height);
   int h = max(1, opt.height >= 0 ? opt.height : opt.width);
   Image img(w, h);
+  assert(img.Ok());
   img.InitAlpha();
   memset(img.GetAlpha(), 0, w * h);
   return img;

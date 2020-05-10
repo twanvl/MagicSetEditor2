@@ -134,6 +134,7 @@ void AlphaMask::convexHull(vector<wxPoint>& points) const {
 
 Image AlphaMask::colorImage(const Color& color) const {
   Image image(size.x, size.y);
+  assert(image.Ok());
   fill_image(image, color);
   setAlpha(image);
   return image;

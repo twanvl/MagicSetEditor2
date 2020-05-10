@@ -89,6 +89,7 @@ template <> void GetDefaultMember::handle(const ScriptableImage& s) {
 void CachedScriptableImage::generateCached(const GeneratedImage::Options& options,
                                          CachedScriptableMask* mask,
                                          ImageCombine* combine, wxBitmap* bitmap, wxImage* image, RealSize* size) {
+  assert(image && bitmap);
   // ready?
   if (!isReady()) {
     // error, return blank image
@@ -137,6 +138,7 @@ void CachedScriptableImage::generateCached(const GeneratedImage::Options& option
   const_cast<GeneratedImage::Options&>(options).angle = 0;
   // generate
   cached_i = generate(options);
+  assert(cached_i.Ok());
   const_cast<GeneratedImage::Options&>(options).angle = cached_angle = a;
   *size = cached_size = RealSize(options.width, options.height);
   if (mask) {
@@ -157,6 +159,7 @@ void CachedScriptableImage::generateCached(const GeneratedImage::Options& option
   } else {
     *image = cached_i;
   }
+  assert(image->Ok() || bitmap->Ok());
 }
 
 bool CachedScriptableImage::update(Context& ctx) {

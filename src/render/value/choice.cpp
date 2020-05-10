@@ -86,6 +86,7 @@ void draw_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, 
         dc.DrawPreRotatedBitmap(bitmap,rect);
       } else {
         // use combine mode
+        assert(image.Ok());
         dc.DrawPreRotatedImage(image,rect,combine);
       }
       margin = size.width + 2;
