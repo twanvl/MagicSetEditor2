@@ -16,6 +16,11 @@ DECLARE_POINTER_TYPE(Script);
 
 template <typename T> class Defaultable;
 template <typename T> class Scriptable;
+template <typename T> ScriptValueP to_script(const vector<T>* v);
+template <typename K, typename V> ScriptValueP to_script(const map<K,V>* v);
+template <typename K, typename V> ScriptValueP to_script(const IndexMap<K,V>* v);
+template <typename T> ScriptValueP to_script(const intrusive_ptr<T>& v);
+template <typename T> inline ScriptValueP to_script(const Defaultable<T>& v);
 
 // ----------------------------------------------------------------------------- : GetDefaultMember
 
