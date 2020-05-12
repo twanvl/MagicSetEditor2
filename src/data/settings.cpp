@@ -237,8 +237,7 @@ String user_settings_dir() {
 }
 
 String Settings::settingsFile() {
-//  return user_settings_dir() + _("mse.config");
-  return user_settings_dir() + _("mse8.config"); // use different file during development of C++ port
+  return user_settings_dir() + _("mse.config");
 }
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(Settings) {
