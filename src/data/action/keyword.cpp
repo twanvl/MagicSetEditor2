@@ -114,7 +114,7 @@ void KeywordReminderTextValue::highlight(const String& code, const vector<Script
     // process a character
     Char c = code.GetChar(pos);
     if (c == _('<')) {
-      new_value += _('\1'); // escape
+      new_value += ESCAPED_LANGLE; // escape
       ++pos;
     } else if (c == _('{')) {
       if (in_string) {

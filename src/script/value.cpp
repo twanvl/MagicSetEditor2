@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/tagged_string.hpp>
 #include <script/value.hpp>
 #include <script/to_value.hpp>
 #include <script/context.hpp>
@@ -305,7 +306,7 @@ String quote_string(String const& str) {
   out += _('"');
   FOR_EACH_CONST(c, str) {
     if      (c == _('"') || c == _('\\')) { out += _('\\'); out += c; }
-    else if (c == _('\1')) out += _("\\<");
+    else if (c == ESCAPED_LANGLE) out += _("\\<");
     else if (c == _('\n')) out += _("\\n");
     else if (c == _('\r')) out += _("\\r");
     else if (c == _('\t')) out += _("\\t");

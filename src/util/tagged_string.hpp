@@ -17,8 +17,11 @@
 
 // ----------------------------------------------------------------------------- : Conversion to/from normal string
 
-Char untag_char(Char c);
-Char tag_char(Char c);
+/// Escaped '<'
+const Char ESCAPED_LANGLE = _('\1');
+
+wxUniChar untag_char(wxUniChar c);
+wxUniChar tag_char(wxUniChar c);
 
 /// Remove all tags from a string and convert escaped '<' back to normal '<'
 /** e.g. "<sym>R</> something <i>(note)</>"
@@ -35,7 +38,7 @@ String untag_no_escape(const String&);
  */
 String untag_hide_sep(const String&);
 
-/// Escapes a String by converting '>' to '\1'
+/// Escapes a String by converting '>' to ESCAPED_LANGLE
 String escape(const String&);
 
 /// Convert old style </> close tags to new style </tag> tags

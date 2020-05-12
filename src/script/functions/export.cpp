@@ -160,7 +160,7 @@ class TagStack {
 String html_escape(const String& str) {
   String ret;
   FOR_EACH_CONST(c, str) {
-    if (c == _('\1') || c == _('<')) { // escape <
+    if (c == ESCAPED_LANGLE || c == _('<')) { // escape <
       ret += _("&lt;");
     } else if (c == _('>')) {  // escape >
       ret += _("&gt;");
@@ -209,8 +209,8 @@ String to_html(const String& str_in, const SymbolFontP& symbol_font, double symb
   String str = remove_tag_contents(str_in,_("<sep-soft"));
   String ret;
   Tag bold  (_("<b>"), _("</b>")),
-        italic(_("<i>"), _("</i>")),
-        symbol(_("<span class=\"symbol\">"), _("</span>"));
+      italic(_("<i>"), _("</i>")),
+      symbol(_("<span class=\"symbol\">"), _("</span>"));
   TagStack tags;
   String symbols;
   for (size_t i = 0 ; i < str.size() ; ) {

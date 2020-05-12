@@ -12,36 +12,46 @@
 
 // ----------------------------------------------------------------------------- : Conversion to/from normal string
 
-Char untag_char(Char c) {
-  if (c == _('\1')) return _('<');
+wxUniChar untag_char(wxUniChar c) {
+  if (c == ESCAPED_LANGLE) return _('<');
   else if (c == CONNECTION_SPACE) return _(' ');
   else return c;
 }
 
-Char tag_char(Char c) {
-  if (c == _('<')) return _('\1');
+wxUniChar tag_char(wxUniChar c) {
+  if (c == _('<')) return ESCAPED_LANGLE;
   else             return c;
 }
 
 
 String untag(const String& str) {
-  bool intag = false;
-  String ret; ret.reserve(str.size());
-  FOR_EACH_CONST(c, str) {
-    if (c==_('<')) intag = true;
-    if (!intag) ret += untag_char(c);
-    if (c==_('>')) intag = false;
+  bool in_tag = false;
+  String ret;
+  ret.reserve(str.size());
+  for(wxUniChar c : str) {
+    if (c == _('<')) {
+      in_tag = true;
+    } else if (!in_tag) {
+      ret += untag_char(c);
+    } else if (c == _('>')) {
+      in_tag = false;
+    }
   }
   return ret;
 }
 
 String untag_no_escape(const String& str) {
-  bool intag = false;
-  String ret; ret.reserve(str.size());
-  FOR_EACH_CONST(c, str) {
-    if (c==_('<')) intag = true;
-    if (!intag) ret += c;
-    if (c==_('>')) intag = false;
+  bool in_tag = false;
+  String ret;
+  ret.reserve(str.size());
+  for (wxUniChar c : str) {
+    if (c == _('<')) {
+      in_tag = true;
+    } else if (!in_tag) {
+      ret += c;
+    } else if (c == _('>')) {
+      in_tag = false;
+    }
   }
   return ret;
 }

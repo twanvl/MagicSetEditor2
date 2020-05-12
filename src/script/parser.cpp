@@ -11,6 +11,7 @@
 #include <script/parser.hpp>
 #include <script/to_value.hpp>
 #include <util/error.hpp>
+#include <util/tagged_string.hpp>
 #include <util/io/package_manager.hpp> // for "include file" semi hack
 #include <stack>
 
@@ -281,7 +282,7 @@ void TokenIterator::readStringToken(bool string_mode) {
       else if (c == _('r')) str += _('\r');
       else if (c == _('t')) str += _('\t');
       else if (c == _('&')); // escape for nothing
-      else if (c == _('<')) str += _('\1'); // escape for < in tagged string
+      else if (c == _('<')) str += ESCAPED_LANGLE; // escape for < in tagged string
       else if (c == _('\\') || c == _('"') || c == _('\'') || c == _('{') || c == _('}')) {
         str += c; // \ or { or " or ', don't warn about these, since they look escape-worthy
       } else if (c >= '0' && c <= '9') {
