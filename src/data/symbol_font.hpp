@@ -25,7 +25,7 @@ struct CharInfo;
 
 /// A font that is drawn using images
 class SymbolFont : public Packaged {
-  public:
+public:
   SymbolFont();
   ~SymbolFont();
   
@@ -37,7 +37,7 @@ class SymbolFont : public Packaged {
   
   /// A symbol to be drawn
   class DrawableSymbol {
-    public:
+  public:
     inline DrawableSymbol(const String& text, const String& draw_text, SymbolInFont& symbol)
       : text(text), draw_text(draw_text), symbol(&symbol)
     {}
@@ -81,7 +81,7 @@ class SymbolFont : public Packaged {
   /** Return the code representing the symbol */
   String insertSymbolCode(int menu_id) const;
     
-  private:
+private:
   double img_size;  ///< Font size that the images use
   RealSize spacing;  ///< Spacing between sybmols (for the default font size)
   // writing text
@@ -102,7 +102,7 @@ class SymbolFont : public Packaged {
   
   /// Size of a single symbol, including spacing
   RealSize symbolSize       (double font_size, const DrawableSymbol& sym);
-  public:
+public:
   /// The default size of symbols, including spacing
   RealSize defaultSymbolSize(double font_size);
   
@@ -120,7 +120,7 @@ enum MenuItemType
 
 /// Description of a menu to insert symbols from a symbol font into the text
 class InsertSymbolMenu : public IntrusivePtrBase<InsertSymbolMenu> {
-  public:
+public:
   InsertSymbolMenu();
   
   MenuItemType              type;
@@ -143,7 +143,7 @@ class InsertSymbolMenu : public IntrusivePtrBase<InsertSymbolMenu> {
 
 /// A reference to an actual symbol font
 class SymbolFontRef {
-  public:
+public:
   SymbolFontRef();
   
   // Script update
@@ -159,7 +159,7 @@ class SymbolFontRef {
   Scriptable<Alignment> alignment;    ///< Alignment of symbols in a line of text
   SymbolFontP           font;        ///< The font, if it is loaded
   
-  private:
+private:
   DECLARE_REFLECTION();
   
   /// (re)load the symbol font based on name

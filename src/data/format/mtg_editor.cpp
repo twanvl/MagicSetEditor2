@@ -22,13 +22,13 @@
 
 /// The file format of Mtg Editor files
 class MtgEditorFileFormat : public FileFormat {
-  public:
+public:
   virtual String extension()          { return _("set"); }
   virtual String name()               { return _("Mtg Editor files (*.set)"); }
   virtual bool canImport()            { return true; }
   virtual bool canExport(const Game&) { return false; }
   virtual SetP importSet(const String& filename);
-  private:
+private:
   // Filter: se filename -> image directory
   // based on MtgEditor's: CardSet.getImageFolder
   String filter1(const String& str);

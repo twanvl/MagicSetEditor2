@@ -19,15 +19,15 @@ DECLARE_POINTER_TYPE(ImageField);
 /// A card list that allows the shows thumbnails of card images
 /** This card list also allows the list to be modified */
 class ImageCardList : public CardListBase {
-  public:
+public:
   ~ImageCardList();
   ImageCardList(Window* parent, int id, long additional_style = 0);
-  protected:
+protected:
   virtual int  OnGetItemImage(long pos) const;
   virtual void onRebuild();
   virtual void onBeforeChangeSet();
   virtual bool allowModify() const { return true; }
-  private:
+private:
   DECLARE_EVENT_TABLE();
   void onIdle(wxIdleEvent&);
   
@@ -42,13 +42,13 @@ class ImageCardList : public CardListBase {
 // ----------------------------------------------------------------------------- : FilteredImageCardList
 
 class FilteredImageCardList : public ImageCardList {
-  public:
+public:
   FilteredImageCardList(Window* parent, int id, long additional_style = 0);
   
   /// Change the filter to use, if null then don't use a filter
   void setFilter(const CardListFilterP& filter);
   
-  protected:
+protected:
   /// Get only the subset of the cards
   virtual void getItems(vector<VoidP>& out) const;
   virtual void onChangeSet();

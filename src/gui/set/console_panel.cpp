@@ -23,7 +23,7 @@ DECLARE_POINTER_TYPE(ConsoleMessage);
 // ----------------------------------------------------------------------------- : MessageControl
 
 class ConsoleMessage : public IntrusivePtrBase<ConsoleMessage> {
-  public:
+public:
   MessageType type;
   String text; // string message
   Bitmap bitmap; // image message instead of string
@@ -43,7 +43,7 @@ class ConsoleMessage : public IntrusivePtrBase<ConsoleMessage> {
 };
 
 class MessageCtrl : public wxPanel {
-  public:
+public:
   MessageCtrl(wxWindow* parent, int id)
     : wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME | wxVSCROLL)
   {
@@ -102,7 +102,7 @@ class MessageCtrl : public wxPanel {
     return ok;
   }
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   // --------------------------------------------------- : Data
@@ -389,7 +389,7 @@ END_EVENT_TABLE()
 // ----------------------------------------------------------------------------- : TextCtrl with history
 
 class HistoryTextCtrl : public wxTextCtrl {
-  public:
+public:
   HistoryTextCtrl(wxWindow* parent, wxWindowID id)
     : wxTextCtrl(parent, id, _(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER)
     , history_pos(0)
@@ -403,7 +403,7 @@ class HistoryTextCtrl : public wxTextCtrl {
     return command;
   }
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   vector<String> history; // TODO: save command history to settings?
   int history_pos; // position when browsing through history

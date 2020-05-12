@@ -16,7 +16,7 @@
 
 /// Viewer that displays a choice value
 class ChoiceValueViewer : public ValueViewer {
-  public:
+public:
   DECLARE_VALUE_VIEWER(Choice) : ValueViewer(parent,style) {}
   
   virtual bool prepare(RotatedDC& dc);

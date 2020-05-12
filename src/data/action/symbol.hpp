@@ -24,7 +24,7 @@ class SymbolPartAction : public Action {};
 
 /// Anything that changes a set of parts
 class SymbolPartsAction : public SymbolPartAction {
-  public:
+public:
   SymbolPartsAction(const set<SymbolPartP>& parts);
   
   const set<SymbolPartP> parts;  ///< Affected parts
@@ -37,7 +37,7 @@ class SymbolPartListAction : public SymbolPartAction {};
 
 /// Move some symbol parts
 class SymbolPartMoveAction : public SymbolPartsAction {
-  public:
+public:
   SymbolPartMoveAction(const set<SymbolPartP>& parts, const Vector2D& delta = Vector2D());
   
   virtual String getName(bool to_undo) const;
@@ -46,13 +46,13 @@ class SymbolPartMoveAction : public SymbolPartsAction {
   /// Update this action to move some more
   void move(const Vector2D& delta);
   
-  private:
+private:
   Vector2D delta;    ///< How much to move
   Vector2D moved;    ///< How much has been moved
   Bounds   bounds;  ///< Bounding box of the thing we are moving
   
   void movePart(SymbolPart& part); ///< Move a single part
-  public:
+public:
   bool constrain;    ///< Constrain movement?
   int snap;      ///< Snap to grid?
 };
@@ -61,13 +61,13 @@ class SymbolPartMoveAction : public SymbolPartsAction {
 
 /// Transforming symbol parts using a matrix
 class SymbolPartMatrixAction : public SymbolPartsAction {
-  public:
+public:
   SymbolPartMatrixAction(const set<SymbolPartP>& parts, const Vector2D& center);
   
   /// Update this action to move some more
   void move(const Vector2D& delta);
   
-  protected:
+protected:
   /// Perform the transformation using the given matrix
   void transform(const Matrix2D& m);
   void transform(SymbolPart& part, const Matrix2D& m);
@@ -77,7 +77,7 @@ class SymbolPartMatrixAction : public SymbolPartsAction {
 
 /// Rotate some symbol parts
 class SymbolPartRotateAction : public SymbolPartMatrixAction {
-  public:
+public:
   SymbolPartRotateAction(const set<SymbolPartP>& parts, const Vector2D& center);
   
   virtual String getName(bool to_undo) const;
@@ -89,9 +89,9 @@ class SymbolPartRotateAction : public SymbolPartMatrixAction {
   /// Update this action to rotate by a deltaAngle
   void rotateBy(Radians deltaAngle);
   
-  private:
+private:
   Radians angle;        ///< How much to rotate?
-  public:
+public:
   bool constrain;        ///< Constrain movement?
 };
 
@@ -100,7 +100,7 @@ class SymbolPartRotateAction : public SymbolPartMatrixAction {
 
 /// Shear some symbol parts
 class SymbolPartShearAction : public SymbolPartMatrixAction {
-  public:
+public:
   SymbolPartShearAction(const set<SymbolPartP>& parts, const Vector2D& center);
   
   virtual String getName(bool to_undo) const;
@@ -109,7 +109,7 @@ class SymbolPartShearAction : public SymbolPartMatrixAction {
   /// Change shear by a given amount
   void move(const Vector2D& deltaShear);
   
-  private:
+private:
   Vector2D shear;        ///< Shearing, shear.x == 0 || shear.y == 0
   Vector2D moved;
   void shearBy(const Vector2D& shear);
@@ -123,7 +123,7 @@ class SymbolPartShearAction : public SymbolPartMatrixAction {
 
 /// Scale some symbol parts
 class SymbolPartScaleAction : public SymbolPartsAction {
-  public:
+public:
   SymbolPartScaleAction(const set<SymbolPartP>& parts, int scaleX, int scaleY);
   
   virtual String getName(bool to_undo) const;
@@ -134,7 +134,7 @@ class SymbolPartScaleAction : public SymbolPartsAction {
   /// Update the action's effect
   void update();
   
-  private:
+private:
   Vector2D old_min,      old_size;    ///< the original pos/size
   Vector2D new_real_min, new_real_size;  ///< the target pos/sizevoid shearBy(const Vector2D& shear)
   Vector2D new_min,      new_size;    ///< the target pos/size after applying constrains
@@ -144,7 +144,7 @@ class SymbolPartScaleAction : public SymbolPartsAction {
   void transformPart(SymbolPart&);
   /// Transform a single vector
   inline Vector2D transform(const Vector2D& v);
-  public:
+public:
   bool constrain;        ///< Constrain movement?
   int snap;          ///< Snap to grid?
 };
@@ -153,14 +153,14 @@ class SymbolPartScaleAction : public SymbolPartsAction {
 
 /// Change the name of a symbol part
 class CombiningModeAction : public SymbolPartsAction {
-  public:
+public:
   // All parts must be SymbolParts
   CombiningModeAction(const set<SymbolPartP>& parts, SymbolShapeCombine mode);
   
   virtual String getName(bool to_undo) const;
   virtual void   perform(bool to_undo);
   
-  private:
+private:
   void add(const SymbolPartP&, SymbolShapeCombine mode);
   vector<pair<SymbolShapeP,SymbolShapeCombine> > parts;  ///< Affected parts with new combining modes
 };
@@ -169,14 +169,14 @@ class CombiningModeAction : public SymbolPartsAction {
 
 /// Change the name of a symbol part
 class SymbolPartNameAction : public SymbolPartAction {
-  public:
+public:
   SymbolPartNameAction(const SymbolPartP& part, const String& name, size_t old_cursor, size_t new_cursor);
   
   virtual String getName(bool to_undo) const;
   virtual void   perform(bool to_undo);
   virtual bool merge(const Action& action);
   
-  public:
+public:
   SymbolPartP part;  ///< Affected part
   String part_name;  ///< New name
   size_t old_cursor;  ///< Cursor position
@@ -187,13 +187,13 @@ class SymbolPartNameAction : public SymbolPartAction {
 
 /// Adding a part to a symbol, added at the front of the list (drawn on top)
 class AddSymbolPartAction : public SymbolPartListAction {
-  public:
+public:
   AddSymbolPartAction(Symbol& symbol, const SymbolPartP& part);
   
   virtual String getName(bool to_undo) const;
   virtual void   perform(bool to_undo);
   
-  private:
+private:
   Symbol& symbol;    ///< Symbol to add the part to
   SymbolPartP part;  ///< Part to add
 };
@@ -202,17 +202,17 @@ class AddSymbolPartAction : public SymbolPartListAction {
 
 /// Removing parts from a symbol
 class RemoveSymbolPartsAction : public SymbolPartListAction {
-  public:
+public:
   RemoveSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& parts);
   
   virtual String getName(bool to_undo) const;
   virtual void   perform(bool to_undo);
   
-  private:
+private:
   Symbol& symbol;
   /// Check for removals in a group
   void check(SymbolGroup& group, const set<SymbolPartP>& parts);
-  public:
+public:
   /// A removal step
   struct Removal {
     inline Removal(SymbolGroup& parent, size_t pos, const SymbolPartP& removed)
@@ -222,7 +222,7 @@ class RemoveSymbolPartsAction : public SymbolPartListAction {
     size_t       pos;
     SymbolPartP  removed;
   };
-  private:
+private:
   /// Removed parts, sorted by ascending pos
   vector<Removal> removals;
 };
@@ -231,7 +231,7 @@ class RemoveSymbolPartsAction : public SymbolPartListAction {
 
 /// Duplicating parts in a symbol
 class DuplicateSymbolPartsAction : public SymbolPartListAction {
-  public:
+public:
   DuplicateSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& parts);
   
   virtual String getName(bool to_undo) const;
@@ -240,7 +240,7 @@ class DuplicateSymbolPartsAction : public SymbolPartListAction {
   /// Fill a set with all the new parts
   void getParts(set<SymbolPartP>& parts);
   
-  private:
+private:
   Symbol& symbol;
   /// Duplicates of parts and their positions, sorted by ascending pos
   vector<pair<SymbolPartP, size_t> > duplications;
@@ -251,28 +251,28 @@ class DuplicateSymbolPartsAction : public SymbolPartListAction {
 
 /// Change the position of a part in a symbol, by moving a part.
 class ReorderSymbolPartsAction : public SymbolPartListAction {
-  public:
+public:
   ReorderSymbolPartsAction(SymbolGroup& old_parent, size_t old_position, SymbolGroup& new_parent, size_t new_position);
   
   virtual String getName(bool to_undo) const;
   virtual void   perform(bool to_undo);
   
-  private:
+private:
   SymbolGroup* old_parent, *new_parent;///< Parents to move from and to
-  public:
+public:
   size_t old_position, new_position;  ///< Positions to move from and to
 };
 
 /// Break up a single group, and put its contents at a specific position
 class UngroupReorderSymbolPartsAction : public SymbolPartListAction {
-  public:
+public:
   /// Remove all the given groups
   UngroupReorderSymbolPartsAction(SymbolGroup& group_parent, size_t group_pos, SymbolGroup& target_parent, size_t target_pos);
   
   virtual String getName(bool to_undo) const;
   virtual void   perform(bool to_undo);
   
-  private:
+private:
   SymbolGroup& group_parent;
   size_t       group_pos;
   SymbolGroupP group;      ///< Group to destroy
@@ -284,29 +284,29 @@ class UngroupReorderSymbolPartsAction : public SymbolPartListAction {
 
 /// Group multiple symbol parts together
 class GroupSymbolPartsActionBase : public SymbolPartListAction {
-  public:
+public:
   GroupSymbolPartsActionBase(SymbolGroup& root);
   
   virtual void perform(bool to_undo);
   
-  protected:
+protected:
   SymbolGroup&        root;      ///< Symbol or group to group stuff in
   vector<SymbolPartP> old_part_list;  ///< Old part list of the symbol
 };
 
 /// Group multiple symbol parts together
 class GroupSymbolPartsAction : public GroupSymbolPartsActionBase {
-  public:
+public:
   GroupSymbolPartsAction(SymbolGroup& root, const set<SymbolPartP>& parts, const SymbolGroupP& group);
   
   virtual String getName(bool to_undo) const;
-  private:
+private:
   SymbolGroupP group;
 };
 
 /// Break up one or more SymbolGroups
 class UngroupSymbolPartsAction : public GroupSymbolPartsActionBase {
-  public:
+public:
   /// Remove all the given groups
   UngroupSymbolPartsAction(SymbolGroup& root, const set<SymbolPartP>& groups);
   

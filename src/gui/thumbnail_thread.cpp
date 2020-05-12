@@ -39,7 +39,7 @@ String safe_filename(const String& str) {
 // ----------------------------------------------------------------------------- : ThumbnailThreadWorker
 
 class ThumbnailThreadWorker : public wxThread {
-  public:
+public:
   ThumbnailThreadWorker(ThumbnailThread* parent);
   
   virtual ExitCode Entry();

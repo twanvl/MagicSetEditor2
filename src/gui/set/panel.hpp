@@ -20,7 +20,7 @@ class wxFindReplaceData;
 /** This class is a virtual base class for all actual panels used in the set window.
  */
 class SetWindowPanel : public wxPanel, public SetView {
-  public:
+public:
   SetWindowPanel(Window* parent, int id, bool autoTabbing = true);
   
   /// We will probably want to respond to set changes
@@ -78,7 +78,7 @@ class SetWindowPanel : public wxPanel, public SetView {
   virtual void  selectFirstCard() {}          ///< Switch the view to the first card
   virtual void  selectionChoices(ExportCardSelectionChoices& out) {} ///< Card subsets that can be exported from this panel
   
-  protected:
+protected:
   /// Have any controls been created?
   bool isInitialized() const;
 };

@@ -23,7 +23,7 @@ class PackageDependency;
 
 /// Information on a package in a repository
 class PackageVersionData : public IntrusivePtrVirtualBase {
-  public:
+public:
   PackageVersionData() {}
   
   String  name;            ///< Name of the package
@@ -58,7 +58,7 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(UpdateData) {
 
 /// A directory for packages
 class PackageDirectory {
-  public:
+public:
   void init(bool local);
   void init(const String& dir);
   
@@ -88,7 +88,7 @@ class PackageDirectory {
   
   void loadDatabase();
   void saveDatabase();
-  private:
+private:
   bool   is_local;
   String directory;
   vector<PackageVersionP> packages; // sorted by name
@@ -107,7 +107,7 @@ class PackageDirectory {
  *  There is a single global instance of the PackageManager, called packages
  */
 class PackageManager {
-  public:
+public:
   /// Initialize the package manager
   void init();
   /// Empty the list of packages.
@@ -176,7 +176,7 @@ class PackageManager {
   
   // --------------------------------------------------- : Packages on a server
   
-  private:
+private:
   map<String, PackagedP> loaded_packages;
   PackageDirectory local, global;
 };
@@ -188,7 +188,7 @@ extern PackageManager package_manager;
 
 /// Version information for an installed package
 class PackageVersion : public IntrusivePtrBase<PackageVersion> {
-  public:
+public:
   PackageVersion() : status(0) {}
   PackageVersion(int status) : status(status) {}
   
@@ -209,7 +209,7 @@ class PackageVersion : public IntrusivePtrBase<PackageVersion> {
   /// Set blessed status to true
   void bless();
   
-  public:
+public:
   /// Status of a single file
   enum FileStatus
   {  FILE_UNCHANGED
@@ -228,7 +228,7 @@ class PackageVersion : public IntrusivePtrBase<PackageVersion> {
     FileStatus status;
     inline bool operator < (const FileInfo& f) const { return file < f.file; }
   };
-  private:
+private:
   vector<FileInfo> files; // sorted by filename
   DECLARE_REFLECTION();
 };

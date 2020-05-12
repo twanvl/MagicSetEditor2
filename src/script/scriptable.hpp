@@ -41,7 +41,7 @@ inline void change(Defaultable<T>& v, const Defaultable<T>& new_v) { v.assignDon
 
 /// An optional script
 class OptionalScript {
-  public:
+public:
   inline OptionalScript() {}
   OptionalScript(const String& script_);
   ~OptionalScript();
@@ -90,7 +90,7 @@ class OptionalScript {
   inline       String& getMutableUnparsed() { return unparsed; }
   inline void setUnparsed(String& new_unparsed) { unparsed = new_unparsed; }
   
-  protected:
+protected:
   ScriptP script;    ///< The script, may be null if there is no script
   String unparsed;  ///< Unparsed script, for writing back to a file
   // parse the unparsed string, while reading
@@ -103,7 +103,7 @@ class OptionalScript {
 
 /// An optional script which is parsed in string mode
 class StringScript : public OptionalScript {
-  public:
+public:
   const String& get() const;
   void set(const String&);
   DECLARE_REFLECTION();
@@ -115,7 +115,7 @@ class StringScript : public OptionalScript {
 /** NOTE: reading MUST happen inside a block */
 template <typename T>
 class Scriptable {
-  public:
+public:
   Scriptable()               : value()      {}
   Scriptable(const T& value) : value(value) {}
   
@@ -139,7 +139,7 @@ class Scriptable {
     script.initDependencies(ctx, dep);
   }
   
-  private:
+private:
   T value;        ///< The actual value
   OptionalScript script;  ///< The optional script
   

@@ -27,7 +27,7 @@ enum RotationFlags
  *  tr***inv do the opposite.
  */
 class Rotation {
-  public:
+public:
   /// Construct a rotation object
   /** with the given rectangle of external coordinates and a given rotation angle and zoom factor.
    *  if is_internal then the rect gives the internal coordinates, its origin should be (0,0)
@@ -97,11 +97,11 @@ class Rotation {
   /// Translate a size back to internal coordinates
   RealSize  trInv(const RealSize& p) const;
   
-  protected:
+protected:
   Radians angle;      ///< The angle of rotation in radians (counterclockwise)
   RealSize size;      ///< Size of the rectangle, in internal coordinates
-  RealPoint origin;    ///< tr(0,0)
-  double zoomX;      ///< Zoom factor, zoom = 2.0 means that 1 internal = 2 external
+  RealPoint origin;   ///< tr(0,0)
+  double zoomX;       ///< Zoom factor, zoom = 2.0 means that 1 internal = 2 external
   double zoomY;
   
   friend class Rotater;
@@ -121,13 +121,13 @@ class Rotation {
  *  @endcode
  */
 class Rotater {
-  public:
+public:
   /// Compose a rotation by onto the rotation rot
   /** rot is restored when this object is destructed
    */
   Rotater(Rotation& rot, const Rotation& by);
   ~Rotater();
-  private:
+private:
   Rotation old;
   Rotation& rot;
 };
@@ -150,7 +150,7 @@ enum RenderQuality {
 /** All draw** functions take internal coordinates.
  */
 class RotatedDC : public Rotation {
-  public:
+public:
   RotatedDC(DC& dc, Radians angle, const RealRect& rect, double zoom, RenderQuality quality, RotationFlags flags = ROTATION_NORMAL);
   RotatedDC(DC& dc, const Rotation& rotation, RenderQuality quality);
   
@@ -211,7 +211,7 @@ class RotatedDC : public Rotation {
   
   inline wxDC& getDC() { return dc; }
   
-  private:
+private:
   wxDC& dc;        ///< The actual dc
   RenderQuality quality;  ///< Quality of the text
 };

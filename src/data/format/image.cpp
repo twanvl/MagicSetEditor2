@@ -25,12 +25,12 @@ void export_image(const SetP& set, const CardP& card, const String& filename) {
 }
 
 class UnzoomedDataViewer : public DataViewer {
-  public:
+public:
   UnzoomedDataViewer(bool use_zoom_settings)
     : use_zoom_settings(use_zoom_settings)
   {}
   virtual Rotation getRotation() const;
-  private:
+private:
   bool use_zoom_settings;
 };
 Rotation UnzoomedDataViewer::getRotation() const {

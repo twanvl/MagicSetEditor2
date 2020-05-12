@@ -24,7 +24,7 @@ class CachedScriptableMask;
  *   - The image can be scaled
  */
 class ScriptableImage {
-  public:
+public:
   inline ScriptableImage() {}
   inline ScriptableImage(const String& script) : script(script) {}
   inline ScriptableImage(const GeneratedImageP& gen) : value(gen) {}
@@ -60,7 +60,7 @@ class ScriptableImage {
   /// Get access to the script, always returns a valid script
   ScriptP getValidScriptP();
   
-  protected:
+protected:
   OptionalScript  script;    ///< The script, not really optional
   GeneratedImageP value;    ///< The image generator
   
@@ -74,7 +74,7 @@ inline ScriptValueP to_script(const ScriptableImage&) { return script_nil; }
 
 /// A version of ScriptableImage that does caching
 class CachedScriptableImage : public ScriptableImage {
-  public:
+public:
   inline CachedScriptableImage() {}
   inline CachedScriptableImage(const String& script) : ScriptableImage(script) {}
   inline CachedScriptableImage(const GeneratedImageP& gen) : ScriptableImage(gen) {}
@@ -97,7 +97,7 @@ class CachedScriptableImage : public ScriptableImage {
   /// Clears the cache
   void clearCache();
   
-  private:
+private:
   Image  cached_i; ///< The cached image
   Bitmap cached_b; ///< *or* the cached bitmap
   RealSize cached_size; ///< The size of the image before rotating
@@ -108,7 +108,7 @@ class CachedScriptableImage : public ScriptableImage {
 
 /// A version of ScriptableImage that caches an AlphaMask
 class CachedScriptableMask {
-  public:
+public:
   
   /// Update the script, returns true if the value has changed
   bool update(Context& ctx);
@@ -130,7 +130,7 @@ class CachedScriptableMask {
   /** Should only be used after get() was called before, otherwise an old mask might be returned */
   inline const AlphaMask& getFromCache() const { return mask; }
   
-  private:
+private:
   ScriptableImage script;
   AlphaMask       mask;
   friend class Reader;

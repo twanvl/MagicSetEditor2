@@ -20,7 +20,7 @@
 
 /// A version number
 struct Version {
-  public:
+public:
   Version()             : version(0)       {}
   Version(UInt version) : version(version) {}
   
@@ -39,7 +39,7 @@ struct Version {
   /// Convert a string to a version number
   static Version fromString(const String& version);
   
-  private:
+private:
   UInt version; ///< Version number encoded as aabbcc, where a=major, b=minor, c=revision
 };
 

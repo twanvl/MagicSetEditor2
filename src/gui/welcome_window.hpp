@@ -24,10 +24,10 @@ DECLARE_POINTER_TYPE(Set);
  *    - new game, new style?
  */
 class WelcomeWindow : public wxFrame {
-  public:
+public:
   WelcomeWindow();
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   // MSE logos
@@ -54,15 +54,15 @@ class WelcomeWindow : public wxFrame {
 
 /// An extended hover button, not only has base images, but also has two labels
 class HoverButtonExt : public HoverButton {
-  public:
+public:
   HoverButtonExt(Window* parent, int id, const wxImage& icon_name, const String& label, const String& sub_label);
   
-  private:
+private:
   Bitmap icon;
   String label, sub_label;
   wxFont font_large, font_small;
   
-  protected:
+protected:
   virtual void draw(DC& dc);
 };
 

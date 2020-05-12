@@ -31,7 +31,7 @@
  */
 template <typename Key, typename Value>
 class IndexMap : private vector<Value> {
-  public:
+public:
   using typename vector<Value>::iterator;
   using typename vector<Value>::const_iterator;
   using typename vector<Value>::reference;
@@ -117,7 +117,7 @@ class IndexMap : private vector<Value> {
     vector<Value>::swap(b);
   }
   
-  private:
+private:
   using vector<Value>::operator [];
 };
 
@@ -144,12 +144,12 @@ struct DelayedIndexMapsData : public IntrusivePtrBase<DelayedIndexMapsData<Key, 
  */
 template <typename Key, typename Value>
 class DelayedIndexMaps {
-  public:
+public:
   /// Get the data for a specific name. Initialize the map with init_with (if it is not alread initialized)
   IndexMap<Key,Value>& get(const String& name, const vector<Key>& init_with);
   /// Clear the delayed index map
   void clear();
-  private:
+private:
   map<String, intrusive_ptr<DelayedIndexMapsData<Key,Value> > > data;
   friend class Reader;
   friend class Writer;

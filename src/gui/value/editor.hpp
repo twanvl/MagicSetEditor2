@@ -32,7 +32,7 @@ DECLARE_POINTER_TYPE(ValueActionPerformer);
  *  Note that ValueEditor does NOT inherit from ValueViewer, because that leads to all kinds of problems
  */
 class ValueEditor {
-  public:
+public:
   virtual ~ValueEditor() {}
   // --------------------------------------------------- : Events
   
@@ -126,7 +126,7 @@ class ValueEditor {
   virtual void onShow(bool) {}
   
   // --------------------------------------------------- : Helpers
-  protected:
+protected:
   /// Retrieve the parent editor object
   virtual DataEditor& editor() const = 0;
   

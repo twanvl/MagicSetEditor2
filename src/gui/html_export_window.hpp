@@ -18,10 +18,10 @@ DECLARE_POINTER_TYPE(Set);
 // ----------------------------------------------------------------------------- : HtmlExportWindow
 
 class HtmlExportWindow : public ExportWindowBase {
-  public:
+public:
   HtmlExportWindow(Window* parent, const SetP& set, const ExportCardSelectionChoices& cards_choices);
   
-  private:
+private:
   PackageList*         list;    ///< List of templates
   ExportOptionsEditor* options; ///< Editor for template options
   SetP                 set;     ///< Set to export

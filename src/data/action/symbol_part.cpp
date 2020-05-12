@@ -301,13 +301,13 @@ double ssqrt(double x) {
 
 // Remove a single control point
 class SinglePointRemoveAction : public Action, public IntrusivePtrBase<SinglePointRemoveAction> {
-  public:
+public:
   SinglePointRemoveAction(const SymbolShapeP& shape, UInt position);
   
   virtual String getName(bool to_undo) const { return _("Delete point"); }
   virtual void   perform(bool to_undo);
   
-  private:
+private:
   SymbolShapeP shape;
   UInt position;
   ControlPointP point;               ///< Removed point
@@ -387,13 +387,13 @@ DECLARE_POINTER_TYPE(SinglePointRemoveAction);
 // Internally represented as a list of Single Point Remove Actions.
 // Not all points mat be removed, at least two points must remain.
 class ControlPointRemoveAction : public Action {
-  public:
+public:
   ControlPointRemoveAction(const SymbolShapeP& shape, const set<ControlPointP>& to_delete);
   
   virtual String getName(bool to_undo) const;
   virtual void   perform(bool to_undo);
   
-  private:
+private:
   vector<SinglePointRemoveActionP> removals;
 };
 

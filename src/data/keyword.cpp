@@ -245,7 +245,7 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 
 /// A node in a trie to match keywords
 class KeywordTrie {
-  public:
+public:
   KeywordTrie();
   ~KeywordTrie();
   

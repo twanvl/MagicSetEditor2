@@ -35,7 +35,7 @@ DECLARE_POINTER_TYPE(PackageChoiceValue);
 
 /// An Action the changes a Value
 class ValueAction : public Action {
-  public:
+public:
   inline ValueAction(const ValueP& value)
     : valueP(value), card(nullptr), old_time_modified(wxDateTime::Now())
   {}
@@ -48,7 +48,7 @@ class ValueAction : public Action {
   
   const ValueP valueP; ///< The modified value
   const Card*  card;   ///< The card the value is on, or null if it is not a card value
-  private:
+private:
   wxDateTime old_time_modified;
 };
 
@@ -66,7 +66,7 @@ unique_ptr<ValueAction> value_action(const PackageChoiceValueP&  value, const St
 
 /// An action that changes a TextValue
 class TextValueAction : public ValueAction {
-  public:
+public:
   TextValueAction(const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name);
   
   virtual String getName(bool to_undo) const;
@@ -77,7 +77,7 @@ class TextValueAction : public ValueAction {
   
   /// The modified selection
   size_t selection_start, selection_end;
-  private:
+private:
   inline TextValue& value() const;
   
   size_t new_selection_end;
@@ -96,7 +96,7 @@ unique_ptr<TextValueAction> typing_action(const TextValueP& value, size_t start_
 
 /// Toggle reminder text for a keyword on or off
 class TextToggleReminderAction : public ValueAction {
-  public:
+public:
   TextToggleReminderAction(const TextValueP& value, size_t pos);
   
   virtual String getName(bool to_undo) const;
@@ -112,17 +112,17 @@ class TextToggleReminderAction : public ValueAction {
 
 /// A TextValueAction without the start and end stuff
 class SimpleTextValueAction : public ValueAction {
-  public:
+public:
   SimpleTextValueAction(const Card* card, const TextValueP& value, const Defaultable<String>& new_value);
   virtual void perform(bool to_undo);
   bool merge(const SimpleTextValueAction& action);
-  private:
+private:
   Defaultable<String> new_value;
 };
 
 /// An action from "Replace All"; just a bunch of value actions performed in sequence
 class ReplaceAllAction : public Action {
-  public:
+public:
   ~ReplaceAllAction();
   
   virtual String getName(bool to_undo) const;
@@ -135,7 +135,7 @@ class ReplaceAllAction : public Action {
 
 /// Notification that a script caused a value to change
 class ScriptValueEvent : public Action {
-  public:
+public:
   inline ScriptValueEvent(const Card* card, const Value* value) : card(card), value(value) {}
     
   virtual String getName(bool to_undo) const;
@@ -147,7 +147,7 @@ class ScriptValueEvent : public Action {
 
 /// Notification that a script caused a style to change
 class ScriptStyleEvent : public Action {
-  public:
+public:
   inline ScriptStyleEvent(const StyleSheet* stylesheet, const Style* style)
     : stylesheet(stylesheet), style(style)
   {}
@@ -165,7 +165,7 @@ class ScriptStyleEvent : public Action {
 /// A loose object for performing ValueActions on a certain value.
 /** Used to reduce coupling */
 class ValueActionPerformer {
-  public:
+public:
   ValueActionPerformer(const ValueP& value, Card* card, const SetP& set);
   ~ValueActionPerformer();
   /// Perform an action. The performer takes ownerwhip of the action.
@@ -173,7 +173,7 @@ class ValueActionPerformer {
   
   const ValueP value; ///< The value
   Package& getLocalPackage();
-  private:
+private:
   Card* card; ///< Card the value is on (if any)
   SetP  set;  ///< Set for the actions
 };

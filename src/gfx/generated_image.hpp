@@ -24,7 +24,7 @@ class Package;
 /** The actual generation is independend of the script execution
  */
 class GeneratedImage : public ScriptValue, public IntrusiveFromThis<GeneratedImage> {
-  public:
+public:
   /// Options for generating the image
   struct Options {
     Options(int width = 0, int height = 0, Package* package = nullptr, Package* local_package = nullptr, PreserveAspect preserve_aspect = ASPECT_STRETCH, bool saturate = false)
@@ -243,7 +243,7 @@ private:
 
 /// Flip an image horizontally
 class FlipImageHorizontal : public SimpleFilterImage {
-  public:
+public:
   inline FlipImageHorizontal(const GeneratedImageP& image)
     : SimpleFilterImage(image)
   {}
@@ -338,7 +338,7 @@ private:
 
 /// Return a built in image
 class BuiltInImage : public GeneratedImage {
-  public:
+public:
   inline BuiltInImage(const String& name)
     : name(name)
   {}

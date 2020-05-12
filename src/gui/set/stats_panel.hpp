@@ -25,7 +25,7 @@ class FilteredCardList;
 
 /// A panel for showing statistics on cards
 class StatsPanel : public SetWindowPanel {
-  public:
+public:
   StatsPanel(Window* parent, int id);
   ~StatsPanel();
   
@@ -44,7 +44,7 @@ class StatsPanel : public SetWindowPanel {
   virtual void selectCard(const CardP& card);
   
   // --------------------------------------------------- : Data
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   #if USE_SEPARATE_DIMENSION_LISTS

@@ -25,7 +25,7 @@ DECLARE_DYNAMIC_ARG(StyleSheet*, stylesheet_for_reading);
 
 /// A collection of style information for card and set fields
 class StyleSheet : public Packaged {
-  public:
+public:
   StyleSheet();
   
   GameP game;            ///< The game this stylesheet is made for
@@ -67,7 +67,7 @@ class StyleSheet : public Packaged {
   /// Validate the stylesheet
   virtual void validate(Version = app_version);
   
-  protected:
+protected:
   
   DECLARE_REFLECTION();
 };

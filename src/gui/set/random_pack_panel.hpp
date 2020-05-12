@@ -37,7 +37,7 @@ struct PackAmountPicker {
 
 /// A SetWindowPanel for creating random booster packs
 class RandomPackPanel : public SetWindowPanel {
-  public:
+public:
   RandomPackPanel(Window* parent, int id);
   ~RandomPackPanel();
   
@@ -62,7 +62,7 @@ class RandomPackPanel : public SetWindowPanel {
   virtual bool canCopy()  const;
   virtual void doCopy();
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   CardViewer*       preview;    ///< Card preview
@@ -93,7 +93,7 @@ class RandomPackPanel : public SetWindowPanel {
   
   void onCardSelect(CardSelectEvent& ev);
   void onPackTypeClick(wxCommandEvent& ev);
-  public:
+public:
   typedef PackItem PackItem_for_typeof;
 };
 

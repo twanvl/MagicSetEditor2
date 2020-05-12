@@ -44,7 +44,7 @@ struct HtmlWindowToBrowser : public wxHtmlWindow {
 
 /// Handle downloading of installers
 class DownloadableInstallerList {
-  public:
+public:
   DownloadableInstallerList() : status(NONE) {}
   
   /// start downloading, return true if we are done
@@ -52,7 +52,7 @@ class DownloadableInstallerList {
   
   vector<DownloadableInstallerP> installers;
   
-  private:
+private:
   enum Status { NONE, DOWNLOADING, DONE } status;
   wxMutex lock;
   
@@ -99,13 +99,13 @@ wxThread::ExitCode DownloadableInstallerList::Thread::Entry() {
 
 /// Information on a package
 class PackageInfoPanel : public wxPanel {
-  public:
+public:
   PackageInfoPanel(Window* parent);
   
   void setPackage(const InstallablePackageP& package);
   
   virtual wxSize DoGetBestSize() const;
-  private:
+private:
   InstallablePackageP package;
   
   DECLARE_EVENT_TABLE();

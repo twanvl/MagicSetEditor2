@@ -22,7 +22,7 @@ class StyleSheet;
 
 /// Layout of a page of cards
 class PageLayout {
-  public:
+public:
   // layout
   RealSize page_size;      ///< Size of a page (in millimetres)
   RealSize card_size;      ///< Size of a card (in millimetres)
@@ -41,7 +41,7 @@ class PageLayout {
 };
 
 class PrintJob : public IntrusivePtrBase<PrintJob> {
-  public:
+public:
   PrintJob(SetP const& set) : set(set) {}
   
   // set and cards to print

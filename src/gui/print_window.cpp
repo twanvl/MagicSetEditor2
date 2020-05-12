@@ -52,7 +52,7 @@ void PageLayout::init(const StyleSheet& stylesheet, PageLayoutType type, const R
 
 /// A printout object specifying how to print a specified set of cards
 class CardsPrintout : public wxPrintout {
-  public:
+public:
   CardsPrintout(PrintJobP const& job);
   /// Number of pages, and something else I don't understand...
   virtual void GetPageInfo(int* pageMin, int* pageMax, int* pageFrom, int* pageTo);
@@ -63,7 +63,7 @@ class CardsPrintout : public wxPrintout {
   /// Print a page
   virtual bool OnPrintPage(int page);
   
-  private:
+private:
   PrintJobP job; ///< Cards to print
   DataViewer viewer;
   double scale_x, scale_y; // priter pixel per mm

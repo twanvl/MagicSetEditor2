@@ -17,7 +17,7 @@ DECLARE_POINTER_TYPE(ExportTemplate);
 
 /// A data editor with a platform native look
 class NativeLookEditor : public DataEditor {
-  public:
+public:
   NativeLookEditor(Window* parent, int id, long style = wxBORDER_THEME);
   
   /// Uses a native look
@@ -27,12 +27,12 @@ class NativeLookEditor : public DataEditor {
   virtual void draw(DC& dc);
   virtual void drawViewer(RotatedDC& dc, ValueViewer& v);
   
-  protected:
+protected:
   // Best size doesn't really matter, as long as it is not too small
   virtual wxSize DoGetBestSize() const;
   virtual void onInit();
   
-  private:
+private:
   static const int margin      = 6;
   static const int margin_left = 4;
   static const int vspace      = 10;
@@ -54,11 +54,11 @@ class NativeLookEditor : public DataEditor {
 
 /// Editor for set.data
 class SetInfoEditor : public NativeLookEditor {
-  public:
+public:
   SetInfoEditor(Window* parent, int id, long style = wxBORDER_THEME);
   
   virtual Package& getStylePackage() const;
-  protected:
+protected:
   virtual void onChangeSet();
 };
 
@@ -66,14 +66,14 @@ class SetInfoEditor : public NativeLookEditor {
 
 /// Editor for styling data
 class StylingEditor : public NativeLookEditor {
-  public:
+public:
   StylingEditor(Window* parent, int id, long style = wxBORDER_THEME);
   
   /// Show the styling for given stylesheet in the editor
   void showStylesheet(const StyleSheetP& stylesheet);
   /// Show the styling for given card
   void showCard(const CardP& card);
-  protected:
+protected:
   virtual void onChangeSet();
 };
 
@@ -81,14 +81,14 @@ class StylingEditor : public NativeLookEditor {
 
 /// Editor for export options
 class ExportOptionsEditor : public NativeLookEditor {
-  public:
+public:
   ExportOptionsEditor(Window* parent, int id, long style = wxBORDER_THEME);
   
   /// Show the options for given export template
   void showExport(const ExportTemplateP& export_template);
   
   virtual Package& getStylePackage() const;
-  private:
+private:
   ExportTemplateP export_template;
 };
 

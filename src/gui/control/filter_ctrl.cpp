@@ -15,7 +15,7 @@
 
 /// A drop down list of recent choices, for autocomplete
 class DropDownMRUList : public DropDownList {
-  public:
+public:
   DropDownMRUList(Window* parent, vector<String> const& choices)
     : DropDownList(parent)
     , choices(choices)
@@ -23,7 +23,7 @@ class DropDownMRUList : public DropDownList {
   
   vector<String> choices;
   
-  protected:
+protected:
   virtual size_t selection() const { return NO_SELECTION; }
   virtual size_t itemCount() const { return choices.size(); }
   virtual String itemText(size_t item) const { return choices.at(item); }
@@ -34,7 +34,7 @@ class DropDownMRUList : public DropDownList {
 
 /// Text control that forwards focus events to the parent
 class TextCtrlWithFocus : public wxTextCtrl {
-  public:
+public:
   DECLARE_EVENT_TABLE();
   void forwardFocusEvent(wxFocusEvent&);
   void forwardKeyEvent(wxKeyEvent&);

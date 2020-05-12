@@ -14,7 +14,7 @@
 // ----------------------------------------------------------------------------- : SubversionVCS
 
 class SubversionVCS : public VCS {
-  public:
+public:
   virtual void addFile (const wxFileName& filename);
   virtual void moveFile (const wxFileName& source, const wxFileName& destination);
   virtual void removeFile (const wxFileName& filename);

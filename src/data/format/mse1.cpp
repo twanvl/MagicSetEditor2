@@ -21,7 +21,7 @@
 
 /// The file format of MSE1 files
 class MSE1FileFormat : public FileFormat {
-  public:
+public:
   virtual String extension()          { return _("mse"); }
   virtual String name()               { return _("Magic Set Editor version 1 files (*.mse)"); }
   virtual bool canImport()            { return true; }

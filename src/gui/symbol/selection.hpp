@@ -27,7 +27,7 @@ enum SelectMode
 
 /// The selected parts of a symbol, enforcing constraints
 class SymbolPartsSelection {
-  public:
+public:
   inline SymbolPartsSelection() : root(nullptr) {}
   
   void setSymbol(const SymbolP& symbol);
@@ -69,7 +69,7 @@ class SymbolPartsSelection {
     return *selection.begin();
   }
   
-  private:
+private:
   Symbol* root;
   set<SymbolPartP> selection;
   

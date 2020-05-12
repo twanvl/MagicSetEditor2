@@ -27,7 +27,7 @@ DECLARE_LOCAL_EVENT_TYPE(EVENT_GALLERY_ACTIVATE, <not used>)
 /** A derived class should implement the abstract members to determine how the items look.
  */
 class GalleryList : public wxPanel {
-  public:
+public:
   GalleryList(Window* parent, int id, int direction = wxHORIZONTAL, bool always_focused = true);
   
   /// Select the given column
@@ -49,7 +49,7 @@ class GalleryList : public wxPanel {
   /// Redraw only the selected items
   void RefreshSelection();
   
-  protected:
+protected:
   static const size_t NO_SELECTION = (size_t)-1;
   size_t active_subcolumn;  ///< The active subcolumn
   wxSize item_size;         ///< The total size of a single item (over all columns)
@@ -82,7 +82,7 @@ class GalleryList : public wxPanel {
   };
   vector<SubColumn> subcolumns;
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   void onLeftDown  (wxMouseEvent& ev);
@@ -126,9 +126,9 @@ class GalleryList : public wxPanel {
     return direction == wxHORIZONTAL ? s.x : s.y;
   }
 
-  public:
+public:
   typedef SubColumn SubColumn_for_typeof;
-  protected:
+protected:
   /// Send an event
   void sendEvent(WXTYPE type);
 

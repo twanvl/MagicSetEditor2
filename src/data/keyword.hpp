@@ -24,7 +24,7 @@ class Value;
 // ----------------------------------------------------------------------------- : Keyword parameters
 
 class ParamReferenceType : public IntrusivePtrBase<ParamReferenceType> {
-  public:
+public:
   String        name;        ///< Name of the parameter reference type
   String        description; ///< Description (for status bar)
   StringScript  script;      ///< Code to insert into the reminder text script, input is the actual parameter name
@@ -34,7 +34,7 @@ class ParamReferenceType : public IntrusivePtrBase<ParamReferenceType> {
 
 /// Parameter type of keywords
 class KeywordParam : public IntrusivePtrBase<KeywordParam> {
-  public:
+public:
   KeywordParam();
   String         name;        ///< Name of the parameter type
   String         description;      ///< Description of the parameter type
@@ -73,7 +73,7 @@ class KeywordParam : public IntrusivePtrBase<KeywordParam> {
 
 /// Information on when and how to use a keyword
 class KeywordMode : public IntrusivePtrBase<KeywordMode> {
-  public:
+public:
   KeywordMode() : is_default(false) {}
   
   String name;    ///< Name of the mode
@@ -87,7 +87,7 @@ class KeywordMode : public IntrusivePtrBase<KeywordMode> {
 
 /// A keyword for a set or a game
 class Keyword : public IntrusivePtrVirtualBase {
-  public:
+public:
   Keyword() : fixed(false), valid(false) {}
   
   String                keyword;    ///< The keyword, only for human use
@@ -183,7 +183,7 @@ private:
 
 /// A script value containing the value of a keyword parameter
 class KeywordParamValue : public ScriptValue {
-  public:
+public:
   KeywordParamValue(const String& type, const String& separator_before, const String& separator_after, const String& value)
     : type_name(type), separator_before(separator_before), separator_after(separator_after), value(value)
   {}

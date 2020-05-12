@@ -19,7 +19,7 @@ class StylingEditor;
 
 /// A panel showing a list of stylesheets, and an editor for styling
 class StylePanel : public SetWindowPanel {
-  public:
+public:
   StylePanel(Window* parent, int id);
   
   virtual void onChangeSet();
@@ -42,7 +42,7 @@ class StylePanel : public SetWindowPanel {
   // --------------------------------------------------- : Selection
   virtual void selectCard(const CardP& card);
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   CardViewer*    preview;    ///< Card preview

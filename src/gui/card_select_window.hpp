@@ -24,7 +24,7 @@ enum ExportCardSelectionType
 };
 
 class ExportCardSelectionChoice : public IntrusivePtrBase<ExportCardSelectionChoice> {
-  public:
+public:
   ExportCardSelectionChoice();
   ExportCardSelectionChoice(const Set& set);
   ExportCardSelectionChoice(const String& label, const vector<CardP>& cards);
@@ -40,7 +40,7 @@ typedef vector<ExportCardSelectionChoiceP> ExportCardSelectionChoices;
 
 /// Base class for export windows, deals with card selection
 class ExportWindowBase : public wxDialog {
-  public:
+public:
   ExportWindowBase(Window* parent, const String& window_title,
                    const SetP& set, const ExportCardSelectionChoices& cards_choices, long style = wxDEFAULT_DIALOG_STYLE);
   /// Create the controls, return a sizer containing them
@@ -49,13 +49,13 @@ class ExportWindowBase : public wxDialog {
   /// Get the selected cards
   const vector<CardP>& getSelection() const { return *cards; }
   
-  protected:
+protected:
   DECLARE_EVENT_TABLE();
   
   SetP                 set;     ///< Set to export
   const vector<CardP>* cards;   ///< Cards to export
   
-  private:
+private:
   ExportCardSelectionChoices cards_choices; ///< Ways to select cards
   size_t active_choice;
   wxStaticText* card_count;
@@ -72,7 +72,7 @@ class ExportWindowBase : public wxDialog {
 /** this is used when printing or exporting
  */
 class CardSelectWindow : public wxDialog {
-  public:
+public:
   CardSelectWindow(Window* parent, const SetP& set, const String& label, const String& title, bool sizer=true);
   
   /// Is the given card selected?
@@ -82,7 +82,7 @@ class CardSelectWindow : public wxDialog {
   /// Change which cards are selected
   void setSelection(const vector<CardP>& cards);
   
-  protected:
+protected:
   DECLARE_EVENT_TABLE();
   
   SelectCardList* list;

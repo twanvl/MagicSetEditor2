@@ -51,41 +51,41 @@ String Error::what() const {
 // Stolen from wx/appbase.cpp
 // we can't just call it, because of static linkage
 #if wxUSE_STACKWALKER
-String get_stack_trace() {
+  String get_stack_trace() {
     wxString stackTrace;
 
     class StackDumper : public wxStackWalker {
-      public:
-        StackDumper() {}
+    public:
+      StackDumper() {}
 
-        const wxString& GetStackTrace() const { return m_stackTrace; }
+      const wxString& GetStackTrace() const { return m_stackTrace; }
 
-      protected:
-        virtual void OnStackFrame(const wxStackFrame& frame) {
-            m_stackTrace << wxString::Format(_("[%02d] "), frame.GetLevel());
+    protected:
+      virtual void OnStackFrame(const wxStackFrame& frame) {
+        m_stackTrace << wxString::Format(_("[%02d] "), frame.GetLevel());
 
-            wxString name = frame.GetName();
-            if ( !name.empty() ) {
-                m_stackTrace << wxString::Format(_("%-40s"), name.c_str());
-            } else {
-                m_stackTrace << wxString::Format(
-                                    _("%p"),
-                                    (void*)frame.GetAddress()
-                                );
-            }
-
-            if ( frame.HasSourceLocation() ) {
-                m_stackTrace << _('\t')
-                             << frame.GetFileName()
-                             << _(':')
-                             << (unsigned int)frame.GetLine();
-            }
-
-            m_stackTrace << _('\n');
+        wxString name = frame.GetName();
+        if ( !name.empty() ) {
+          m_stackTrace << wxString::Format(_("%-40s"), name.c_str());
+        } else {
+          m_stackTrace << wxString::Format(
+                              _("%p"),
+                              (void*)frame.GetAddress()
+                          );
         }
 
-      private:
-        wxString m_stackTrace;
+        if ( frame.HasSourceLocation() ) {
+            m_stackTrace << _('\t')
+                          << frame.GetFileName()
+                          << _(':')
+                          << (unsigned int)frame.GetLine();
+        }
+
+        m_stackTrace << _('\n');
+      }
+
+    private:
+      wxString m_stackTrace;
     };
 
     StackDumper dump;
@@ -101,11 +101,11 @@ String get_stack_trace() {
         stackTrace = stackTrace.BeforeLast(wxT('\n'));
 
     return stackTrace;
-}
+  }
 #else
-String get_stack_trace() {
-  return _(""); // not supported
-}
+  String get_stack_trace() {
+    return _(""); // not supported
+  }
 #endif // wxUSE_STACKWALKER
 
 InternalError::InternalError(const String& str)

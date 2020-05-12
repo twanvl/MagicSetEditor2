@@ -16,13 +16,13 @@
 
 /// Viewer that displays a symbol value
 class SymbolValueViewer : public ValueViewer {
-  public:
+public:
   DECLARE_VALUE_VIEWER(Symbol) : ValueViewer(parent,style) {}
   
   virtual void draw(RotatedDC& dc);
   void onValueChange();
   
-  protected:
+protected:
   vector<Bitmap> symbols;  ///< Cached images
 };
 

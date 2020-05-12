@@ -119,7 +119,7 @@ void PackageUpdateList::TreeItem::setIcon(const Image& img) {
 /// wx doesn't allow seeking on InputStreams from a wxURL
 /// The built in buffer class is too stupid to seek, so we must do it ourselfs
 class SeekAtStartInputStream : public wxFilterInputStream {
-  public:
+public:
   SeekAtStartInputStream(wxInputStream& stream)
     : wxFilterInputStream(stream)
     , buffer_pos(0)
@@ -129,33 +129,33 @@ class SeekAtStartInputStream : public wxFilterInputStream {
   }
   
   bool IsSeekable() const { return true; }
-  protected:
-    virtual size_t OnSysRead(void *buffer, size_t bufsize) {
+protected:
+  virtual size_t OnSysRead(void *buffer, size_t bufsize) {
     size_t len = min(buffer_size - buffer_pos, bufsize);
     memcpy(buffer, this->buffer + buffer_pos, len);
     buffer_pos += len;
     m_parent_i_stream->Read((Byte*)buffer + len, bufsize - len);
-    return m_parent_i_stream->LastRead() + len; 
-    }
-    virtual wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode) {
+    return m_parent_i_stream->LastRead() + len;
+  }
+  virtual wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode) {
     if      (mode == wxFromStart)   buffer_pos = seek;
     else if (mode == wxFromCurrent) buffer_pos += seek;
     else                            assert(false);
     assert(buffer_pos < buffer_size);
     return buffer_pos;
-    }
-    virtual wxFileOffset OnSysTell() const {
+  }
+  virtual wxFileOffset OnSysTell() const {
     assert(buffer_pos < buffer_size);
     return buffer_pos;
-    }
-  private:
+  }
+private:
   size_t buffer_size, buffer_pos;
   Byte buffer[1024];
 };
 
 /// Retrieve the icon for a package
 class PackageIconRequest : public ThumbnailRequest {
-  public:
+public:
   PackageIconRequest(PackageUpdateList* list, PackageUpdateList::TreeItem* ti)
     : ThumbnailRequest(
       list,
@@ -177,7 +177,7 @@ class PackageIconRequest : public ThumbnailRequest {
     ti->setIcon(image);
     list->Refresh(false);
   }
-  private:
+private:
   PackageUpdateList* list;
   PackageUpdateList::TreeItem* ti;
 };

@@ -22,7 +22,7 @@ class FilterCtrl;
 
 /// A panel for listing and editing the keywords in a set
 class KeywordsPanel : public SetWindowPanel {
-  public:
+public:
   KeywordsPanel(Window* parent, int id);
   ~KeywordsPanel();
   
@@ -47,7 +47,7 @@ class KeywordsPanel : public SetWindowPanel {
   virtual bool canSelectAll() const;
   virtual void doSelectAll();
 
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   /// Find the code to insert based on the ref_scripts for the parameters of the current keyword

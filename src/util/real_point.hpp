@@ -25,7 +25,7 @@ typedef Vector2D RealPoint;
 
 /// A size (width,height) using real (double) coordinates
 class RealSize {
-  public:
+public:
   double width;
   double height;
   
@@ -125,7 +125,7 @@ inline RealSize piecewise_max(const RealSize& a, const RealSize& b) {
 
 /// A rectangle (postion and size) using real (double) coordinats
 class RealRect : private RealPoint, private RealSize {
-  public:
+public:
   using RealPoint::x;
   using RealPoint::y;
   using RealSize::width;

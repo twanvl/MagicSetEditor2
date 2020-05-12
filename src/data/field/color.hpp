@@ -22,7 +22,7 @@ DECLARE_POINTER_TYPE(ColorValue);
 
 /// A field for color values, it contains a list of choices for colors
 class ColorField : public Field {
-  public:
+public:
   ColorField();
   DECLARE_FIELD_TYPE(Color);
   
@@ -41,7 +41,7 @@ class ColorField : public Field {
 
 /// A color that can be chosen for this field
 class ColorField::Choice : public IntrusivePtrBase<ColorField::Choice> {
-  public:
+public:
   String name;    ///< Name of the color
   Color  color;    ///< The actual color
   
@@ -52,7 +52,7 @@ class ColorField::Choice : public IntrusivePtrBase<ColorField::Choice> {
 
 /// The Style for a ColorField
 class ColorStyle : public Style {
-  public:
+public:
   ColorStyle(const ColorFieldP& field);
   DECLARE_STYLE_TYPE(Color);
   
@@ -70,7 +70,7 @@ class ColorStyle : public Style {
 
 /// The Value in a ColorField
 class ColorValue : public Value {
-  public:
+public:
   ColorValue(const ColorFieldP& field);
   DECLARE_VALUE_TYPE(Color, Defaultable<Color>);
   

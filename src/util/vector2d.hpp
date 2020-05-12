@@ -25,7 +25,7 @@ inline int to_int(double d) {
 
 /// A simple 2d vector class
 class Vector2D {
-  public:
+public:
   /// Coordinates of this vector
   double x, y;
   
@@ -146,7 +146,7 @@ inline Vector2D operator * (double a, const Vector2D& b) { return b * a; }
 
 /// A two dimensional transformation matrix, simply two vectors
 class Matrix2D {
-  public:
+public:
   Vector2D mx, my;
   
   inline Matrix2D() : mx(1,0), my(0,1) {}

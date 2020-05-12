@@ -72,7 +72,7 @@ private:
   void switchSet(const SetP& new_set);
   
   // --------------------------------------------------- : Action related
-  protected:
+protected:
   /// We want to respond to set changes
   virtual void onChangeSet();
   /// Actions that change the set

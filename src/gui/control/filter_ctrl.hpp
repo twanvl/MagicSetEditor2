@@ -18,7 +18,7 @@ class TextCtrlWithFocus;
 
 /// A search/filter textbox
 class FilterCtrl : public wxControl {
-  public:
+public:
   FilterCtrl(wxWindow* parent, int id, String const& placeholder);
   
   /// Set the filter text
@@ -36,7 +36,7 @@ class FilterCtrl : public wxControl {
     }
   }
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   bool changing;
   String value;

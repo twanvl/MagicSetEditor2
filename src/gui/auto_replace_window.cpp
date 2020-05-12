@@ -23,7 +23,7 @@ DECLARE_EVENT_TYPE(EVENT_ITEM_SELECT, <not used>)
 DEFINE_EVENT_TYPE(EVENT_ITEM_SELECT);
 
 class AutoReplaceList : public ItemList {
-  public:
+public:
   AutoReplaceList(Window* parent, int id, const Game& game);
 
   /// The items
@@ -45,7 +45,7 @@ class AutoReplaceList : public ItemList {
 
   using ItemList::refreshList;
 
-  protected:
+protected:
   /// Get all items
   virtual void getItems(vector<VoidP>& out) const;
   /// Return the AutoReplace at the given position in the sorted list

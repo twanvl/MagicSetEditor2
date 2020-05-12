@@ -22,7 +22,7 @@ DECLARE_POINTER_TYPE(ImageValue);
 
 /// A field for image values
 class ImageField : public Field {
-  public:
+public:
   // no extra data
   DECLARE_FIELD_TYPE(Image);
 };
@@ -31,7 +31,7 @@ class ImageField : public Field {
 
 /// The Style for a ImageField
 class ImageStyle : public Style {
-  public:
+public:
   inline ImageStyle(const ImageFieldP& field) : Style(field) {}
   DECLARE_STYLE_TYPE(Image);
   
@@ -44,7 +44,7 @@ class ImageStyle : public Style {
 
 /// The Value in a ImageField, i.e. an image
 class ImageValue : public Value {
-  public:
+public:
   inline ImageValue(const ImageFieldP& field) : Value(field) {}
   DECLARE_VALUE_TYPE(Image, LocalFileName);
   

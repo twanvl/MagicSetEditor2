@@ -54,7 +54,7 @@
    *  Has an interface like boost::regex, but compatible with wxStrings.
    */
   class Regex {
-    public:
+  public:
     struct Results : public boost::match_results<String::const_iterator> {
       /// Get a sub match
       inline String str(int sub = 0) const {
@@ -90,7 +90,7 @@
       return regex.empty();
     }
     
-    private:
+  private:
     boost::basic_regex<Char> regex; ///< The regular expression
   };
 
@@ -101,10 +101,10 @@
    *  Has an interface like boost::regex.
    */
   class Regex 
-    public:
+  public:
     // Interface for compatability with boost::regex
     class Results {
-      public:
+    public:
       typedef pair<const Char*,const Char*> value_type; // (begin,end)
       typedef value_type const_reference;
       /// Number of submatches (+1 for the total match)
@@ -140,7 +140,7 @@
         regex->ReplaceFirst(&inside, format);
         return inside;
       }
-      private:
+    private:
       wxRegEx*    regex;
       const Char* begin;
       friend class ScriptRegex;
@@ -170,7 +170,7 @@
       return !regex.IsValid();
     }
     
-    private:
+  private:
     wxRegEx regex; ///< The regular expression
   };
 

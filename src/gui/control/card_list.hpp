@@ -44,7 +44,7 @@ struct CardSelectEvent : public wxCommandEvent {
   CardP getCard() const;
   /// All focused cards
   void getSelection(vector<CardP>& out) const;
-  private:
+private:
   CardListBase* getTheCardList() const;
 };
 
@@ -58,7 +58,7 @@ struct CardSelectEvent : public wxCommandEvent {
  *        (size_t) index refers to the index in the actual card list.
  */
 class CardListBase : public ItemList, public SetView {
-  public:
+public:
   CardListBase(Window* parent, int id, long additional_style = 0);
   ~CardListBase();
   
@@ -85,12 +85,12 @@ class CardListBase : public ItemList, public SetView {
   virtual void onAction(const Action&, bool undone);
   
   // --------------------------------------------------- : The cards
-  public:
+public:
   /// Return the card at the given position in the sorted card list
   inline CardP getCard(long pos) const { return static_pointer_cast<Card>(getItem(pos)); }
   /// Get a list of all focused cards
   void getSelection(vector<CardP>& out) const;
-  protected:
+protected:
   /// Get a list of all cards
   virtual void getItems(vector<VoidP>& out) const;
   
@@ -121,17 +121,17 @@ class CardListBase : public ItemList, public SetView {
   virtual wxListItemAttr* OnGetItemAttr(long pos) const;
   
   // --------------------------------------------------- : Data
-  private:
+private:
   // display stuff
   vector<FieldP> column_fields; ///< The field to use for each column (by column index)
   FieldP alternate_sort_field;  ///< Second field to sort by, if the column doesn't suffice
   
   mutable wxListItemAttr item_attr; // for OnGetItemAttr
   
-  public:
+public:
   /// Open a dialog for selecting columns to be shown
   void selectColumns();
-  private:
+private:
   /// Store the column sizes in the settings
   void storeColumns();
   /// All card lists; used to exchange column sizes

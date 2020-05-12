@@ -25,7 +25,7 @@ DECLARE_POINTER_TYPE(Value);
 /// The virtual viewer control for a single field on a card (or in the set data)
 /** A viewer can only display a value, not edit it, ValueEditor is used for that */
 class ValueViewer : public StyleListener {
-  public:
+public:
   /// Construct a ValueViewer, set the value at a later time
   ValueViewer(DataViewer& parent, const StyleP& style);
   virtual ~ValueViewer() {}
@@ -71,7 +71,7 @@ class ValueViewer : public StyleListener {
   virtual ValueEditor* getEditor() { return 0; }
   
   DataViewer& viewer;  ///< Our parent object
-  protected:
+protected:
   ValueP valueP;    ///< The value we are currently viewing
   
   /// Set the pen for drawing the border, returns true if a border needs to be drawn
@@ -86,7 +86,7 @@ class ValueViewer : public StyleListener {
   const AlphaMask& getMask(int w = 0, int h = 0) const;
   const AlphaMask& getMask(const Rotation& rot) const;
   
-  public:
+public:
   /// Should this viewer render using a platform native look?
   bool nativeLook() const;
   /// Is this the currently selected viewer?

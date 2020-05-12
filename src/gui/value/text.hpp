@@ -28,7 +28,7 @@ enum IndexType
 /** Okay, this class responds to pretty much every event available... :)
  */
 class TextValueEditor : public TextValueViewer, public ValueEditor {
-  public:
+public:
   DECLARE_VALUE_EDITOR(Text);
   ~TextValueEditor();
   
@@ -83,9 +83,9 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
   // --------------------------------------------------- : Search/replace
   
   virtual bool search(FindInfo& find, bool from_start);
-  private:
+private:
   bool matchSubstr(const String& s, size_t pos, FindInfo& find);
-  public:
+public:
   
   // --------------------------------------------------- : Other
   
@@ -97,7 +97,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
   virtual void draw(RotatedDC&);
   
   // --------------------------------------------------- : Data
-  private:
+private:
   size_t selection_start,   selection_end;   ///< Cursor position/selection (if any), cursor positions
   size_t selection_start_i, selection_end_i; ///< Cursor position/selection, character indices
   bool selecting;                            ///< Selecting text?

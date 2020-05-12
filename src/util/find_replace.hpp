@@ -18,7 +18,7 @@ DECLARE_POINTER_TYPE(TextValue);
 
 /// Information for search/replace
 class FindInfo {
-  public:
+public:
   FindInfo(wxFindReplaceData& what) : what(what) {}
   virtual ~FindInfo() {}
   
@@ -39,7 +39,7 @@ class FindInfo {
   /// String to look for
   inline const String& findString() const { return what.GetFindString(); }
   
-  protected:
+protected:
   wxFindReplaceData& what; ///< What to search for, the direction to search in
 };
 

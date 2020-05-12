@@ -18,14 +18,14 @@ DECLARE_POINTER_TYPE(AlphaMask);
 
 /// Viewer that displays an image value
 class ImageValueViewer : public ValueViewer {
-  public:
+public:
   DECLARE_VALUE_VIEWER(Image) : ValueViewer(parent,style) {}
   
   virtual void draw(RotatedDC& dc);
   virtual void onValueChange();
   virtual void onStyleChange(int);
       
-  private:
+private:
   Bitmap bitmap; ///< Cached bitmap
   RealSize size; ///< Size of cached bitmap
   Radians angle;  ///< Angle of cached bitmap

@@ -19,7 +19,7 @@
 
 /// Our own exception class
 class Error {
-  public:
+public:
   Error(const String& message);
   virtual ~Error();
   
@@ -28,14 +28,14 @@ class Error {
   /// Is the message (potentially) fatal?
   virtual bool is_fatal() const { return false; }
   
-  protected:
+protected:
   String message; ///< The error message
 };
 
 
 /// Internal errors
 class InternalError : public Error {
-  public:
+public:
   InternalError(const String& str);
   // not all internal errors are fatal, but we had still better warn the user about them.
   virtual bool is_fatal() const { return true; }
@@ -45,19 +45,19 @@ class InternalError : public Error {
 
 /// Errors related to packages
 class PackageError : public Error {
-  public:
+public:
   inline PackageError(const String& str) : Error(str) {}
 };
 
 /// A package is not found
 class PackageNotFoundError : public PackageError {
-  public:
+public:
   inline PackageNotFoundError(const String& str) : PackageError(str) {}
 };
 
 /// A file is not found
 class FileNotFoundError : public PackageError {
-  public:
+public:
   inline FileNotFoundError(const String& file, const String& package)
     : PackageError(_ERROR_2_("file not found", file, package))
   {}
@@ -67,13 +67,13 @@ class FileNotFoundError : public PackageError {
 
 /// Parse errors
 class ParseError : public Error {
-  public:
+public:
   inline ParseError(const String& str) : Error(str) {}
 };
 
 /// Parse error in a particular file
 class FileParseError : public ParseError {
-  public:
+public:
   inline FileParseError(const String& err, const String& file) :
     ParseError(_ERROR_2_("file parse error", file, err))
   {}
@@ -81,7 +81,7 @@ class FileParseError : public ParseError {
 
 /// Parse error in a script
 class ScriptParseError : public ParseError {
-  public:
+public:
   ScriptParseError(size_t pos, int line, const String& filename, const String& str);
   ScriptParseError(size_t pos, int line, const String& filename, const String& expected, const String& found);
   ScriptParseError(size_t pos1, size_t pos2, int line, const String& filename, const String& open, const String& close, const String& found);
@@ -97,7 +97,7 @@ class ScriptParseError : public ParseError {
 
 /// Multiple parse errors in a script
 class ScriptParseErrors : public ParseError {
-  public:
+public:
   ScriptParseErrors(const vector<ScriptParseError>& errors);
 };
 
@@ -105,19 +105,19 @@ class ScriptParseErrors : public ParseError {
 
 /// A runtime error in a script
 class ScriptError : public Error {
-  public:
+public:
   inline ScriptError(const String& str) : Error(str) {}
 };
 
 /// "Variable not set"
 class ScriptErrorNoVariable : public ScriptError {
-  public:
+public:
   inline ScriptErrorNoVariable(const String& var) : ScriptError(_("Variable not set: ") + var) {}
 };
 
 /// "Can't convert from A to B"
 class ScriptErrorConversion : public ScriptError {
-  public:
+public:
   inline ScriptErrorConversion(const String& a, const String& b)
     : ScriptError(_ERROR_2_("can't convert", a, b)) {}
   inline ScriptErrorConversion(const String& value, const String& a, const String& b)
@@ -126,7 +126,7 @@ class ScriptErrorConversion : public ScriptError {
 
 /// "A has no member B"
 class ScriptErrorNoMember : public ScriptError {
-  public:
+public:
   inline ScriptErrorNoMember(const String& type, const String& member)
     : ScriptError(_ERROR_2_("has no member", type, member)) {}
 };

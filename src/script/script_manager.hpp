@@ -54,7 +54,7 @@ protected:
  *  itself owns this object.
  */
 class SetScriptManager : public SetScriptContext, public ActionListener {
-  public:
+public:
   SetScriptManager(Set& set);
   ~SetScriptManager();
   
@@ -70,7 +70,7 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
    */
   void updateAll();
   
-  private:
+private:
   void onInit(const StyleSheetP& stylesheet, Context& ctx) override;
   
   void initDependencies(Context&, Game&);
@@ -105,7 +105,7 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
   };
   int delay;
   
-  protected:
+protected:
   /// Respond to actions by updating scripts
   void onAction(const Action&, bool undone);
 };

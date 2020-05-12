@@ -15,7 +15,7 @@
 /// A filter function to determine which items are shown in a list
 template <typename T>
 class Filter : public IntrusivePtrVirtualBase {
-  public:
+public:
   typedef intrusive_ptr<T> TP;
   
   virtual ~Filter() {}

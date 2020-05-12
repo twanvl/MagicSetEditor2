@@ -27,7 +27,7 @@ String card_rarity_code(const String& rarity);
 
 /// Callback for updating a progress bar
 class WithProgress {
-  public:
+public:
   virtual void onProgress(float progress, const String& message) = 0;
   virtual ~WithProgress () {}
 };
@@ -37,7 +37,7 @@ class AbortException {};
 
 /// A dialog to show the progress of exporting
 class ExportProgressDialog : public wxProgressDialog, public WithProgress {
-  public:
+public:
   ExportProgressDialog(Window* parent, const String& title, const String& message);
   
   /// Update the progress bar
@@ -60,7 +60,7 @@ void ExportProgressDialog::onProgress(float progress, const String& message) {
 
 /// An Apprentice database file, has read() and write() functions
 class ApprDatabase {
-  public:
+public:
   ApprDatabase(WithProgress* progress_target, const String& name);
   virtual ~ApprDatabase();
   
@@ -71,13 +71,13 @@ class ApprDatabase {
   /// Finalize the writing, swap the actual and the temporary file
   void commit();
   
-  protected:
+protected:
   virtual void doRead(wxInputStream&)   = 0;
   virtual void doWrite(wxOutputStream&) = 0;
   
   WithProgress* progress_target; ///< Write progress information to here
   
-  private:
+private:
   bool in_progress; ///< Is writing in progress?
   String filename; ///< Filename of database file
 };
@@ -92,7 +92,7 @@ ApprDatabase::~ApprDatabase() {
   // An exception is thrown while we were writing, clean up the temporary files
   if (in_progress) {
     // abort 'transaction'
-    wxRemoveFile(filename + _(".new"));
+    remove_file(filename + _(".new"));
   }
 }
 
@@ -106,7 +106,7 @@ void ApprDatabase::read() {
 void ApprDatabase::write() {
   // write to a .new file, doesn't commit yet
   if (wxFileExists(filename + _(".new"))) {
-    wxRemoveFile(filename + _(".new"));
+    remove_file(filename + _(".new"));
   }
   wxFileOutputStream out(filename + _(".new"));
   in_progress = true;
@@ -128,15 +128,15 @@ void ApprDatabase::commit() {
 
 /// An Apprentice expansion database (Expan.dat)
 class ApprExpansionDatabase : public ApprDatabase {
-  public:
+public:
   inline ApprExpansionDatabase(WithProgress* progress_target)
     : ApprDatabase(progress_target, _("Expan.dat"))
   {}
-  protected:
+protected:
   virtual void doRead(wxInputStream& in);
   virtual void doWrite(wxOutputStream& out);
   
-  public:
+public:
   map<String,String> expansions; ///< code -> name
   vector<String> order;          ///< order of codes
 };
@@ -181,25 +181,25 @@ void ApprExpansionDatabase::doWrite(wxOutputStream& out) {
 // ----------------------------------------------------------------------------- : Format database
 
 class ApprFormat {
-  public:
+public:
   ApprFormat(const String& name) : name(name) {}
   String name, sets;
 };
 
 /// An Apprentice format database (Format.dat)
 class ApprFormatDatabase : public ApprDatabase {
-  public:
+public:
   inline ApprFormatDatabase(WithProgress* progress_target)
     : ApprDatabase(progress_target, _("Format.dat"))
   {}
   /// Remove a set code from all formats
   void removeSet(const String& code);
   
-  protected:
+protected:
   virtual void doRead(wxInputStream& in);
   virtual void doWrite(wxOutputStream& out);
   
-  private:
+private:
   vector<ApprFormat> formats;
 };
 
@@ -253,7 +253,7 @@ void ApprFormatDatabase::doWrite(wxOutputStream& out) {
 
 // An entry in the Distro database
 class ApprDistro {
-  public:
+public:
   inline ApprDistro(int bc = 0, int bu = 0, int br = 0,  int sc = 0, int su = 0, int sr = 0)
     : bc(bc), bu(bu), br(br)
     , sc(sc), su(su), sr(sr)
@@ -266,24 +266,24 @@ class ApprDistro {
   
   void write(const String& code, wxTextOutputStream& tout);
   
-  private:
+private:
   void writeD(wxTextOutputStream& tout, const String& name, int c, int u, int r);
 };
 
 /// An Apprentice distribution database (Distro.dat)
 class ApprDistroDatabase : public ApprDatabase {
-  public:
+public:
   inline ApprDistroDatabase(WithProgress* progress_target)
     : ApprDatabase(progress_target, _("Distro.dat"))
   {}
   /// Remove a set code
   void removeSet(const String& code);
   
-  protected:
+protected:
   virtual void doRead(wxInputStream& in);
   virtual void doWrite(wxOutputStream& out);
   
-  public:
+public:
   map<String,ApprDistro> distros;
   vector<String> order; // order of codes
 };
@@ -357,18 +357,18 @@ DECLARE_POINTER_TYPE(ApprCardRecord);
 
 /// An Apprentice card database (cardinfo.dat)
 class ApprCardDatabase : public ApprDatabase {
-  public:
+public:
   inline ApprCardDatabase(WithProgress* progress_target)
     : ApprDatabase(progress_target, _("sets\\cardinfo.dat"))
   {}
   /// Remove a set code
   void removeSet(const String& code);
   
-  protected:
+protected:
   virtual void doRead(wxInputStream& in);
   virtual void doWrite(wxOutputStream& out);
   
-  public:
+public:
   vector<ApprCardRecordP> cards;
 };
 
@@ -377,7 +377,7 @@ class ApprCardDatabase : public ApprDatabase {
  *  and a head record at the bottom
  */
 class ApprCardRecord : public IntrusivePtrBase<ApprCardRecord> {
-  public:
+public:
   String name, sets;
   String type, cc, pt, text, flavor;
   UInt data_pos;
@@ -579,13 +579,13 @@ void ApprCardDatabase::doWrite(wxOutputStream& out) {
 
 /// Dialog for exporting a set to Apprentice
 class ApprenticeExportWindow : public wxDialog, public WithProgress {
-  public:
+public:
   ApprenticeExportWindow(Window* parent, const SetP& set);
   
   virtual void onProgress(float p, const String& message);
   void doStep(const String& s, float size);
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   SetP set;
   

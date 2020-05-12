@@ -18,14 +18,14 @@ class PackageInfoPanel;
 
 /// A window that displays the installed packages and updates to them
 class PackagesWindow : public wxDialog {
-  public:
+public:
   /// Show the packages window, optionally downloading the package database from the website
   PackagesWindow(Window* parent, bool download_package_list = true);
   /// Show the packages window for an installer
   PackagesWindow(Window* parent, const InstallerP& installer);
   ~PackagesWindow();
   
-  private:
+private:
   PackageUpdateList* package_list; ///< List of available packages
   PackageInfoPanel*  package_info; ///< Description of the selected package
   

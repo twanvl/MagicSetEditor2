@@ -23,7 +23,7 @@ class Rotation;
 
 /// A bezier curve for evaluation
 class BezierCurve {
-  public:
+public:
   /// coefficients of the equation (x,y) = at^3 + bt^2 + ct + d
   Vector2D a, b, c, d;
   

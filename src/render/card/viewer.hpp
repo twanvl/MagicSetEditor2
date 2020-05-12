@@ -72,12 +72,12 @@ class DataViewer : public SetView {
   virtual void onChangeSet();
   
   // --------------------------------------------------- : The viewers
-  private:
+private:
   /// Create some viewers for the given styles
   void addStyles(IndexMap<FieldP,StyleP>& styles);
   /// Update style scripts
   void updateStyles(bool only_content_dependent);
-  protected:
+protected:
   /// Set the styles for the data to be shown, recreating the viewers
   void setStyles(const StyleSheetP& stylesheet, IndexMap<FieldP,StyleP>& styles, IndexMap<FieldP,StyleP>* extra_styles = nullptr);
   /// Set the data to be shown in the viewers, refresh them

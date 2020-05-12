@@ -20,7 +20,7 @@ DECLARE_POINTER_TYPE(Card);
 
 /// A filter for a specific file format
 class FileFormat : public IntrusivePtrVirtualBase {
-  public:
+public:
   virtual ~FileFormat() {}
   /// File extension used by this file format
   virtual String extension() = 0;

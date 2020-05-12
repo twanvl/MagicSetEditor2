@@ -18,7 +18,7 @@
  */
 template <typename T>
 class Defaultable {
-  public:
+public:
   inline Defaultable()                             :           is_default(true)  {}
   inline Defaultable(const T& v, bool def = false) : value(v), is_default(def) {}
   
@@ -57,7 +57,7 @@ class Defaultable {
   /** used by scriptable to check for changes */
   inline bool operator != (const Defaultable& that) const { return value != that.value; }
   
-  private:
+private:
   /// The value
   T value;
   /// Is this value in the default state?

@@ -26,7 +26,7 @@ DECLARE_POINTER_TYPE(StyleSheet);
 
 /// A card from a card Set
 class Card : public IntrusivePtrVirtualBase, public IntrusiveFromThis<Card> {
-  public:
+public:
   /// Default constructor, uses game_for_new_cards to make the game
   Card();
   /// Creates a card using the given game

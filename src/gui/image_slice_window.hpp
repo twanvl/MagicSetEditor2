@@ -27,7 +27,7 @@ enum PreferedProperty
 
 /// A slice of an image, i.e. a selected rectangle
 class ImageSlice {
-  public:
+public:
   ImageSlice(const Image& source, const wxSize& target_size);
   
   Image  source;    ///< The source image
@@ -57,14 +57,14 @@ class ImageSlice {
 
 /// Dialog for selecting a slice of an image
 class ImageSliceWindow : public wxDialog {
-  public:
+public:
   ImageSliceWindow(Window* parent, const Image& source, const wxSize& target_size, const AlphaMask& target_mask);
   
   /// Return the sliced image
   Image getImage() const;
   
   // --------------------------------------------------- : Data
-  private:
+private:
   // The slice we are extracting
   ImageSlice slice;
   // Gui items
@@ -114,14 +114,14 @@ class ImageSliceWindow : public wxDialog {
 
 /// A preview of the sliced image
 class ImageSlicePreview : public wxControl {
-  public:
+public:
   ImageSlicePreview(Window* parent, int id, ImageSlice& slice, const AlphaMask& mask);
   
   /// Notify that the slice was updated
   void update();
   
   // --------------------------------------------------- : Data
-  private:
+private:
   Bitmap bitmap;
   ImageSlice& slice;
   const AlphaMask& mask;
@@ -149,14 +149,14 @@ class ImageSlicePreview : public wxControl {
 
 // A overview of the slicing of the image, allows to select the sliced area
 class ImageSliceSelector : public wxControl {
-  public:
+public:
   ImageSliceSelector(Window* parent, int id, ImageSlice& slice);
   
   /// Notify that the slice was updated
   void update();
   
   // --------------------------------------------------- : Data
-  private:
+private:
   ImageSlice& slice;
   Bitmap bitmap, bitmap_no_sel;  ///< Bitmaps showing selection
   

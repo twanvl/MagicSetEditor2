@@ -128,7 +128,7 @@ bool create_parent_dirs(const String& file) {
 // ----------------------------------------------------------------------------- : Removing
 
 class RecursiveDeleter : public wxDirTraverser {
-  public:
+public:
   RecursiveDeleter(const String& start) {
     to_delete.push_back(start);
     ok = true;
@@ -160,7 +160,7 @@ class RecursiveDeleter : public wxDirTraverser {
     to_delete.push_back(dirname);
     return wxDIR_CONTINUE;
   }
-  private:
+private:
   vector<String> to_delete;
 };
 
@@ -195,7 +195,7 @@ bool rename_file_or_dir(const String& from, const String& to) {
 // ----------------------------------------------------------------------------- : Moving
 
 class IgnoredMover : public wxDirTraverser {
-  public:
+public:
   IgnoredMover(const String& from, const String& to)
     : from(from), to(to)
   {}
@@ -206,7 +206,7 @@ class IgnoredMover : public wxDirTraverser {
   wxDirTraverseResult OnDir(const String& dirname) {
     return tryMove(dirname) ? wxDIR_IGNORE : wxDIR_CONTINUE;
   }
-  private:
+private:
   String from, to;
   bool tryMove(const String& from_path) {
     if (is_substr(from_path,0,from)) {

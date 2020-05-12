@@ -48,7 +48,7 @@ enum WhichHandle
 
 /// A control point (corner) of a SymbolShape (polygon/bezier-gon)
 class ControlPoint : public IntrusivePtrBase<ControlPoint> {
-  public:
+public:
   Vector2D pos;      ///< position of the control point itself
   Vector2D delta_before;  ///< delta to bezier control point, for curve before point
   Vector2D delta_after;  ///< delta to bezier control point, for curve after point
@@ -80,7 +80,7 @@ class ControlPoint : public IntrusivePtrBase<ControlPoint> {
 
 /// A specific handle of a ControlPoint
 class SelectedHandle {
-  public:
+public:
   ControlPointP point;  ///< the selected point
   WhichHandle   handle; ///< the selected handle of the point
   
@@ -109,7 +109,7 @@ class SelectedHandle {
 
 /// Bounding box of a symbol part
 class Bounds {
-  public:
+public:
   inline Bounds() : min(Vector2D::infinity()), max(-Vector2D::infinity()) {}
   inline explicit Bounds(const Vector2D& p) : min(p), max(p) {}
   inline Bounds(const Vector2D& min, const Vector2D& max) : min(min), max(max) {}
@@ -135,7 +135,7 @@ class Bounds {
 
 /// A part of a symbol, not necesserly a shape
 class SymbolPart : public IntrusivePtrVirtualBase {
-  public:
+public:
   /// Name/label for this part
   String name;
   /// Position and size of the part.
@@ -196,7 +196,7 @@ inline size_t mod(int a, size_t size) {
 
 /// A single shape (polygon/bezier-gon) in a Symbol
 class SymbolShape : public SymbolPart {
-  public:
+public:
   /// The points of this polygon
   vector<ControlPointP> points;
   /// How is this part combined with parts below it?
@@ -231,7 +231,7 @@ class SymbolShape : public SymbolPart {
 
 /// A group of symbol parts
 class SymbolGroup : public SymbolPart {
-  public:
+public:
   vector<SymbolPartP> parts;  ///< The parts in this group, first item is on top
   
   SymbolGroup();
@@ -259,7 +259,7 @@ enum SymbolSymmetryType
 /// A mirror, reflecting the part of the symbol in the group
 /** Can handle rotation symmetry with any number of reflections */
 class SymbolSymmetry : public SymbolGroup {
-  public:
+public:
   SymbolSymmetryType kind;  ///< What kind of symmetry
   int                copies;  ///< How many times is the orignal reflected (including the original itself)
   bool               clip;  ///< Clip the orignal so it doesn't intersect the mirror(s)
@@ -284,7 +284,7 @@ class SymbolSymmetry : public SymbolGroup {
 
 /// An editable symbol, consists of any number of SymbolParts
 class Symbol : public SymbolGroup {
-  public:
+public:
   /// Actions performed on this symbol and the parts in it
   ActionStack actions;
   
@@ -304,7 +304,7 @@ SymbolP default_symbol();
 /** To listen to events, derived classes should override onAction(const Action&, bool undone)
  */
 class SymbolView : public ActionListener {
-  public:
+public:
   SymbolView();
   ~SymbolView();
   
@@ -313,7 +313,7 @@ class SymbolView : public ActionListener {
   /// Change the symbol that is being viewed
   void   setSymbol(const SymbolP& symbol);
   
-  protected:
+protected:
   /// The symbol that is currently being viewed, should not be modified directly!
   SymbolP symbol;
   

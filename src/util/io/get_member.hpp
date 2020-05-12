@@ -112,7 +112,7 @@ public:
   template <typename K, typename V> void handle(const DelayedIndexMaps<K,V>&);
   template <typename K, typename V> void handle(const DelayedIndexMapsData<K,V>&);
   
-  private:
+private:
   const String& target_name;  ///< The name we are looking for
   GetDefaultMember gdm;    ///< Object to store and retrieve the value
 };
@@ -148,7 +148,7 @@ public:
 
 /// Handler to be used when reflecting enumerations for GetMember
 class EnumGetMember {
-  public:
+public:
   inline EnumGetMember(GetDefaultMember& gdm)
     : gdm(gdm) {}
   
@@ -160,7 +160,7 @@ class EnumGetMember {
     }
   }
   
-  private:
+private:
   GetDefaultMember& gdm;  ///< The object to store output in
 };
 

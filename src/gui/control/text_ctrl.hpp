@@ -27,7 +27,7 @@ DECLARE_POINTER_TYPE(FakeTextValue);
  *                     2. Ignore the problem, it will not happen in practice
  */
 class TextCtrl : public DataEditor {
-  public:
+public:
   TextCtrl(Window* parent, int id, bool multi_line, long style = wxBORDER_THEME);
   ~TextCtrl();
   
@@ -57,11 +57,11 @@ class TextCtrl : public DataEditor {
   
   virtual void onChangeSet();
   
-  protected:
+protected:
   virtual void onInit();
   virtual wxSize DoGetBestSize() const;
   
-  private:
+private:
   bool multi_line; ///< Multi line text control?
   
   DECLARE_EVENT_TABLE();

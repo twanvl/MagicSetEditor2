@@ -20,7 +20,7 @@ DECLARE_POINTER_TYPE(ValueActionPerformer);
 
 /// The window for editing symbols
 class SymbolWindow : public wxFrame {
-  public:
+public:
   /// Construct a SymbolWindow
   SymbolWindow(Window* parent);
   /// Construct a SymbolWindow showing a symbol from a file
@@ -29,7 +29,7 @@ class SymbolWindow : public wxFrame {
   SymbolWindow(Window* parent, ValueActionPerformer* performer);
   ~SymbolWindow();
   
-  private:
+private:
   // --------------------------------------------------- : Children
   
   /// Actual initialisation
@@ -66,7 +66,7 @@ class SymbolWindow : public wxFrame {
   
   bool inSelectionEvent; ///< Prevent recursion in onSelect...
   
-  public:
+public:
   void onSelectFromControl();
 };
 

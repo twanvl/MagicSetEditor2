@@ -17,7 +17,7 @@
 
 /// An editor 'control' for editing MultipleChoiceValues
 class MultipleChoiceValueEditor : public MultipleChoiceValueViewer, public ValueEditor {
-  public:
+public:
   DECLARE_VALUE_EDITOR(MultipleChoice);
   ~MultipleChoiceValueEditor();
   
@@ -29,7 +29,7 @@ class MultipleChoiceValueEditor : public MultipleChoiceValueViewer, public Value
   virtual bool onChar(wxKeyEvent& ev);
   virtual void onLoseFocus();
   
-  private:
+private:
   DropDownListP drop_down;
   vector<int> active;      ///< Which choices are active? (note: vector<bool> is evil)
   friend class DropDownMultipleChoiceList;

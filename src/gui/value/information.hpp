@@ -16,7 +16,7 @@
 
 /// An editor 'control' for editing InfoValues
 class InfoValueEditor : public InfoValueViewer, public ValueEditor {
-  public:
+public:
   DECLARE_VALUE_EDITOR(Info);
   
   virtual void determineSize(bool);

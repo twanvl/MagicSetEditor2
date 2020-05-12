@@ -18,13 +18,13 @@ typedef intrusive_ptr<Filter<Card> > CardListFilterP;
 
 /// A card list that lists a subset of the cards in the set
 class FilteredCardList : public CardListBase {
-  public:
+public:
   FilteredCardList(Window* parent, int id, long additional_style = 0);
   
   /// Change the filter to use
   void setFilter(const CardListFilterP& filter);
   
-  protected:
+protected:
   /// Get only the subset of the cards
   virtual void getItems(vector<VoidP>& out) const;
   

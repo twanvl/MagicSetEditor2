@@ -23,7 +23,7 @@ class FilterCtrl;
 
 /// A card list and card editor panel
 class CardsPanel : public SetWindowPanel {
-  public:
+public:
   CardsPanel(Window* parent, int id);
   ~CardsPanel();
   
@@ -61,21 +61,21 @@ class CardsPanel : public SetWindowPanel {
   virtual bool doFind      (wxFindReplaceData&);
   virtual bool doReplace   (wxFindReplaceData&);
   virtual bool doReplaceAll(wxFindReplaceData&);
-  private:
+private:
   /// Do a search or replace action for the given FindInfo in all cards
   bool search(FindInfo& find, bool from_start);
   class SearchFindInfo;
   class ReplaceFindInfo;
   friend class CardsPanel::SearchFindInfo;
   friend class CardsPanel::ReplaceFindInfo;
-  public:
-  
+public:
+
   // --------------------------------------------------- : Selection
   virtual CardP selectedCard() const;
   virtual void selectCard(const CardP& card);
   virtual void selectFirstCard();
-  
-  private:
+
+private:
   // --------------------------------------------------- : Controls
   wxSizer*          s_left;
   wxSplitterWindow* splitter;

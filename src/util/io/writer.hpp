@@ -20,7 +20,7 @@ DECLARE_POINTER_TYPE(StyleSheet);
 
 /// The Writer can be used for writing (serializing) objects
 class Writer {
-  public:
+public:
   /// Construct a writer that writes to the given output stream
   Writer(OutputStream& output, Version file_app_version);
   
@@ -69,7 +69,7 @@ class Writer {
   void handle(const GameP&);
   void handle(const StyleSheetP&);
   
-  private:
+private:
   // --------------------------------------------------- : Data
   /// Indentation of the current block
   int indentation;
@@ -147,7 +147,7 @@ void Writer::handle(const IndexMap<K,V>& m) {
 
 /// Handler to be used when reflecting enumerations for Writer
 class EnumWriter {
-  public:
+public:
   inline EnumWriter(Writer& writer)
     : writer(writer) {}
   
@@ -159,7 +159,7 @@ class EnumWriter {
     }
   }
   
-  private:
+private:
   Writer& writer;  ///< The writer to write output to
 };
 

@@ -33,7 +33,7 @@
  *  - line_id   The index of a line, 0 is the first line.
  */
 class TextViewer {
-  public:
+public:
   /// Information on a line in the textbox
   struct Line;
   
@@ -116,11 +116,11 @@ class TextViewer {
   /// Set exact scroll position
   void setExactScrollPosition(double pos);
   
-  private:
+private:
   /// Scroll all lines a given amount
   void scrollBy(double delta);
   
-  private:
+private:
   // --------------------------------------------------- : More drawing
   double scale;    ///< Scale when drawing
   

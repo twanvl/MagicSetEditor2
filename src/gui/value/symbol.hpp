@@ -18,7 +18,7 @@ class ValueActionPerformer;
 
 /// An editor 'control' for editing SymbolValues
 class SymbolValueEditor : public SymbolValueViewer, public ValueEditor {
-  public:
+public:
   DECLARE_VALUE_EDITOR(Symbol);
   
   virtual void draw(RotatedDC& dc);
@@ -27,7 +27,7 @@ class SymbolValueEditor : public SymbolValueViewer, public ValueEditor {
   virtual bool onLeftDClick(const RealPoint& pos, wxMouseEvent&);
   virtual bool onMotion    (const RealPoint& pos, wxMouseEvent&);
   virtual void determineSize(bool);
-  private:
+private:
   /// Draw a button, buttons are numbered from the right
   void drawButton(RotatedDC& dc, int button, const String& text);
   /// Is there a button at the given position? returns the button index, or -1 if there is no button

@@ -30,7 +30,7 @@ DECLARE_POINTER_TYPE(InstallablePackage);
 /** Installers will be sent around the internet, etc. so they are fairly selfcontained.
  */
 class Installer : public Packaged {
-  public:
+public:
   String prefered_filename;  ///< What filename should be used (by default), when creating the installer
   vector<PackageDescriptionP> packages;  ///< Packages to install
   
@@ -42,7 +42,7 @@ class Installer : public Packaged {
    */
   void addPackage(Packaged& package);
   
-  protected:
+protected:
   virtual String typeName() const;
   virtual Version fileVersion() const;
   virtual void validate(Version file_app_version);
@@ -56,7 +56,7 @@ class Installer : public Packaged {
  *  TODO: try to merge these!
  */
 class PackageDescription : public IntrusivePtrBase<PackageDescription> {
-  public:
+public:
   PackageDescription();
   PackageDescription(const Packaged& package);
   
@@ -80,7 +80,7 @@ class PackageDescription : public IntrusivePtrBase<PackageDescription> {
 
 /// A description of the contents of an installer
 class InstallerDescription : public IntrusivePtrBase<InstallerDescription> {
-  public:
+public:
   vector<PackageDescriptionP> packages;
   
   DECLARE_REFLECTION();
@@ -88,7 +88,7 @@ class InstallerDescription : public IntrusivePtrBase<InstallerDescription> {
 
 /// Information on an installer that can be downloaded
 class DownloadableInstaller : public IntrusivePtrBase<DownloadableInstaller> {
-  public:
+public:
   DownloadableInstaller() : downloadable(true) {}
   DownloadableInstaller(const InstallerP& installer);
   ~DownloadableInstaller();
@@ -133,7 +133,7 @@ inline bool flag(int flags, int flag) { return (flags & flag) == flag; }
 
 /// A package that can be installed, or is already installed
 class InstallablePackage : public IntrusivePtrVirtualBase {
-  public:
+public:
   /// A new package
   InstallablePackage(const PackageDescriptionP&, const DownloadableInstallerP&);
   /// An installed package

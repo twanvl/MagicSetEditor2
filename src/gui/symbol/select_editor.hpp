@@ -20,14 +20,14 @@ DECLARE_POINTER_TYPE(SymbolPartShearAction);
 
 /// Editor that allows the user to select symbol parts
 class SymbolSelectEditor : public SymbolEditorBase {
-  public:
+public:
   SymbolSelectEditor(SymbolControl* control, bool rotate);
   
   // --------------------------------------------------- : Drawing
   
   virtual void draw(DC& dc);
   
-  private:
+private:
   /// Draw handles on all sides
   void drawHandles(DC& dc);
   /// Draw a handle, dx and dy indicate the side, can be {-1,0,1}
@@ -36,7 +36,7 @@ class SymbolSelectEditor : public SymbolEditorBase {
   /// Draw the rotation center
   void drawRotationCenter(DC& dc, const Vector2D& pos);
   
-  public:
+public:
   // --------------------------------------------------- : UI
   
   virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
@@ -60,7 +60,7 @@ class SymbolSelectEditor : public SymbolEditorBase {
   
   virtual bool isEditing();
   
-  private:
+private:
   // The part under the mouse cursor
   SymbolPartP highlightPart;
   // Actions

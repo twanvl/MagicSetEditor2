@@ -20,7 +20,7 @@ DECLARE_POINTER_TYPE(ThumbnailRequest);
 
 /// An editor 'control' for editing ChoiceValues
 class ChoiceValueEditor : public ChoiceValueViewer, public ValueEditor {
-  public:
+public:
   DECLARE_VALUE_EDITOR(Choice);
   ~ChoiceValueEditor();
   
@@ -32,7 +32,7 @@ class ChoiceValueEditor : public ChoiceValueViewer, public ValueEditor {
   virtual void draw(RotatedDC& dc);
   virtual void determineSize(bool);
   
-  private:
+private:
   DropDownListP drop_down;
   friend class DropDownChoiceList;
   /// Change the choice
@@ -89,10 +89,10 @@ private:
 
 /// A drop down list of choices
 class DropDownChoiceList : public DropDownChoiceListBase {
-  public:
+public:
   DropDownChoiceList(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group);
   
-  protected:
+protected:
   virtual void   onShow();
   virtual void   select(size_t item);
   virtual size_t selection() const;

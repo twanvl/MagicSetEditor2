@@ -23,7 +23,7 @@ DECLARE_POINTER_TYPE(PackageChoiceValue);
 
 /// A field for PackageChoice values, it contains a list of choices for PackageChoices
 class PackageChoiceField : public Field {
-  public:
+public:
   PackageChoiceField() : required(true), empty_name(_("none")) {}
   DECLARE_FIELD_TYPE(PackageChoice);
   
@@ -40,7 +40,7 @@ class PackageChoiceField : public Field {
 
 /// The Style for a PackageChoiceField
 class PackageChoiceStyle : public Style {
-  public:
+public:
   PackageChoiceStyle(const PackageChoiceFieldP& field);
   DECLARE_STYLE_TYPE(PackageChoice);
   
@@ -53,7 +53,7 @@ class PackageChoiceStyle : public Style {
 
 /// The Value in a PackageChoiceField
 class PackageChoiceValue : public Value {
-  public:
+public:
   PackageChoiceValue(const PackageChoiceFieldP& field) : Value(field), package_name(field->initial) {}
   DECLARE_VALUE_TYPE(PackageChoice, String);
   

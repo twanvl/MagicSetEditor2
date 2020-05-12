@@ -87,7 +87,7 @@ struct NegTag {
 
 /// A stack of opened HTML tags
 class TagStack {
-  public:
+public:
   void open(String& ret, Tag& tag) {
     add(ret, NegTag(&tag, false));
   }
@@ -113,7 +113,7 @@ class TagStack {
     pending_tags.clear();
   }
   
-  private:
+private:
   vector<Tag*>   tags;      ///< Tags opened in the html output
   vector<NegTag> pending_tags;  ///< Tags opened in the tagged string, but not (yet) in the output
   

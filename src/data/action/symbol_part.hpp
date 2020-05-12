@@ -51,7 +51,7 @@ protected:
 
 /// Moving a control point in a symbol
 class ControlPointMoveAction : public ExtendableAction {
-  public:
+public:
   ControlPointMoveAction(const set<ControlPointP>& points);
   
   virtual String getName(bool to_undo) const;
@@ -60,11 +60,11 @@ class ControlPointMoveAction : public ExtendableAction {
   /// Update this action to move some more
   void move(const Vector2D& delta);
   
-  private:
+private:
   set<ControlPointP> points;  ///< Points to move
   vector<Vector2D> oldValues; ///< Their old positions
   Vector2D delta;        ///< Amount we moved
-  public:
+public:
   bool constrain;        ///< Constrain movement?
   int snap;          ///< Snap to grid?
 };
@@ -73,7 +73,7 @@ class ControlPointMoveAction : public ExtendableAction {
 
 /// Moving a handle(before/after) of a control point in a symbol
 class HandleMoveAction : public ExtendableAction {
-  public:
+public:
   HandleMoveAction(const SelectedHandle& handle);
   
   virtual String getName(bool to_undo) const;
@@ -82,12 +82,12 @@ class HandleMoveAction : public ExtendableAction {
   /// Update this action to move some more
   void move(const Vector2D& delta);
   
-  private:
+private:
   SelectedHandle handle;    ///< The handle to move
   Vector2D old_handle;    ///< Old value of this handle
   Vector2D old_other;      ///< Old value of other handle, needed for contraints
   Vector2D delta;        ///< Amount we moved
-  public:
+public:
   bool constrain;        ///< Constrain movement?
   int snap;          ///< Snap to grid?
 };
@@ -96,7 +96,7 @@ class HandleMoveAction : public ExtendableAction {
 
 /// Utility class to update a control point
 class ControlPointUpdate {
-  public:
+public:
   ControlPointUpdate(const ControlPointP& pnt);
   
   /// Perform or undo an update on this control point
@@ -112,13 +112,13 @@ class ControlPointUpdate {
 
 /// Changing a line to a curve and vice versa
 class SegmentModeAction : public Action {
-  public:
+public:
   SegmentModeAction(const ControlPointP& p1, const ControlPointP& p2, SegmentMode mode);
   
   virtual String getName(bool to_undo) const;
   virtual void   perform(bool to_undo);
   
-  protected:
+protected:
   ControlPointUpdate point1, point2;
 };
 
@@ -126,13 +126,13 @@ class SegmentModeAction : public Action {
 
 /// Locking a control point
 class LockModeAction : public Action {
-  public:
+public:
   LockModeAction(const ControlPointP& p, LockMode mode);
   
   virtual String getName(bool to_undo) const;
   virtual void   perform(bool to_undo);
   
-  private:
+private:
   ControlPointUpdate point;  ///< The affected point
 };
 
@@ -142,7 +142,7 @@ class LockModeAction : public Action {
 /** Inherits from SegmentModeAction because it also has that effect
  */
 class CurveDragAction : public SegmentModeAction {
-  public:
+public:
   CurveDragAction(const ControlPointP& point1, const ControlPointP& point2);
   
   virtual String getName(bool to_undo) const;
@@ -156,7 +156,7 @@ class CurveDragAction : public SegmentModeAction {
 
 /// Insert a new point in a symbol shape
 class ControlPointAddAction : public Action {
-  public:
+public:
   /// Insert a new point in shape, after position insertAfter_, at the time t on the segment
   ControlPointAddAction(const SymbolShapeP& shape, UInt insert_after, double t);
   
@@ -165,7 +165,7 @@ class ControlPointAddAction : public Action {
   
   inline ControlPointP getNewPoint() const { return new_point; }
   
-  private:
+private:
   SymbolShapeP  shape;        ///< SymbolShape we are in
   ControlPointP new_point;      ///< The point to insert
   UInt          insert_after;      ///< Insert after index .. in the array
@@ -185,7 +185,7 @@ unique_ptr<Action> control_point_remove_action(const SymbolShapeP& shape, const 
 
 /// Moving the handle or the center of a symbol symmetry
 class SymmetryMoveAction : public Action {
-  public:
+public:
   SymmetryMoveAction(SymbolSymmetry& symmetry, bool is_handle);
   
   virtual String getName(bool to_undo) const;
@@ -194,12 +194,12 @@ class SymmetryMoveAction : public Action {
   /// Update this action to move some more
   void move(const Vector2D& delta);
   
-  private:
+private:
   SymbolSymmetry& symmetry; ///< Affected part
   bool is_handle;      ///< Move the handle or the center?
   Vector2D delta;      ///< Amount we moved
   Vector2D original;    ///< Original value
-  public:
+public:
   bool constrain;      ///< Constrain movement?
   int snap;        ///< Snap to grid?
 };
@@ -208,12 +208,12 @@ class SymmetryMoveAction : public Action {
 
 /// Change the type of symmetry
 class SymmetryTypeAction : public Action {
-  public:
+public:
   SymmetryTypeAction(SymbolSymmetry& symmetry, SymbolSymmetryType type);
   
   virtual String getName(bool to_undo) const;
   virtual void   perform(bool to_undo);
-  private:
+private:
   SymbolSymmetry&    symmetry;
   SymbolSymmetryType type;
   String             old_name;
@@ -224,12 +224,12 @@ class SymmetryTypeAction : public Action {
 
 /// Change the number of copies of a symmetry
 class SymmetryCopiesAction : public Action {
-  public:
+public:
   SymmetryCopiesAction(SymbolSymmetry& symmetry, int copies);
   
   virtual String getName(bool to_undo) const;
   virtual void   perform(bool to_undo);
-  private:
+private:
   SymbolSymmetry& symmetry;
   int             copies;
   String          old_name;

@@ -48,7 +48,7 @@ struct CharInfo {
 
 /// A section of text that can be rendered using a TextViewer
 class TextElement : public IntrusivePtrBase<TextElement> {
-  public:
+public:
   /// What section of the input string is this element?
   size_t start, end;
   
@@ -71,7 +71,7 @@ class TextElement : public IntrusivePtrBase<TextElement> {
 
 /// A list of text elements
 class TextElements {
-  public:
+public:
   /// Draw all the elements (as need to show the range start..end)
   void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
   // Get information on all characters in the range [start...end) and store them in out
@@ -98,7 +98,7 @@ class TextElements {
 
 /// A text element that just shows text
 class SimpleTextElement : public TextElement {
-  public:
+public:
   SimpleTextElement(const String& content, size_t start, size_t end)
     : TextElement(start, end), content(content)
   {}
@@ -107,7 +107,7 @@ class SimpleTextElement : public TextElement {
 
 /// A text element that uses a normal font
 class FontTextElement : public SimpleTextElement {
-  public:
+public:
   FontTextElement(const String& content, size_t start, size_t end, const FontP& font, DrawWhat draw_as, LineBreak break_style)
     : SimpleTextElement(content, start, end)
     , font(font), draw_as(draw_as), break_style(break_style)
@@ -117,7 +117,7 @@ class FontTextElement : public SimpleTextElement {
   virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
   virtual double minScale() const;
   virtual double scaleStep() const;
-  private:
+private:
   FontP     font;
   DrawWhat  draw_as;
   LineBreak break_style;
@@ -125,7 +125,7 @@ class FontTextElement : public SimpleTextElement {
 
 /// A text element that uses a symbol font
 class SymbolTextElement : public SimpleTextElement {
-  public:
+public:
   SymbolTextElement(const String& content, size_t start, size_t end, const SymbolFontRef& font, Context* ctx)
     : SimpleTextElement(content, start, end)
     , font(font), ctx(*ctx)
@@ -135,7 +135,7 @@ class SymbolTextElement : public SimpleTextElement {
   virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
   virtual double minScale() const;
   virtual double scaleStep() const;
-  private:
+private:
   const SymbolFontRef& font; // owned by TextStyle
   Context& ctx;
 };
@@ -144,7 +144,7 @@ class SymbolTextElement : public SimpleTextElement {
 
 /// A TextElement consisting of sub elements
 class CompoundTextElement : public TextElement {
-  public:
+public:
   CompoundTextElement(size_t start, size_t end) : TextElement(start, end) {}
   
   virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
@@ -157,7 +157,7 @@ class CompoundTextElement : public TextElement {
 
 /// A TextElement drawn using a grey background
 class AtomTextElement : public CompoundTextElement {
-  public:
+public:
   AtomTextElement(size_t start, size_t end) : CompoundTextElement(start, end) {}
   
   virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
@@ -165,7 +165,7 @@ class AtomTextElement : public CompoundTextElement {
 
 /// A TextElement drawn using a red wavy underline
 class ErrorTextElement : public CompoundTextElement {
-  public:
+public:
   ErrorTextElement(size_t start, size_t end) : CompoundTextElement(start, end) {}
   
   virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;

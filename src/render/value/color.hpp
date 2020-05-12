@@ -18,7 +18,7 @@ DECLARE_POINTER_TYPE(AlphaMask);
 
 /// Viewer that displays a color value
 class ColorValueViewer : public ValueViewer {
-  public:
+public:
   DECLARE_VALUE_VIEWER(Color) : ValueViewer(parent,style) {}
   
   virtual void draw(RotatedDC& dc);

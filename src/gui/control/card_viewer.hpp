@@ -22,7 +22,7 @@ DECLARE_LOCAL_EVENT_TYPE(EVENT_SIZE_CHANGE, <not used>)
 
 /// A control to view a single card
 class CardViewer : public wxControl, public DataViewer {
-  public:
+public:
   CardViewer(Window* parent, int id, long style = wxBORDER_THEME);
   
   /// Get a dc to draw on the card outside onPaint  
@@ -39,7 +39,7 @@ class CardViewer : public wxControl, public DataViewer {
   
   virtual bool AcceptsFocus() const { return false; }
   
-  protected:
+protected:
   /// Return the desired size of control
   virtual wxSize DoGetBestSize() const;
   
@@ -51,7 +51,7 @@ class CardViewer : public wxControl, public DataViewer {
   
   virtual void drawViewer(RotatedDC& dc, ValueViewer& v);
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   void onEraseBackground(wxEraseEvent&) {}

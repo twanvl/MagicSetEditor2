@@ -19,7 +19,7 @@ DECLARE_POINTER_TYPE(Keyword);
 
 /// The data format for cards on the clipboard
 class CardsDataObject : public wxTextDataObject {
-  public:
+public:
   /// Name of the format of MSE cards
   static wxDataFormat format;
   
@@ -36,7 +36,7 @@ class CardsDataObject : public wxTextDataObject {
 
 /// The data format for keywords on the clipboard
 class KeywordDataObject : public wxTextDataObject {
-  public:
+public:
   /// Name of the format of MSE keywords
   static wxDataFormat format;
   
@@ -52,7 +52,7 @@ class KeywordDataObject : public wxTextDataObject {
 
 /// A DataObject for putting one or more cards on the clipboard, in multiple formats
 class CardsOnClipboard : public wxDataObjectComposite {
-  public:
+public:
   CardsOnClipboard(const SetP& set, const vector<CardP>& cards);
 };
 

@@ -19,7 +19,7 @@ String spec_sort(const String& spec, String& input, String& ret);
 
 /// Iterator over a sort specification (for spec_sort)
 class SpecIterator {
-  public:
+public:
   SpecIterator(const String& spec, size_t pos = 0)
     : spec(spec), pos(pos)
   {}
@@ -105,7 +105,7 @@ class SpecIterator {
     return false;
   }
   
-  private:
+private:
   const String& spec;
   size_t pos;
 };

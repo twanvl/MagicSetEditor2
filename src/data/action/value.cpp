@@ -54,7 +54,7 @@ inline void swap_value(MultipleChoiceValue& a, MultipleChoiceValue::ValueType& b
 /// A ValueAction that swaps between old and new values
 template <typename T, bool ALLOW_MERGE>
 class SimpleValueAction : public ValueAction {
-  public:
+public:
   inline SimpleValueAction(const intrusive_ptr<T>& value, const typename T::ValueType& new_value)
     : ValueAction(value), new_value(new_value)
   {}
@@ -77,7 +77,7 @@ class SimpleValueAction : public ValueAction {
     return false;
   }
   
-  private:
+private:
   typename T::ValueType new_value;
 };
 

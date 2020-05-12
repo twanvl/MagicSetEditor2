@@ -16,10 +16,10 @@
 
 /// A drop down list of color choices
 class DropDownPackageChoiceList : public DropDownList {
-  public:
+public:
   DropDownPackageChoiceList(Window* parent, PackageChoiceValueEditor* editor);
   
-  protected:
+protected:
   virtual size_t itemCount() const;
   virtual String itemText(size_t item) const;
   virtual bool   lineBelow(size_t item) const;
@@ -27,7 +27,7 @@ class DropDownPackageChoiceList : public DropDownList {
   virtual void   select(size_t selection);
   virtual size_t selection() const;
   
-  private:
+private:
   PackageChoiceValueEditor& editor;
 };
 

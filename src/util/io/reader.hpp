@@ -28,7 +28,7 @@ class Packaged;
  *  object that was just read.
  */
 class Reader {
-  public:
+public:
   /// Construct a reader that reads from the given input stream
   /** filename is used only for error messages
    *  package is used for looking up included files.
@@ -273,7 +273,7 @@ void Reader::handle(IndexMap<K,V>& m) {
 
 /// 'Handler' to be used when reflecting enumerations for Reader
 class EnumReader {
-  public:
+public:
   inline EnumReader(String const& read)
     : read(read), first(nullptr), done(false) {}
   
@@ -295,7 +295,7 @@ class EnumReader {
   void warnIfNotDone(Reader* errors_to);
   void errorIfNotDone();
   
-  private:
+private:
   String      read;  ///< The string to match to a value name
   Char const* first; ///< Has the first (default) value been handled? If so, what is its name.
   bool        done;  ///< Was anything matched?

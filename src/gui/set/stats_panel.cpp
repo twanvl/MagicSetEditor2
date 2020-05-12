@@ -26,7 +26,7 @@
 
 /// A list of fields of which the statistics can be shown
 class StatCategoryList : public GalleryList {
-  public:
+public:
   StatCategoryList(Window* parent, int id)
     : GalleryList(parent, id, wxVERTICAL)
   {
@@ -40,11 +40,11 @@ class StatCategoryList : public GalleryList {
     return *categories.at(subcolumns[0].selection);
   }
   
-  protected:
+protected:
   virtual size_t itemCount() const;
   virtual void drawItem(DC& dc, int x, int y, size_t item);
   
-  private:
+private:
   GameP game;
   vector<StatsCategoryP> categories; ///< Categories, sorted by position_hint
 };
@@ -98,7 +98,7 @@ void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item) {
 
 /// A list of fields of which the statistics can be shown
 class StatDimensionList : public GalleryList {
-  public:
+public:
   StatDimensionList(Window* parent, int id, bool show_empty, int dimension_count = 3)
     : GalleryList(parent, id, wxVERTICAL, false)
     , dimension_count(dimension_count)
@@ -145,7 +145,7 @@ class StatDimensionList : public GalleryList {
     RefreshSelection();
   }
   
-  protected:
+protected:
   virtual size_t itemCount() const;
   virtual void drawItem(DC& dc, int x, int y, size_t item);
   
@@ -183,7 +183,7 @@ class StatDimensionList : public GalleryList {
     }
   }
   
-  private:
+private:
   GameP game;
   bool show_empty;
   vector<StatsDimensionP> dimensions; ///< Dimensions, sorted by position_hint
@@ -523,7 +523,7 @@ void StatsPanel::onGraphSelect(wxCommandEvent&) {
 // ----------------------------------------------------------------------------- : Filtering card list
 
 class StatsFilter : public Filter<Card> {
-  public:
+public:
   StatsFilter(GraphData& data, const vector<int> match) {
     data.indices(match, indices);
   }

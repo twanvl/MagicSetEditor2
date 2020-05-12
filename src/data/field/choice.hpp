@@ -26,7 +26,7 @@ DECLARE_POINTER_TYPE(ChoiceValue);
 
 /// A field that contains a list of choices
 class ChoiceField : public Field {
-  public:
+public:
   ChoiceField();
   DECLARE_FIELD_TYPE(Choice);
   
@@ -53,7 +53,7 @@ enum ChoiceChoiceType {
 
 /// An item that can be chosen for this field
 class ChoiceField::Choice : public IntrusivePtrBase<ChoiceField::Choice> {
-  public:
+public:
   Choice();
   Choice(const String& name);
   
@@ -184,7 +184,7 @@ public:
 
 /// The Value in a ChoiceField
 class ChoiceValue : public Value {
-  public:
+public:
   /// Create a value for the given field
   /** If initial_first_choice then the first choice should be used in the absence of
       an explicit initial value

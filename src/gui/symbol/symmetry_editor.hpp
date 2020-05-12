@@ -18,7 +18,7 @@ class SymmetryMoveAction;
 
 /// Editor for adding symmetries
 class SymbolSymmetryEditor : public SymbolEditorBase {
-  public:
+public:
   /** The symmetry parameter is optional, if it is not set, then only new ones can be created */
   SymbolSymmetryEditor(SymbolControl* control, const SymbolSymmetryP& symmetry);
   
@@ -48,7 +48,7 @@ class SymbolSymmetryEditor : public SymbolEditorBase {
   virtual bool isEditing();
   
   // --------------------------------------------------- : Data
-  private:
+private:
   SymbolSymmetryP& symmetry;
   // controls
   wxSpinCtrl* copies;

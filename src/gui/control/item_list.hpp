@@ -23,7 +23,7 @@
  *  TODO: This is reverse of normal
  */
 class ItemList : public wxListView {
-  public:
+public:
   ItemList(Window* parent, int id, long additional_style = 0, bool multi_sel = false);
   
   // --------------------------------------------------- : Selection
@@ -56,7 +56,7 @@ class ItemList : public wxListView {
   virtual bool doDelete() { return false; }
   
   // --------------------------------------------------- : Virtual interface
-  protected:
+protected:
   /// Get a list of all items
   virtual void getItems(vector<VoidP>& out) const = 0;
   
@@ -108,7 +108,7 @@ class ItemList : public wxListView {
   bool           sort_ascending;    ///< Sort order
   vector<VoidP>  sorted_list;       ///< Sorted list of items, can be considered a map: pos->item
   
-  private:
+private:
   struct ItemComparer; // for comparing items
   
   // --------------------------------------------------- : Window events

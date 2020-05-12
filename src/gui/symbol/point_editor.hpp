@@ -20,14 +20,14 @@ class CurveDragAction;
 
 // Symbol editor for editing control points and handles
 class SymbolPointEditor : public SymbolEditorBase {
-  public:
+public:
   SymbolPointEditor(SymbolControl* control, const SymbolShapeP& part);
   
   // --------------------------------------------------- : Drawing
   
   virtual void draw(DC& dc);
   
-  private:
+private:
   /// Draws a gradient on the selected line to indicate curve dragging
   void drawHoveredLine(DC& dc);
   /// Draw all handles belonging to selected points
@@ -53,7 +53,7 @@ class SymbolPointEditor : public SymbolEditorBase {
   /// Retrieve a pen for the drawing of other things
   wxPen otherPen(WhichPen p);
   
-  public:
+public:
   // --------------------------------------------------- : UI
   
   virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
@@ -76,7 +76,7 @@ class SymbolPointEditor : public SymbolEditorBase {
   virtual void onChar(wxKeyEvent& ev);
   virtual bool isEditing();
   
-  private:
+private:
   // --------------------------------------------------- : Data
   
   // The symbol part we are editing

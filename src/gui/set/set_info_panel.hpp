@@ -16,7 +16,7 @@ class SetInfoEditor;
 // ----------------------------------------------------------------------------- : SetInfoPanel
 
 class SetInfoPanel : public SetWindowPanel {
-  public:
+public:
   SetInfoPanel(Window* parent, int id);
   
   // --------------------------------------------------- : UI
@@ -37,10 +37,10 @@ class SetInfoPanel : public SetWindowPanel {
   virtual void doPaste();
   virtual void doSelectAll();
   
-  protected:
+protected:
   virtual void onChangeSet();
   
-  private:
+private:
   SetInfoEditor* editor;
 };
 

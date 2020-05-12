@@ -24,7 +24,7 @@ DECLARE_POINTER_TYPE(InfoValue);
 /** These values are not editable, they are just headers, icons, labels, etc.
  */
 class InfoField : public Field {
-  public:
+public:
   InfoField() { editable = false; }
   DECLARE_FIELD_TYPE(Text);
   
@@ -37,7 +37,7 @@ class InfoField : public Field {
 
 /// The Style for a InfoField
 class InfoStyle : public Style {
-  public:
+public:
   InfoStyle(const InfoFieldP&);
   DECLARE_STYLE_TYPE(Info);
   
@@ -55,7 +55,7 @@ class InfoStyle : public Style {
 
 /// The Value in a InfoField
 class InfoValue : public Value {
-  public:
+public:
   inline InfoValue(const InfoFieldP& field) : Value(field) {}
   DECLARE_VALUE_TYPE(Info, String);
   

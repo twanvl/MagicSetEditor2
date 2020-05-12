@@ -27,7 +27,7 @@ DECLARE_LOCAL_EVENT_TYPE(EVENT_PART_ACTIVATE, <not used>)
 // ----------------------------------------------------------------------------- : SymbolPartList
 
 class SymbolPartList : public wxScrolledWindow, public SymbolView {
-  public:
+public:
   SymbolPartList(Window* parent, int id, SymbolPartsSelection& selection, SymbolP symbol = SymbolP());
   
   /// Another symbol is being viewed
@@ -40,9 +40,9 @@ class SymbolPartList : public wxScrolledWindow, public SymbolView {
   /// Update only a subset of the parts
   void updateParts(const set<SymbolPartP>& parts);
   
-  protected:
+protected:
   virtual wxSize DoGetBestSize() const;
-  private:
+private:
   SymbolPartsSelection& selection; ///< Store selection here
   int number_of_items;
   

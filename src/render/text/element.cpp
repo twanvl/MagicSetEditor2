@@ -194,7 +194,7 @@ struct TextElementsFromString {
     }
   }
   
-  private:
+private:
   /// Create a text element for a piece of text, text[start..end)
   void addText(TextElements& te, const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx) {
     String content = untag(text.substr(start, end - start));

@@ -24,7 +24,7 @@ DECLARE_POINTER_TYPE(SymbolValue);
 
 /// A field for image values
 class SymbolField : public Field {
-  public:
+public:
   DECLARE_FIELD_TYPE(Symbol);
   
   // no extra data
@@ -34,7 +34,7 @@ class SymbolField : public Field {
 
 /// The Style for a SymbolField
 class SymbolStyle : public Style {
-  public:
+public:
   inline SymbolStyle(const SymbolFieldP& field)
     : Style(field)
     , min_aspect_ratio(1), max_aspect_ratio(1)
@@ -48,7 +48,7 @@ class SymbolStyle : public Style {
 
 /// Styling for a symbol variation, defines color, border, etc.
 class SymbolVariation : public IntrusivePtrBase<SymbolVariation> {
-  public:
+public:
   SymbolVariation();
   ~SymbolVariation();
   String        name;        ///< Name of this variation
@@ -64,7 +64,7 @@ class SymbolVariation : public IntrusivePtrBase<SymbolVariation> {
 
 /// The Value in a SymbolField, i.e. a symbol
 class SymbolValue : public Value {
-  public:
+public:
   inline SymbolValue(const SymbolFieldP& field) : Value(field) {}
   DECLARE_VALUE_TYPE(Symbol, LocalFileName);
   

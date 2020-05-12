@@ -37,7 +37,7 @@ struct KeywordSelectEvent : public wxCommandEvent {
 
 /// A control that lists the keywords in a set and its game
 class KeywordList : public ItemList, public SetView {
-  public:
+public:
   KeywordList(Window* parent, int id, long additional_style = 0);
   ~KeywordList();
   
@@ -68,7 +68,7 @@ class KeywordList : public ItemList, public SetView {
   bool doDelete();
   
   // --------------------------------------------------- : The keywords
-  protected:
+protected:
   /// Get a list of all keywords
   virtual void getItems(vector<VoidP>& out) const;
   /// Return the keyword at the given position in the sorted keyword list
@@ -88,7 +88,7 @@ class KeywordList : public ItemList, public SetView {
   /// Get the color for an item
   virtual wxListItemAttr* OnGetItemAttr(long pos) const;
   
-  private:
+private:
   void storeColumns();
   
   mutable wxListItemAttr item_attr; // for OnGetItemAttr

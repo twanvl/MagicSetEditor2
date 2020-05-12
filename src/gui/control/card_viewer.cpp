@@ -115,7 +115,7 @@ bool CardViewer::shouldDraw(const ValueViewer& v) const {
 
 // helper class for overdrawDC()
 class CardViewer::OverdrawDC_aux : private wxClientDC {
-  protected:
+protected:
   wxBufferedDC bufferedDC;
   
   OverdrawDC_aux(CardViewer* window)
@@ -125,7 +125,7 @@ class CardViewer::OverdrawDC_aux : private wxClientDC {
   }
 };
 class CardViewer::OverdrawDC : private OverdrawDC_aux, public RotatedDC {
-  public:
+public:
   OverdrawDC(CardViewer* window)
     : OverdrawDC_aux(window)
     , RotatedDC(bufferedDC, window->getRotation(), QUALITY_LOW)

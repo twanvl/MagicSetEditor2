@@ -32,7 +32,7 @@ enum FontFlags
 /// A font for rendering text
 /** Contains additional information about scaling, color and shadow */
 class Font : public IntrusivePtrBase<Font> {
-  public:
+public:
   Scriptable<String> name;                 ///< Name of the font
   Scriptable<String> italic_name;          ///< Font name for italic text (optional)
   Scriptable<double> size;                 ///< Size of the font
@@ -65,7 +65,7 @@ class Font : public IntrusivePtrBase<Font> {
   /// Convert this font to a wxFont
   wxFont toWxFont(double scale) const;
   
-  private:
+private:
   DECLARE_REFLECTION();
 };
 

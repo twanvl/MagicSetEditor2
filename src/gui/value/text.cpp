@@ -30,9 +30,9 @@ DECLARE_SHARED_POINTER_TYPE(DropDownList);
 /// A scrollbar to scroll a TextValueEditor
 /** implemented as the scrollbar of a Window because that functions better */
 class TextValueEditorScrollBar : public wxWindow {
-  public:
+public:
   TextValueEditorScrollBar(TextValueEditor& tve);
-  private:
+private:
   DECLARE_EVENT_TABLE();
   TextValueEditor& tve;
   
@@ -65,7 +65,7 @@ END_EVENT_TABLE  ()
 // ----------------------------------------------------------------------------- : WordListPos
 
 class WordListPos : public IntrusivePtrBase<WordListPos> {
-  public:
+public:
   WordListPos(size_t start, size_t end, WordListP word_list)
     : start(start), end(end)
     , rect(-1,-1,-1,-1)
@@ -107,7 +107,7 @@ struct DropDownWordListItem {
 };
 
 class DropDownWordList : public DropDownList {
-  public:
+public:
   DropDownWordList(Window* parent, bool is_submenu, TextValueEditor& tve, const WordListPosP& pos, const WordListWordP& list);
   
   void setWords(const WordListWordP& words2);
@@ -115,7 +115,7 @@ class DropDownWordList : public DropDownList {
   
   inline WordListPosP getPos() const { return pos; }
   
-  protected:
+protected:
   virtual void          redrawArrowOnParent();
   virtual size_t        itemCount() const             { return items.size(); }
   virtual bool          lineBelow(size_t item) const  { return items[item].flags & FLAG_LINE_BELOW; }
@@ -125,7 +125,7 @@ class DropDownWordList : public DropDownList {
   virtual size_t        selection() const;
   virtual void          select(size_t item);
   virtual bool          stayOpen(size_t selection) const;
-  private:
+private:
   TextValueEditor& tve;
   WordListPosP pos;
   WordListWordP words; ///< The words we are listing

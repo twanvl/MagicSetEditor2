@@ -15,7 +15,7 @@
 
 /// The file format of MSE2 files
 class MSE2FileFormat : public FileFormat {
-  public:
+public:
   virtual String extension()          { return _("mse-set"); }
   virtual String matches()            { return _("*.mse-set;set"); }
   virtual String name()               { return _("Magic Set Editor sets (*.mse-set)"); }

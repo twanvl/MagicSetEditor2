@@ -145,7 +145,7 @@ void set_alpha(Image& img, double alpha);
 /** It is created by treating black in the source image as transparent and white (red) as opaque
  */
 class AlphaMask : public IntrusivePtrBase<AlphaMask> {
-  public:
+public:
   AlphaMask();
   AlphaMask(const Image& mask);
   ~AlphaMask();
@@ -181,7 +181,7 @@ class AlphaMask : public IntrusivePtrBase<AlphaMask> {
   /// Is the mask loaded?
   inline bool isLoaded() const { return alpha; }
   
-  private:
+private:
   wxSize size; ///< Size of the mask
   Byte* alpha; ///< Data of alpha mask
   mutable int *lefts, *rights; ///< Row sizes

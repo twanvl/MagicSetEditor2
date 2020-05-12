@@ -24,7 +24,7 @@
 
 /// A card list that contains the 
 class RandomCardList : public CardListBase {
-  public:
+public:
   RandomCardList(Window* parent, int id, long style = 0);
   
   /// Reset the list
@@ -35,7 +35,7 @@ class RandomCardList : public CardListBase {
   const vector<CardP>* getCardsPtr() const { return &cards; }
   vector<CardP> cards;
   
-  protected:
+protected:
   virtual void getItems(vector<VoidP>& out) const;
   virtual void onChangeSet();
 };
@@ -64,12 +64,12 @@ void RandomCardList::getItems(vector<VoidP>& out) const {
 // ----------------------------------------------------------------------------- : PackTotalsPanel
 
 class PackTotalsPanel : public wxPanel {
-  public:
+public:
   PackTotalsPanel(Window* parent, int id, PackGenerator& generator, bool show_all = false)
     : wxPanel(parent,id), generator(generator), show_all(show_all) {}
   void setGame(const GameP& game);
   virtual wxSize DoGetBestSize() const;
-  private:
+private:
   DECLARE_EVENT_TABLE();
   GameP game;
   void onPaint(wxPaintEvent&);
@@ -150,7 +150,7 @@ END_EVENT_TABLE()
 // ----------------------------------------------------------------------------- : SelectableLabel
 
 class SelectableLabel : public HoverButtonBase {
-  public:
+public:
   SelectableLabel(wxWindow* parent, int id, const String& label, bool interactive = true)
     : HoverButtonBase(parent, id, false)
     , label(label)
@@ -192,7 +192,7 @@ class SelectableLabel : public HoverButtonBase {
   void onDoubleClick(wxMouseEvent&) {
     if (interactive) HoverButtonBase::onClick();
   }
-  private:
+private:
   String label;
   bool interactive;
   wxWindow* buddy;
@@ -229,10 +229,10 @@ void PackAmountPicker::destroy(wxFlexGridSizer* sizer) {
 // ----------------------------------------------------------------------------- : CustomPackDialog
 
 class CustomPackDialog : public wxDialog {
-  public:
+public:
   CustomPackDialog(Window* parent, const SetP& set, const PackTypeP& edited_pack, bool can_remove);
   PackTypeP get() const { return edited_pack; }
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   SetP             set;

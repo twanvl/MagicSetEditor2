@@ -14,10 +14,10 @@
 
 /// Dialog for the program settings, rendered as a set of pages
 class PreferencesWindow : public wxDialog {
-  public:
+public:
   PreferencesWindow(Window* parent);
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   /// Close the dialog, and store all settings

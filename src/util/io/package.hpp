@@ -81,7 +81,7 @@ private:
  *  TODO: maybe support sub packages (a package inside another package)?
  */
 class Package : public IntrusivePtrVirtualBase {
-  public:
+public:
   // --------------------------------------------------- : Managing the outside of the package
 
   /// Creates a new package
@@ -181,7 +181,7 @@ class Package : public IntrusivePtrVirtualBase {
     writer.handle(obj);
   }
 
-  protected:
+protected:
   // TODO: I dislike putting this here very much. There ought to be a better way.
   virtual VCSP getVCS() { return make_intrusive<VCS>(); }
 
@@ -208,13 +208,13 @@ class Package : public IntrusivePtrVirtualBase {
   /// Last modified time
   DateTime modified;
 
-  public:
+public:
   /// Information on files in the package
   typedef map<String, FileInfo> FileInfos;
   inline const FileInfos& getFileInfos() const { return files; }
   /// When was a file last modified?
   DateTime modificationTime(const pair<String, FileInfo>& fi) const;
-  private:
+private:
   /// All files in the package
   FileInfos files;
   /// Filestream/zipstream for reading zip files
@@ -244,7 +244,7 @@ class Package : public IntrusivePtrVirtualBase {
 
 /// Dependencies of a package
 class PackageDependency : public IntrusivePtrBase<PackageDependency> {
-  public:
+public:
   String  package;         ///< Name of the package someone depends on
   vector<String> suggests; ///< Packages suggested to fulfill this dependency
   Version version;         ///< Minimal required version of that package
@@ -256,7 +256,7 @@ class PackageDependency : public IntrusivePtrBase<PackageDependency> {
 /** When the package is opened/saved a file describing the data object is read/written
  */
 class Packaged : public Package {
-  public:
+public:
   Packaged();
   virtual ~Packaged() {}
 
@@ -290,7 +290,7 @@ class Packaged : public Package {
     return fully_loaded;
   }
 
-  protected:
+protected:
   /// filename of the data file, and extension of the package file
   virtual String typeName() const = 0;
   /// Can be overloaded to do validation after loading
@@ -301,7 +301,7 @@ class Packaged : public Package {
   DECLARE_REFLECTION_VIRTUAL();
   friend void after_reading(Packaged& p, Version file_app_version);
   
-  private:
+private:
   bool   fully_loaded;  ///< Is the package fully loaded?
   friend struct JustAsPackageProxy;
   friend class Installer;
@@ -315,7 +315,7 @@ inline void after_reading(Packaged& p, Version file_app_version) {
 
 /// A package that just contains a bunch of files that are used from other packages
 class IncludePackage : public Packaged {
-  protected:
+protected:
   String typeName() const;
   Version fileVersion() const;
   DECLARE_REFLECTION();

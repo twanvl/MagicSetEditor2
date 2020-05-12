@@ -23,7 +23,7 @@ enum AddingOrRemoving {ADD, REMOVE};
 /// Adding or removing some objects from a vector
 template <typename T>
 class GenericAddAction {
-  public:
+public:
   GenericAddAction(AddingOrRemoving, const T& item,          const vector<T>& container);
   GenericAddAction(AddingOrRemoving, const vector<T>& items, const vector<T>& container);
   

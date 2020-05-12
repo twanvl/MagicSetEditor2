@@ -39,7 +39,7 @@ enum PackSelectType
 
 /// A card pack description for playtesting
 class PackType : public IntrusivePtrBase<PackType> {
-  public:
+public:
   PackType();
   
   String            name;       ///< Name of this pack
@@ -53,14 +53,14 @@ class PackType : public IntrusivePtrBase<PackType> {
   /// Update scripts, returns true if there is a change
   bool update(Context& ctx);
   
-  private:
+private:
   DECLARE_REFLECTION();
 };
 void after_reading(PackType&, Version);
 
 /// An item in a PackType
 class PackItem : public IntrusivePtrBase<PackItem> {
-  public:
+public:
   PackItem();
   PackItem(const String& name, int amount);
   
@@ -71,7 +71,7 @@ class PackItem : public IntrusivePtrBase<PackItem> {
   /// Update scripts, returns true if there is a change
   bool update(Context& ctx);
   
-  private:
+private:
   DECLARE_REFLECTION();
 };
 
@@ -84,7 +84,7 @@ inline String type_name(const PackType&) {
 // A PackType that is instantiated for a particular Set,
 // i.e. we now know the actual cards
 class PackInstance : public IntrusivePtrBase<PackInstance> {
-  public:
+public:
   PackInstance(const PackType& pack_type, PackGenerator& parent);
   
   /// Expect to pick this many copies from this pack, updates expected_copies
@@ -104,7 +104,7 @@ class PackInstance : public IntrusivePtrBase<PackInstance> {
   inline size_t get_card_copies()     const { return card_copies; }
   inline double get_expected_copies() const { return expected_copies; }
   
-  private:
+private:
   const PackType& pack_type;
   PackGenerator&  parent;
   int             depth;             //< 0 = no items, otherwise 1+max depth of items refered to
@@ -121,7 +121,7 @@ class PackInstance : public IntrusivePtrBase<PackInstance> {
 };
 
 class PackGenerator {
-  public:
+public:
   /// Reset the generator, possibly switching the set or reseeding
   void reset(const SetP& set, int seed);
   /// Reset the generator, but not the set
@@ -139,7 +139,7 @@ class PackGenerator {
   // only for PackInstance
   SetP set; ///< The set
   mt19937 gen; ///< Random generator
-  private:
+private:
   /// Details for each PackType
   map<String,PackInstanceP> instances;
   int max_depth;

@@ -26,17 +26,17 @@ DECLARE_POINTER_TYPE(Keyword);
 
 /// An Action the changes the keyword list of a set
 class KeywordListAction : public Action {
-  public:
+public:
   inline KeywordListAction(Set& set) : set(set) {}
   
-  protected:
+protected:
   Set& set; // the set owns this action, so the set will not be destroyed before this
             // therefore we don't need a smart pointer
 };
 
 /// Adding or removing a keyword from a set
 class AddKeywordAction : public KeywordListAction {
-  public:
+public:
   AddKeywordAction(Set& set);
   AddKeywordAction(AddingOrRemoving, Set& set, const KeywordP& keyword);
   
@@ -56,7 +56,7 @@ class AddKeywordAction : public KeywordListAction {
  *    - reminder text
  */
 class KeywordTextValue : public FakeTextValue {
-  public:
+public:
   KeywordTextValue(const TextFieldP& field, Keyword* keyword, String* underlying, bool editable, bool untagged = false)
     : FakeTextValue(field, underlying, editable, untagged)
     , keyword(*keyword)
@@ -67,7 +67,7 @@ class KeywordTextValue : public FakeTextValue {
 
 /// A FakeTextValue that is used to edit reminder text scripts
 class KeywordReminderTextValue : public KeywordTextValue {
-  public:
+public:
   KeywordReminderTextValue(Set& set, const TextFieldP& field, Keyword* keyword, bool editable);
   
   String errors; ///< Errors in the script
@@ -88,7 +88,7 @@ class KeywordReminderTextValue : public KeywordTextValue {
 
 /// Changing the mode of a keyword
 class ChangeKeywordModeAction : public Action {
-  public:
+public:
   ChangeKeywordModeAction(Keyword& keyword, const String& new_mode);
   
   virtual String getName(bool to_undo) const;

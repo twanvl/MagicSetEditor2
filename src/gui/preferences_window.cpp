@@ -23,7 +23,7 @@
 
 // A page from the preferences dialog
 class PreferencesPage : public wxPanel {
-  public:
+public:
   PreferencesPage(Window* parent)
     : wxPanel(parent, wxID_ANY)
   {}
@@ -34,22 +34,22 @@ class PreferencesPage : public wxPanel {
 
 // Preferences page for global MSE settings
 class GlobalPreferencesPage : public PreferencesPage {
-  public:
+public:
   GlobalPreferencesPage(Window* parent);
   void store();  
   
-  private:
+private:
   wxComboBox* language;
   wxCheckBox* open_sets_in_new_window;
 };
 
 // Preferences page for card viewing related settings
 class DisplayPreferencesPage : public PreferencesPage {
-  public:
+public:
   DisplayPreferencesPage(Window* parent);
   void store();  
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   wxCheckBox* high_quality, *borders, *draw_editing, *spellcheck_enabled;
@@ -72,11 +72,11 @@ class DisplayPreferencesPage : public PreferencesPage {
 // i.e. Apprentice, Magic Workstation
 // perhaps in the future also directories for packages?
 class DirsPreferencesPage : public PreferencesPage {
-  public:
+public:
   DirsPreferencesPage(Window* parent);
   void store();
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   wxTextCtrl* apprentice;
@@ -86,11 +86,11 @@ class DirsPreferencesPage : public PreferencesPage {
 
 // Preferences page for automatic updates
 class UpdatePreferencesPage : public PreferencesPage {
-  public:
+public:
   UpdatePreferencesPage(Window* parent);
   void store();
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   wxChoice* check_at_startup;

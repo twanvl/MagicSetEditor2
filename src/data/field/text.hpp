@@ -30,7 +30,7 @@ DECLARE_POINTER_TYPE(LineLayout);
 
 /// A field for values containing tagged text
 class TextField : public Field {
-  public:
+public:
   TextField();
   DECLARE_FIELD_TYPE(Text);
   
@@ -68,7 +68,7 @@ public:
 
 /// The Style for a TextField
 class TextStyle : public Style {
-  public:
+public:
   TextStyle(const TextFieldP&);
   DECLARE_STYLE_TYPE(Text);
   
@@ -107,7 +107,7 @@ class TextStyle : public Style {
 
 /// The Value in a TextField
 class TextValue : public Value {
-  public:
+public:
   inline TextValue(const TextFieldP& field) : Value(field), last_update(1) {}
   DECLARE_VALUE_TYPE(Text, Defaultable<String>);
   
@@ -122,7 +122,7 @@ class TextValue : public Value {
 /// A 'fake' TextValue that is used to edit some other string
 /** Used by TextCtrl */
 class FakeTextValue : public TextValue {
-  public:
+public:
   /// Initialize the fake text value
   /** underlying can be nullptr, in that case there is no underlying value */
   FakeTextValue(const TextFieldP& field, String* underlying, bool editable, bool untagged);

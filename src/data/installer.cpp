@@ -76,7 +76,7 @@ struct dependency_check : public unary_function<bool, PackagedP> {
   bool operator () (PackagedP package) {
     return package->name() == dep->package && package->version >= dep->version;
   }
-  private:
+private:
   PackageDependencyP dep;
 };
 
@@ -268,7 +268,7 @@ DownloadableInstaller::DownloadableInstaller(const InstallerP& installer)
 
 DownloadableInstaller::~DownloadableInstaller() {
   if (!installer_file.empty()) {
-    wxRemoveFile(installer_file);
+    remove_file(installer_file);
   }
 }
 

@@ -22,7 +22,7 @@ class SymbolControl;
  *  NOTE : Do not confuse with SymbolEditor (a FieldEditor)
  */
 class SymbolEditorBase : public IntrusivePtrVirtualBase {
-  protected:
+protected:
   /// The control for which we are editing
   SymbolControl& control;
   
@@ -33,7 +33,7 @@ class SymbolEditorBase : public IntrusivePtrVirtualBase {
   
   void SetStatusText(const String& text);
   
-  public:
+public:
   SymbolEditorBase(SymbolControl* control)
     : control(*control)
   {}

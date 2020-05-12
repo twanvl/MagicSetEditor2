@@ -20,7 +20,7 @@ class ThumbnailThreadWorker;
 
 /// A request for some kind of thumbnail
 class ThumbnailRequest : public IntrusivePtrVirtualBase {
-  public:
+public:
   ThumbnailRequest(void* owner, const String& cache_name, const wxDateTime& modified)
     : owner(owner), cache_name(cache_name), modified(modified) {}
   
@@ -51,7 +51,7 @@ class ThumbnailRequest : public IntrusivePtrVirtualBase {
  *  Thumbnails are cached, and need not be generated in a thread
  */
 class ThumbnailThread {
-  public:
+public:
   ThumbnailThread();
   
   /// Request a thumbnail, it may be store()d immediatly if the thumbnail is cached
@@ -65,7 +65,7 @@ class ThumbnailThread {
   /** *must* be called at application exit */
   void abortAll();
   
-  private:
+private:
   wxMutex     mutex;  ///< Mutex used by the worker when accessing the request lists or the thread pointer
   wxCondition completed; ///< Event signaled when a request is completed
   

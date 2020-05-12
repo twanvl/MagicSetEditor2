@@ -34,7 +34,7 @@ DECLARE_DYNAMIC_ARG(Game*, game_for_reading);
 
 /// A description of a card game
 class Game : public Packaged {
-  public:
+public:
   Game();
   
   OptionalScript          init_script;            ///< Script of variables available to other scripts in this game
@@ -73,7 +73,7 @@ class Game : public Packaged {
   virtual String typeName() const;
   Version fileVersion() const;
   
-  protected:
+protected:
   virtual void validate(Version);
   
   DECLARE_REFLECTION_OVERRIDE();

@@ -20,7 +20,7 @@ DECLARE_POINTER_TYPE(AutoReplace);
 
 /// A word in a WordList
 class WordListWord : public IntrusivePtrBase<WordListWord> {
-  public:
+public:
   WordListWord();
 
   String  name;         ///< Name of the list / the word
@@ -36,7 +36,7 @@ class WordListWord : public IntrusivePtrBase<WordListWord> {
 
 /// A list of words for a drop down box
 class WordList : public WordListWord {
-  public:
+public:
   DECLARE_REFLECTION();
 };
 
@@ -44,7 +44,7 @@ class WordList : public WordListWord {
 
 /// Autoreplace specific shortcut words
 class AutoReplace : public IntrusivePtrVirtualBase {
-  public:
+public:
   AutoReplace();
 
   bool   enabled;

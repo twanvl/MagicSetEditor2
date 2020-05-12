@@ -58,13 +58,13 @@ DECLARE_POINTER_TYPE(FunctionProfile);
 
 /// Simple execution timer
 class Timer {
-  public:
+public:
   Timer();
   /// The time the timer has been running, resets the timer
   inline ProfileTime time();
   /// Exclude the time since the last reset from ALL running timers
   inline void exclude_time();
-  private:
+private:
   ProfileTime start;
   static ProfileTime delta; ///< Time excluded
 };
@@ -73,7 +73,7 @@ class Timer {
 
 /// How much time was spent in a function?
 class FunctionProfile : public IntrusivePtrBase<FunctionProfile> {
-  public:
+public:
   FunctionProfile(const String& name)
     : name(name), time_ticks(0), time_ticks_max(0), calls(0)
   {}
@@ -106,7 +106,7 @@ const FunctionProfile& profile_aggregated(int level = 1);
 
 /// Profile a single function call
 class Profiler {
-  public:
+public:
   /// Log the fact that the function  function_name  is entered, ends when profiler goes out of scope.
   /** Time between the construction of Timer and the construction of Profiler is excluded from ALL profiles.
    */
@@ -118,7 +118,7 @@ class Profiler {
   Profiler(Timer& timer, void* function_object, const String& function_name);
   /// Log the fact that the function is left
   ~Profiler();
-  private:
+private:
   Timer&                  timer;
   static FunctionProfile* function; ///< function we are in
   FunctionProfile*        parent;

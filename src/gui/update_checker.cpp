@@ -90,7 +90,7 @@ bool update_available()  {
 // Checks if the current version is the latest version
 // If not, displays a message
 class CheckUpdateThread : public wxThread {
-  public:
+public:
   virtual void* Entry() {
     Work();
     return 0;

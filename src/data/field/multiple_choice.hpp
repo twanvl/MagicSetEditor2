@@ -19,7 +19,7 @@ DECLARE_POINTER_TYPE(MultipleChoiceValue);
 
 /// A ChoiceField where multiple choices can be selected simultaniously
 class MultipleChoiceField : public ChoiceField {
-  public:
+public:
   MultipleChoiceField();
   DECLARE_FIELD_TYPE(MultipleChoiceField);
   
@@ -31,7 +31,7 @@ class MultipleChoiceField : public ChoiceField {
 
 /// The Style for a MultipleChoiceField
 class MultipleChoiceStyle : public ChoiceStyle {
-  public:
+public:
   MultipleChoiceStyle(const MultipleChoiceFieldP& field);
   DECLARE_STYLE_TYPE(MultipleChoice);
   
@@ -48,7 +48,7 @@ class MultipleChoiceStyle : public ChoiceStyle {
  *  The choices must be ordered by id
  */
 class MultipleChoiceValue : public ChoiceValue {
-  public:
+public:
   inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field, false) {}
   DECLARE_HAS_FIELD(MultipleChoice);
   virtual ValueP clone() const;
@@ -66,7 +66,7 @@ class MultipleChoiceValue : public ChoiceValue {
   
   virtual bool update(Context&);
   
-  private:
+private:
   DECLARE_REFLECTION();
   
   /// Put the value in normal form (all choices ordered, empty_name

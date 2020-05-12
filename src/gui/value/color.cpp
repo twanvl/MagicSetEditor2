@@ -17,7 +17,7 @@
 
 // A drop down list of color choices
 class DropDownColorList : public DropDownList {
-  public:
+public:
   DropDownColorList(Window* parent, ColorValueEditor& cve);
   
   protected:    
@@ -29,7 +29,7 @@ class DropDownColorList : public DropDownList {
   virtual void   select(size_t item);
   virtual size_t selection() const;
   
-  private:
+private:
   ColorValueEditor& cve;
   mutable Color default_color;
 

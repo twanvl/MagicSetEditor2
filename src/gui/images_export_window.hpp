@@ -16,10 +16,10 @@
 
 /// A window for selecting a subset of the cards from a set to export to images
 class ImagesExportWindow : public ExportWindowBase {
-  public:
+public:
   ImagesExportWindow(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices);
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   void onOk(wxCommandEvent&);

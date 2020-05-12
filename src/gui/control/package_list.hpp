@@ -18,7 +18,7 @@ DECLARE_POINTER_TYPE(Packaged);
 
 /// A list of Packages of a specific type
 class PackageList : public GalleryList {
-  public:
+public:
   PackageList(Window* parent, int id, int direction = wxHORIZONTAL, bool always_focused = true);
   
   /// Shows packages that match a specific patern, and that are of the given type
@@ -51,13 +51,13 @@ class PackageList : public GalleryList {
   int requiredWidth() const;
   using GalleryList::column_count;
   
-  protected:
+protected:
   /// Draw an item
   virtual void drawItem(DC& dc, int x, int y, size_t item);
   /// Return how many items there are in the list
   virtual size_t itemCount() const;
   
-  private:
+private:
   // The default icon to use
 //  wxIcon default_icon;
   

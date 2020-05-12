@@ -22,14 +22,14 @@ SetP new_set_window(Window* parent);
 
 /// "Create a new set" dialog. First select game, then matching style.
 class NewSetWindow : public wxDialog {
-  public:
+public:
   /// The newly created set, if any
   SetP set;
   
   NewSetWindow(Window* parent);
   
   // --------------------------------------------------- : data
-  private:
+private:
   DECLARE_EVENT_TABLE();
 
   // gui items
@@ -59,14 +59,14 @@ StyleSheetP select_stylesheet(const Game& game, const String& failed_name);
 
 /// "Create a new set" dialog. First select game, then matching style.
 class SelectStyleSheetWindow : public wxDialog {
-  public:
+public:
   /// The selected stylesheet, if any
   StyleSheetP stylesheet;
   
   SelectStyleSheetWindow(Window* parent, const Game& game, const String& failed_name);
   
   // --------------------------------------------------- : data
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   const Game& game;

@@ -22,7 +22,7 @@ DECLARE_POINTER_TYPE(StatsCategory);
 /// A dimension that can be plotted as an axis in a graph
 /** Dimensions can be generated automatically based on card fields */
 class StatsDimension : public IntrusivePtrBase<StatsDimension> {
-  public:
+public:
   StatsDimension();
   StatsDimension(const Field&);
   
@@ -48,7 +48,7 @@ class StatsDimension : public IntrusivePtrBase<StatsDimension> {
 /// A category for statistics
 /** Can be generated automatically based on a dimension */
 class StatsCategory : public IntrusivePtrBase<StatsCategory> {
-  public:
+public:
   StatsCategory();
   StatsCategory(const StatsDimensionP&);
   

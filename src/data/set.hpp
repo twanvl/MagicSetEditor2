@@ -36,7 +36,7 @@ typedef intrusive_ptr<OrderCache<CardP> > OrderCacheP;
 
 /// A set of cards
 class Set : public Packaged {
-  public:
+public:
   /// Create a set, the set should be open()ed later
   Set();
   /// Create a set using the given game
@@ -119,12 +119,12 @@ class Set : public Packaged {
   /// Validate that the set is correctly loaded
   virtual void validate(Version = app_version);
   
-  protected:
+protected:
   virtual VCSP getVCS() {
     return vcs;
   }
 
-  private:
+private:
   DECLARE_REFLECTION();
   template <typename Handler>
   void reflect_cards(Handler& handler);
@@ -154,7 +154,7 @@ void mark_dependency_member(const Set& set, const String& name, const Dependency
 /** To listen to events, derived classes should override onAction(const Action&, bool undone)
  */
 class SetView : public ActionListener {
-  public:
+public:
   SetView();
   ~SetView();
   
@@ -163,7 +163,7 @@ class SetView : public ActionListener {
   /// Change the set that is being viewed
   void setSet(const SetP& set);
   
-  protected:
+protected:
   /// The set that is currently being viewed, should not be modified directly!
   SetP set;
   

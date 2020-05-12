@@ -18,7 +18,7 @@ class Dependency;
 /** K should be an integer type, the keys should be dense. */
 template <typename K, typename V>
 class VectorIntMap {
-  public:
+public:
   inline V& operator [] (K key) {
     if (values.size() <= key) {
       values.resize(key + 1);
@@ -27,7 +27,7 @@ class VectorIntMap {
   }
   /// Get access to the vector
   inline const vector<V>& get() const { return values; }
-  private:
+private:
   vector<V> values;
 };
 
@@ -35,7 +35,7 @@ class VectorIntMap {
 
 /// Context for script evaluation
 class Context {
-  public:
+public:
   Context();
   
   /// Evaluate a script inside this context.
@@ -74,7 +74,7 @@ class Context {
   /// Make a closure of the function with the direct parameters of the current call
   ScriptValueP makeClosure(const ScriptValueP& fun);
   
-  public:
+public:
   
   /// Open a new scope
   /** returns the number of shadowed binding before that scope */
@@ -83,7 +83,7 @@ class Context {
   void closeScope(size_t scope);
   friend class LocalScope;
   
-  public:// public for FOR_EACH
+public:// public for FOR_EACH
   /// Record of a variable
   struct VariableValue {
     VariableValue() : level(0) {}
@@ -95,7 +95,7 @@ class Context {
     Variable      variable; ///< Name of the overwritten variable.
     VariableValue value;    ///< Old value of that variable.
   };
-  private:
+private:
   /// Variables, indexed by integer name (using string_to_variable)
   VectorIntMap<unsigned int, VariableValue> variables;
   /// Shadowed variable bindings
@@ -129,10 +129,10 @@ class Context {
 
 /// A class that creates a local scope
 class LocalScope {
-  public:
+public:
   inline LocalScope(Context& ctx) : ctx(ctx), scope(ctx.openScope()) {}
   inline ~LocalScope() { ctx.closeScope(scope); }
-  private:
+private:
   Context& ctx;
   size_t scope;
 };

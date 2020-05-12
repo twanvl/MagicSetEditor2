@@ -16,15 +16,15 @@
 
 /// Viewer that displays a multiple choice value
 class MultipleChoiceValueViewer : public ValueViewer {
-  public:
+public:
   DECLARE_VALUE_VIEWER(MultipleChoice) : ValueViewer(parent,style), item_height(0) {}
   
   virtual bool prepare(RotatedDC& dc);
   virtual void draw(RotatedDC& dc);
   virtual void onStyleChange(int);
-  protected:
+protected:
   double item_height; ///< Height of a single item, or 0 if non uniform
-  private:
+private:
   void drawChoice(RotatedDC& dc, RealPoint& pos, const String& choice, bool active = true);
 };
 

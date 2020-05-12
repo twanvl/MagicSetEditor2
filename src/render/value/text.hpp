@@ -17,7 +17,7 @@
 
 /// Viewer that displays a text value
 class TextValueViewer : public ValueViewer {
-  public:
+public:
   DECLARE_VALUE_VIEWER(Text) : ValueViewer(parent,style) {}
   
   virtual bool prepare(RotatedDC& dc);
@@ -27,7 +27,7 @@ class TextValueViewer : public ValueViewer {
   virtual void onAction(const Action&, bool undone);
   virtual double getStretch() const;
   
-  protected:
+protected:
   TextViewer v;
 };
 

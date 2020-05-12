@@ -16,7 +16,7 @@
 
 /// A card list with check boxes
 class SelectCardList : public CardListBase {
-  public:
+public:
   SelectCardList(Window* parent, int id, long additional_style = 0);
   ~SelectCardList();
   /// Select all cards
@@ -30,10 +30,10 @@ class SelectCardList : public CardListBase {
   /// Change which cards are selected
   void setSelection(const vector<CardP>& cards);
   
-  protected:
+protected:
   virtual int  OnGetItemImage(long pos) const;
   virtual void onChangeSet();
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   std::set<CardP> selected; ///< which cards are selected?

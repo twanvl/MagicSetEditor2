@@ -38,14 +38,14 @@ private:
 
 /// A button that changes images on mouseenter/leave
 class HoverButtonBase : public wxControl {
-  public:
+public:
   HoverButtonBase(Window* parent, int id, bool accepts_focus = true);
   
   virtual bool AcceptsFocus() const;
   
   virtual void SetHelpText(const String& s) { help_text = s; }
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   const bool accepts_focus;
@@ -62,7 +62,7 @@ class HoverButtonBase : public wxControl {
   void onPaint     (wxPaintEvent&);
   void onEraseBackground(wxEraseEvent&) {}
   
-  protected:
+protected:
   bool hover, focus, mouse_down, key_down;
   String help_text;
   
@@ -75,7 +75,7 @@ class HoverButtonBase : public wxControl {
 
 /// A button that changes images on mouseenter/leave
 class HoverButton : public HoverButtonBase {
-  public:
+public:
   /// Create a HoverButton, name is the resource name of the images to use
   /** name+"_normal", name+"_hover", name+"_focus", name+"_down"
    *  are the resource names of the images used.
@@ -85,7 +85,7 @@ class HoverButton : public HoverButtonBase {
   /// Load different bitmaps for this button
   void loadBitmaps(const String& name);
   
-  private:
+private:
   String bitmaps; ///< Name of the loaded bitmaps
   Bitmap bg_normal, bg_hover, bg_focus, bg_down; ///< Bitmaps for the states of the button
   Color background;
@@ -94,7 +94,7 @@ class HoverButton : public HoverButtonBase {
   
   const Bitmap* last_drawn;
   const Bitmap* toDraw() const;
-  protected:
+protected:
   int drawDelta() const;
   virtual void refreshIfNeeded();
   virtual void draw(DC& dc);

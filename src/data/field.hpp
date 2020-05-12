@@ -37,7 +37,7 @@ DECLARE_DYNAMIC_ARG(Value*, value_being_updated);
 
 /// Information on how to store a value
 class Field : public IntrusivePtrVirtualBase, public IntrusiveFromThis<Field> {
-  public:
+public:
   Field();
   virtual ~Field();
   
@@ -70,7 +70,7 @@ class Field : public IntrusivePtrVirtualBase, public IntrusiveFromThis<Field> {
   /// Add the given dependency to the dependet_scripts list for the variables this field depends on
   virtual void initDependencies(Context& ctx, const Dependency& dep) const;
   
-  private:
+private:
   DECLARE_REFLECTION_VIRTUAL();
   virtual void after_reading(Version ver);
   friend void after_reading(Field& s, Version ver);
@@ -94,7 +94,7 @@ inline String type_name(const Field&) {
 
 /// Style information needed to display a Value in a Field.
 class Style : public IntrusivePtrVirtualBase, public IntrusiveFromThis<Style> {
-  public:
+public:
   Style(const FieldP&);
   virtual ~Style();
   
@@ -162,7 +162,7 @@ class Style : public IntrusivePtrVirtualBase, public IntrusiveFromThis<Style> {
   /** change_info is a subset of StyleChange flags */
   void tellListeners(int changes);
   
-  private:
+private:
   DECLARE_REFLECTION_VIRTUAL();
   /// Things that are listening to changes in this style
   vector<StyleListener*> listeners;
@@ -193,14 +193,14 @@ void mark_dependency_member(const Style& style, const String& name, const Depend
 
 /// An object that can respond when a style changes;
 class StyleListener : public IntrusivePtrVirtualBase {
-  public:
+public:
   StyleListener(const StyleP& style);
   virtual ~StyleListener();
   
   /// Called when a (scripted) property of the viewed style has changed
   /** changes is a combination of StyleChange flags */
   virtual void onStyleChange(int changes) {}
-  protected:
+protected:
   const StyleP styleP; ///< The style we are listening to
 };
 
@@ -208,17 +208,17 @@ class StyleListener : public IntrusivePtrVirtualBase {
 
 /// A specific value 'in' a Field.
 class Value : public IntrusivePtrVirtualBase {
-  public:
+public:
   inline Value(const FieldP& field) : fieldP(field) {}
   virtual ~Value();
-  
+
   const FieldP fieldP;        ///< Field this value is for, should have the right type!
   Age          last_script_update;  ///< When where the scripts last updated? (by calling update)
   String       sort_value;      ///< How this should be sorted.
-  
+
   /// Get a copy of this value
   virtual ValueP clone() const = 0;
-  
+
   /// Convert this value to a string for use in tables
   virtual String toString() const = 0;
   /// Apply scripts to this value, return true if the value has changed
@@ -237,14 +237,14 @@ class Value : public IntrusivePtrVirtualBase {
   inline String getSortKey() const {
     return fieldP->sort_script ? sort_value : toString();
   }
-  
-  protected:
+
+protected:
   /// update() split into two functions;.
   /** Derived classes should put their stuff in between if they need the age in scripts */
   void updateAge();
   void updateSortValue(Context& ctx);
-  
-  private:
+
+private:
   DECLARE_REFLECTION_VIRTUAL();
 };
 
@@ -260,11 +260,11 @@ inline String type_name(const Value&) {
 // ----------------------------------------------------------------------------- : Utilities
 
 #define DECLARE_FIELD_TYPE(Type) \
-  DECLARE_REFLECTION_OVERRIDE(); \
+    DECLARE_REFLECTION_OVERRIDE(); \
   public: \
-  virtual ValueP newValue() override; \
-  virtual StyleP newStyle() override; \
-  virtual String typeName() const override
+    virtual ValueP newValue() override; \
+    virtual StyleP newStyle() override; \
+    virtual String typeName() const override
 
 // implement newStyle and newValue
 #define IMPLEMENT_FIELD_TYPE(Type, NAME) \
@@ -285,20 +285,20 @@ inline String type_name(const Value&) {
   }
 
 #define DECLARE_STYLE_TYPE(Type) \
-  DECLARE_REFLECTION_OVERRIDE(); \
+    DECLARE_REFLECTION_OVERRIDE(); \
   public: \
-  DECLARE_HAS_FIELD(Type) \
-  StyleP clone() const override; \
-  ValueViewerP makeViewer(DataViewer& parent) override; \
-  ValueViewerP makeEditor(DataEditor& parent) override
+    DECLARE_HAS_FIELD(Type) \
+    StyleP clone() const override; \
+    ValueViewerP makeViewer(DataViewer& parent) override; \
+    ValueViewerP makeEditor(DataEditor& parent) override
 
 #define DECLARE_VALUE_TYPE(Type,ValueType_) \
-  DECLARE_REFLECTION_OVERRIDE(); \
+    DECLARE_REFLECTION_OVERRIDE(); \
   public: \
-  DECLARE_HAS_FIELD(Type) \
-  ValueP clone() const override; \
-  String toString() const override; \
-  typedef ValueType_ ValueType
+    DECLARE_HAS_FIELD(Type) \
+    ValueP clone() const override; \
+    String toString() const override; \
+    typedef ValueType_ ValueType
 
 // implement field() which returns a field with the right (derived) type
 #define DECLARE_HAS_FIELD(Type) \

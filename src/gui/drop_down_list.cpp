@@ -20,10 +20,10 @@
 
 // Class that intercepts all events not directed to a DropDownList, and closes the list
 class DropDownHider : public wxEvtHandler {
-  public:
+public:
   DropDownHider(DropDownList& list) : list(list) {}
   
-  private:
+private:
   DropDownList& list;
   
   virtual bool ProcessEvent(wxEvent& ev) {

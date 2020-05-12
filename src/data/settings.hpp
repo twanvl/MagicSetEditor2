@@ -56,7 +56,7 @@ enum FilenameConflicts
 
 /// Settings of a single column in the card list
 class ColumnSettings {
-  public:
+public:
   ColumnSettings();
   UInt width;
   int  position;
@@ -67,7 +67,7 @@ class ColumnSettings {
 
 /// Settings for a Game
 class GameSettings : public IntrusivePtrBase<GameSettings> {
-  public:
+public:
   GameSettings();
   
   /// Where the settings have defaults, initialize with the values from the game
@@ -87,13 +87,13 @@ class GameSettings : public IntrusivePtrBase<GameSettings> {
   int                         pack_seed;
   
   DECLARE_REFLECTION();
-  private:
+private:
   bool initialized;
 };
 
 /// Settings for a StyleSheet
 class StyleSheetSettings : public IntrusivePtrBase<StyleSheetSettings> {
-  public:
+public:
   StyleSheetSettings();
   
   // Rendering/display settings
@@ -126,7 +126,7 @@ enum PageLayoutType
  *  Settings are loaded at startup, and stored at shutdown.
  */
 class Settings {
-  public:
+public:
   /// Default constructor initializes default settings
   Settings();
   
@@ -171,16 +171,16 @@ class Settings {
   /// Get the settings object for a specific stylesheet
   StyleSheetSettings& stylesheetSettingsFor(const StyleSheet& stylesheet);
   
-  private:
+private:
   map<String,GameSettingsP>       game_settings;
   map<String,StyleSheetSettingsP> stylesheet_settings;
-  public:
+public:
   StyleSheetSettings              default_stylesheet_settings;  ///< The default settings for stylesheets
   
   // --------------------------------------------------- : Exports
-  private:
+private:
   DelayedIndexMaps<FieldP,ValueP> export_options;
-  public:
+public:
   
   /// Get the options for an export template
   IndexMap<FieldP,ValueP>& exportOptionsFor(const ExportTemplate& export_template);
@@ -212,7 +212,7 @@ class Settings {
   /// Store the settings in the standard location
   void write();
   
-  private:
+private:
   /// Name of the settings file
   String settingsFile();
   /// Clear settings before reading them

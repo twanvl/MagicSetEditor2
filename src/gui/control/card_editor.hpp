@@ -18,7 +18,7 @@ class FindInfo;
 
 /// An editor for data values (usually a card)
 class DataEditor : public CardViewer {
-  public:
+public:
   DataEditor(Window* parent, int id, long style = wxBORDER_THEME);
   
   // --------------------------------------------------- : Utility for ValueViewers/Editors
@@ -88,7 +88,7 @@ class DataEditor : public CardViewer {
   
   // --------------------------------------------------- : ValueViewers
   
-  protected:
+protected:
   /// Create an editor for the given style (as opposed to a normal viewer)
   virtual ValueViewerP makeViewer(const StyleP&);
   
@@ -100,7 +100,7 @@ class DataEditor : public CardViewer {
   ValueViewer* hovered_viewer;  ///< The editor under the mouse cursor
   vector<ValueViewer*> viewers_in_search_order;  ///< The editable viewers, sorted by tab index, for find/replace
   
-  private:
+private:
   // --------------------------------------------------- : Events
   DECLARE_EVENT_TABLE();
   

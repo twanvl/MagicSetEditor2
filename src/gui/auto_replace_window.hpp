@@ -17,11 +17,11 @@ class AutoReplaceList;
 
 /// A window for editing the AutoReplace words
 class AutoReplaceWindow : public wxDialog {
-  public:
+public:
   /// Edit auto replace words for the given game
   AutoReplaceWindow(Window* parent, const Game& game);
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   AutoReplaceList* list;

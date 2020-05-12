@@ -29,7 +29,7 @@ enum HighlightStyle
 
 /// Class that knows how to draw a symbol
 class SymbolViewer : public SymbolView {
-  public:
+public:
   // --------------------------------------------------- : Data
   SymbolViewer(const SymbolP& symbol, bool editing_hints, double size = 500, double border_radius = 0.05);
   
@@ -61,7 +61,7 @@ class SymbolViewer : public SymbolView {
   void onAction(const Action&, bool) {}
   
   
-  private:
+private:
   typedef shared_ptr<wxMemoryDC> MemoryDCP;
   /// Inside a reflection?
   int in_symmetry;

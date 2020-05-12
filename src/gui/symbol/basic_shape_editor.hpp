@@ -17,7 +17,7 @@ class wxSpinCtrl;
 
 /// Editor for drawing basic shapes such as rectangles and polygons
 class SymbolBasicShapeEditor : public SymbolEditorBase {
-  public:
+public:
   SymbolBasicShapeEditor(SymbolControl* control);
   
   // --------------------------------------------------- : Drawing
@@ -45,7 +45,7 @@ class SymbolBasicShapeEditor : public SymbolEditorBase {
   virtual bool isEditing();
   
   // --------------------------------------------------- : Data
-  private:
+private:
   int mode;
   SymbolShapeP shape;
   Vector2D start;

@@ -27,7 +27,7 @@ enum DependencyType
 
 /// A 'pointer' to some script that depends on another script
 class Dependency {
-  public:
+public:
   inline Dependency(DependencyType type, size_t index, void* data = nullptr)
     : type(type), index(index), data(data)
   {}
@@ -50,7 +50,7 @@ class Dependency {
 
 /// A list of dependencies
 class Dependencies : public vector<Dependency> {
-  public:
+public:
   /// Add a dependency, prevents duplicates
   inline void add(const Dependency& d) {
     if (d.type == DEP_DUMMY) return;
@@ -58,7 +58,7 @@ class Dependencies : public vector<Dependency> {
       push_back(d);
     }
   }
-  private:
+private:
   using vector<Dependency>::push_back;
 };
 

@@ -123,7 +123,7 @@ void Reader::moveNext() {
  *              making startup slightly faster.
  */
 template <typename T> class LocalVector {
-  public:
+public:
   LocalVector() : the_size(0), alloced(SMALL_SIZE), buffer(small) {}
   ~LocalVector() { if (buffer != small) free(buffer); }
   void push_back(T t) {
@@ -141,7 +141,7 @@ template <typename T> class LocalVector {
   }
   inline const T* get() const { return buffer; }
   inline size_t size() const { return the_size; }
-  private:
+private:
   static const int SMALL_SIZE = 1024;
   size_t the_size, alloced;
   T* buffer;

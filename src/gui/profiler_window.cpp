@@ -17,14 +17,14 @@
 // -----------------------------------------------------------------------------
 
 class ProfilerPanel : public wxPanel {
-  public:
+public:
   ProfilerPanel(wxWindow* parent, bool fancy_effects);
   ~ProfilerPanel();
   
   virtual bool AcceptsFocus() const { return false; }
   virtual wxSize DoGetBestSize() const;
   
-  private:
+private:
   bool        fancy_effects;
   wxTimer     timer;
   wxStopWatch stopwatch;

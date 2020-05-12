@@ -412,19 +412,19 @@ void CardsPanel::doSelectAll() {
 // ----------------------------------------------------------------------------- : Searching
 
 class CardsPanel::SearchFindInfo : public FindInfo {
-  public:
+public:
   SearchFindInfo(CardsPanel& panel, wxFindReplaceData& what) : FindInfo(what), panel(panel) {}
   virtual bool handle(const CardP& card, const TextValueP& value, size_t pos, bool was_selection) {
     // Select the card
     panel.card_list->setCard(card);
     return true;
   }
-  private:
+private:
   CardsPanel& panel;
 };
 
 class CardsPanel::ReplaceFindInfo : public FindInfo {
-  public:
+public:
   ReplaceFindInfo(CardsPanel& panel, wxFindReplaceData& what) : FindInfo(what), panel(panel) {}
   virtual bool handle(const CardP& card, const TextValueP& value, size_t pos, bool was_selection) {
     // Select the card
@@ -438,7 +438,7 @@ class CardsPanel::ReplaceFindInfo : public FindInfo {
     }
   }
   virtual bool searchSelection() const { return true; }
-  private:
+private:
   CardsPanel& panel;
 };
 

@@ -23,7 +23,7 @@ DECLARE_POINTER_TYPE(SymbolEditorBase);
  *  That object handles all events and the drawing. This class is mostly just a proxy.
  */
 class SymbolControl : public wxControl, public SymbolViewer {
-  public:
+public:
   SymbolControl(SymbolWindow* parent, int id, const SymbolP& symbol);
   
   virtual void onChangeSymbol();
@@ -57,14 +57,14 @@ class SymbolControl : public wxControl, public SymbolViewer {
   /// Are we editing?
   bool isEditing();
   
-  private:
+private:
   /// Switch the a different editor object
   void switchEditor(const SymbolEditorBaseP& e);
     
   /// Draw the editor
   void draw(DC& dc);
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
 
   // --------------------------------------------------- : Data
@@ -79,7 +79,7 @@ class SymbolControl : public wxControl, public SymbolViewer {
   /// Parent window 
   SymbolWindow* parent;
   
-  private:
+private:
   /// The current editor
   SymbolEditorBaseP editor;
   

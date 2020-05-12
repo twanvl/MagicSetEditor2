@@ -25,10 +25,10 @@ DECLARE_POINTER_TYPE(Field);
  *       <ok> <cancel>
  */
 class CardListColumnSelectDialog : public wxDialog {
-  public:
+public:
   CardListColumnSelectDialog(Window* parent, const GameP& game);
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   // gui items

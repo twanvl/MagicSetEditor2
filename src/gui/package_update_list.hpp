@@ -16,7 +16,7 @@
 
 /// A list of installed and downloadable packages
 class PackageUpdateList : public TreeList {
-  public:
+public:
   PackageUpdateList(Window* parent, const InstallablePackages& packages, bool show_only_installable, int id = wxID_ANY);
   ~PackageUpdateList();
   
@@ -28,7 +28,7 @@ class PackageUpdateList : public TreeList {
     return static_pointer_cast<TreeItem>(items[item])->package;
   }
     
-  protected:
+protected:
   // overridden methods from TreeList
   virtual void initItems();
   virtual void drawItem(DC& dc, size_t index, size_t column, int x, int y, bool selected) const;
@@ -37,18 +37,18 @@ class PackageUpdateList : public TreeList {
   virtual String columnText(size_t column) const;
   virtual int    columnWidth(size_t column) const;
   
-  private:
+private:
   /// The list of packages we are displaying
   const InstallablePackages& packages;
   /// Show only packages with an installer?
   bool show_only_installable;
   
   class TreeItem;
-  public:
+public:
   typedef intrusive_ptr<TreeItem> TreeItemP;
-  private:
+private:
   class TreeItem : public Item {
-    public:
+  public:
     TreeItem() : position_type(TYPE_OTHER), position_hint(1000000) {}
     String label;
     vector<TreeItemP> children;

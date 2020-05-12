@@ -15,7 +15,7 @@
 
 /// A combination of a TreeCtrl and a ListCtrl. A tree with multiple columns.
 class TreeList : public wxPanel {
-  public:
+public:
   TreeList(Window* parent, int id, long style = wxBORDER_THEME);
   
   /// Expand/collapse an item
@@ -28,8 +28,7 @@ class TreeList : public wxPanel {
   /// (re)build the list
   void rebuild(bool full = true);
   
-  public:
-  
+public:
   /// An item in the tree list
   class Item : public IntrusivePtrBase<Item> {
     public:
@@ -47,7 +46,7 @@ class TreeList : public wxPanel {
   };
   typedef intrusive_ptr<Item> ItemP;
   
-  protected:
+protected:
   
   /// The items in the tree list
   vector<ItemP> items;
@@ -72,7 +71,7 @@ class TreeList : public wxPanel {
   static const int header_height = 17;
   static const int level_width   = 17;
   
-  private:
+private:
   size_t total_lines;     // number of shown items
   size_t first_line;      // first visible line
   size_t visible_lines;   // number of (partially) visible lines

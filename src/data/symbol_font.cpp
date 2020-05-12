@@ -60,7 +60,7 @@ IMPLEMENT_REFLECTION(SymbolFont) {
 
 /// A symbol in a symbol font
 class SymbolInFont : public IntrusivePtrBase<SymbolInFont> {
-  public:
+public:
   SymbolInFont();
   
   /// Get a shrunk, zoomed image
@@ -89,7 +89,7 @@ class SymbolInFont : public IntrusivePtrBase<SymbolInFont> {
   double           text_margin_right;
   double           text_margin_top;
   double           text_margin_bottom;
-  private:
+private:
   ScriptableImage  image;      ///< The image for this symbol
   double           img_size;    ///< Font size used by the image
   wxSize           actual_size;  ///< Actual image size, only known after loading the image

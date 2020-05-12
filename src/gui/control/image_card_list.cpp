@@ -49,7 +49,7 @@ ImageFieldP ImageCardList::findImageField() {
 
 /// A request for a thumbnail of a card image
 class CardThumbnailRequest : public ThumbnailRequest {
-  public:
+public:
   CardThumbnailRequest(ImageCardList* parent, const LocalFileName& filename)
     : ThumbnailRequest(
       parent,

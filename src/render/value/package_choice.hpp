@@ -16,7 +16,7 @@
 
 /// Viewer that displays a package choice value
 class PackageChoiceValueViewer : public ValueViewer {
-  public:
+public:
   DECLARE_VALUE_VIEWER(PackageChoice) : ValueViewer(parent,style) { initItems(); }
   
   virtual void draw(RotatedDC& dc);
@@ -26,9 +26,9 @@ class PackageChoiceValueViewer : public ValueViewer {
     String name;
     Bitmap image;
   };
-  protected:
+protected:
   vector<Item> items;
-  private:
+private:
   void initItems();
   struct ComparePackagePosHint;
 };

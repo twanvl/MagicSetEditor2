@@ -36,7 +36,7 @@ ScriptValueP export_set(SetP const& set, vector<CardP> const& cards, ExportTempl
 /** This class is used by wxWidgets as a kind of 'main function'
  */
 class MSE : public wxApp {
-  public:
+public:
   /// Do nothing. The command line parsing, etc. is done in OnRun
   bool OnInit() { return true; }
   /// Main startup function of the program

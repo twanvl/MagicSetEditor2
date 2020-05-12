@@ -18,7 +18,7 @@ DECLARE_SHARED_POINTER_TYPE(DropDownList);
 
 /// An editor 'control' for editing ColorValues
 class ColorValueEditor : public ColorValueViewer, public ValueEditor {
-  public:
+public:
   DECLARE_VALUE_EDITOR(Color);
   
   // --------------------------------------------------- : Events
@@ -29,7 +29,7 @@ class ColorValueEditor : public ColorValueViewer, public ValueEditor {
   virtual void draw(RotatedDC& dc);
   virtual void determineSize(bool);
   
-  private:
+private:
   DropDownListP drop_down;
   friend class DropDownColorList;
   /// Change the color

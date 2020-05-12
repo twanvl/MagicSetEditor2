@@ -27,7 +27,7 @@ public:
 
   bool isThreadSafe;
   virtual bool threadSafe() const {return isThreadSafe;}
-  private:
+private:
   int id;
   
   inline ChoiceStyle& style()  { return *static_cast<ChoiceStyle*>(viewer().getStyle().get()); }

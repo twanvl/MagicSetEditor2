@@ -16,7 +16,7 @@
 
 /// An editor 'control' for editing ImageValues
 class ImageValueEditor : public ImageValueViewer, public ValueEditor {
-  public:
+public:
   DECLARE_VALUE_EDITOR(Image);
   
   virtual bool onLeftDClick(const RealPoint&, wxMouseEvent&);
@@ -31,7 +31,7 @@ class ImageValueEditor : public ImageValueViewer, public ValueEditor {
   
   virtual bool onChar(wxKeyEvent&);
   
-  private:
+private:
   // Open the image slice window showing the give image
   void sliceImage(const Image&);
 };

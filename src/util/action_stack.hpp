@@ -19,7 +19,7 @@
  *  It must store the necessary information to also undo the action.
  */
 class Action {
-  public:
+public:
   virtual ~Action() {};
   
   /// Name of the action, for use in strings like "Undo <name>"
@@ -46,7 +46,7 @@ class Action {
 
 /// Base class/interface for objects that listen to actions
 class ActionListener {
-  public:
+public:
   virtual ~ActionListener() {}
   /// Notification that an action a has been performed or undone
   virtual void onAction(const Action& a, bool undone) = 0;
@@ -61,7 +61,7 @@ class ActionListener {
  *  They will be notified when an action is added.
  */
 class ActionStack {
-  public:
+public:
   ActionStack();
   
   /// Add an action to the stack, and perform that action.
@@ -103,7 +103,7 @@ class ActionStack {
   /// Tell all listeners about an action
   void tellListeners(const Action&, bool undone);
   
-  private:
+private:
   /// Actions to be undone.
   vector<unique_ptr<Action>> undo_actions;
   /// Actions to be redone

@@ -29,7 +29,7 @@ void Reader::handle(VCSP& pointer);
  */
 class VCS : public IntrusivePtrVirtualBase
 {
-  public:
+public:
   /// Add a file - it's assumed to already have been created
   virtual void addFile (const wxFileName& filename) {
   }
