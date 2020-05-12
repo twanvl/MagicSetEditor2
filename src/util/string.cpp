@@ -418,12 +418,12 @@ bool is_substr_i(const String& str, size_t pos, const String& cmp) {
 
 bool canonical_name_compare(const String& as, const Char* b) {
   assert(canonical_name_form(b) == b);
-  const Char* a = as.c_str();
-  while (true) {
-    if (*a != *b && !(*a == _('_') && *b == _(' '))) return false;
-    if (*a == _('\0')) return true;
-    a++; b++;
+  for (String::const_iterator a_it = as.begin(); a_it != as.end(); ++a_it, ++b) {
+    if (*a_it != *b && !(*a_it == '_' && *b == ' ')) {
+      return false;
+    }
   }
+  return true;
 }
 
 size_t find_i(const String& heystack, const String& needle) {
