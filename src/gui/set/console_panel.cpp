@@ -49,7 +49,8 @@ class MessageCtrl : public wxPanel {
   {
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
     // icons
-    BOOST_STATIC_ASSERT(MESSAGE_TYPE_MAX == 6);
+    static_assert(MESSAGE_TYPE_MAX == 7);
+    icons[MESSAGE_NONE]    = wxBitmap();
     icons[MESSAGE_INPUT]   = wxBitmap(load_resource_image(_("message_input")));
     icons[MESSAGE_OUTPUT]  = wxBitmap();
     icons[MESSAGE_INFO]    = wxBitmap(load_resource_image(_("message_information")));
@@ -233,7 +234,6 @@ class MessageCtrl : public wxPanel {
   void draw(wxDC& dc) const {
     clearDC(dc, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     dc.SetFont(*wxNORMAL_FONT);
-    int height = GetClientSize().y;
     FOR_EACH_CONST(msg, messages) {
       draw(dc, *msg);
     }
@@ -450,11 +450,11 @@ END_EVENT_TABLE()
 
 ConsolePanel::ConsolePanel(Window* parent, int id)
   : SetWindowPanel(parent, id)
+  , messages(nullptr)
+  , entry(nullptr)
   , is_active_window(false)
   , blinker_state(0)
   , blinker_timer(this)
-  , messages(nullptr)
-  , entry(nullptr)
 {
   // init controls
   splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -617,7 +617,7 @@ void ConsolePanel::start_blinker() {
 }
 void ConsolePanel::stop_blinker() {
   blinker_state = 0;
-  new_errors_since_last_view = static_cast<MessageType>(0);
+  new_errors_since_last_view = MESSAGE_NONE;
   blinker_timer.Stop();
   update_blinker();
 }

@@ -55,7 +55,7 @@ private:
   
   // notification of new messages
   bool is_active_window;
-  MessageType new_errors_since_last_view;
+  MessageType new_errors_since_last_view = MESSAGE_NONE;
   int blinker_state;
   wxTimer blinker_timer;
   static const int MAX_BLINKS = 6;

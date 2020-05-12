@@ -139,7 +139,8 @@ extern bool write_errors_to_cli;
 
 /// Types/levels of (error)messages
 enum MessageType
-{  MESSAGE_INPUT
+{  MESSAGE_NONE
+,  MESSAGE_INPUT
 ,  MESSAGE_OUTPUT
 ,  MESSAGE_INFO
 ,  MESSAGE_WARNING
