@@ -187,6 +187,10 @@ class MessageCtrl : public wxPanel {
   void update_scrollbar() {
     int screen_height = GetClientSize().y;
     int total_height = messages.empty() ? 0 : messages.back()->bottom();
+    // update view_start to keep messages in view
+    int bottom = total_height - GetClientSize().y;
+    view_start = min(bottom, view_start);
+    view_start = max(0, view_start);
     SetScrollbar(wxVERTICAL, view_start, screen_height, total_height);
   }
 
