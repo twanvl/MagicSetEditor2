@@ -17,6 +17,9 @@ Bug fixes:
  * length function now gives correct results for maps
  * substr("foo",begin:3) now returns "" instead of true
 
+Template features:
+ * Added <font:...> tag to change the font inside a text field.
+
 Scripting:
  * Added type_name function
  * nil != "", so missing values are no longer equal to the empty string
@@ -26,7 +29,7 @@ Scripting:
 
 Internal:
  * Switch build system to to CMake
- * Update code to work with wxWidgets 3.0/3.1 and C++ 17
+ * Update code to work with wxWidgets 3.1 and C++ 17
  * Lots of code cleanup
 
 ------------------------------------------------------------------------------

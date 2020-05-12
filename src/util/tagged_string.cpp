@@ -613,7 +613,7 @@ void check_tagged(const String& str, bool check_balance) {
       }
       for (size_t j = i + 1 ; j + 1 < end ; ++j) {
         Char c = str.GetChar(j);
-        if (c == _(' ') || c == _('<')) {
+        if (c == ESCAPED_LANGLE || c == _('<')) {
           queue_message(MESSAGE_WARNING, _("Invalid character in tag"));
         }
       }

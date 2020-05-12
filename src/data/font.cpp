@@ -50,7 +50,7 @@ void Font::initDependencies(Context& ctx, const Dependency& dep) const {
   shadow_color.initDependencies(ctx, dep);
 }
 
-FontP Font::make(int add_flags, Color* other_color, double* other_size) const {
+FontP Font::make(int add_flags, String const* other_family, Color const* other_color, double const* other_size) const {
   FontP f(new Font(*this));
   f->flags |= add_flags;
   if (add_flags & FONT_CODE_STRING) {
@@ -72,6 +72,9 @@ FontP Font::make(int add_flags, Color* other_color, double* other_size) const {
   }
   if (other_size) {
     f->size = *other_size;
+  }
+  if (other_family && !other_family->empty()) {
+    f->name = *other_family;
   }
   return f;
 }

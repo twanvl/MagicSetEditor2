@@ -78,6 +78,7 @@ struct TextElementsFromString {
   int param_id;
   vector<Color> colors;
   vector<double> sizes;
+  vector<String> fonts;
   /// put angle brackets around the text?
   bool bracket;
   
@@ -137,6 +138,14 @@ struct TextElementsFromString {
           }
         } else if (is_substr(text, tag_start, _("</color"))) {
           if (!colors.empty()) colors.pop_back();
+        }
+        else if (is_substr(text, tag_start, _( "<font"))) {
+          size_t colon = text.find_first_of(_(">:"), tag_start);
+          if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
+            fonts.push_back(text.substr(colon+1, pos-colon-2));
+          }
+        } else if (is_substr(text, tag_start, _("</font"))) {
+          if (!fonts.empty()) fonts.pop_back();
         }
         else if (is_substr(text, tag_start, _( "<size"))) {
           size_t colon = text.find_first_of(_(">:"), tag_start);
@@ -251,6 +260,7 @@ private:
       (code        > 0 ? FONT_CODE        : FONT_NORMAL) |
       (code_kw     > 0 ? FONT_CODE_KW     : FONT_NORMAL) |
       (code_string > 0 ? FONT_CODE_STRING : FONT_NORMAL),
+      fonts.empty() ? nullptr : &fonts.back(),
       param > 0 || param_ref > 0
         ? &param_colors[(param_id++) % param_colors_count]
       : !colors.empty()
