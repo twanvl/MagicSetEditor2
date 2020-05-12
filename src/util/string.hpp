@@ -200,6 +200,14 @@ bool starts_with(const String& str, const String& start);
 bool is_substr(const String& str, size_t pos, const Char* cmp);
 /// Return whether str contains the string cmp at position pos
 bool is_substr(const String& str, size_t pos, const String& cmp);
+/// Return whether begin..end contains the string cmp at position begin
+template <typename It>
+bool is_substr(It begin, It end, const char* cmp) {
+  for (; begin != end && *cmp; ++begin, ++cmp) {
+    if (*begin != *cmp) return false;
+  }
+  return true;
+}
 
 /// Return whether str contains the string cmp at position pos, case insensitive compare
 bool is_substr_i(const String& str, size_t pos, const Char* cmp);

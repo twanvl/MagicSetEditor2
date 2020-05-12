@@ -42,7 +42,7 @@ struct Token {
   TokenType type;
   String    value;
   bool      newline; ///< Is there a newline between this token and the previous one?
-  size_t    pos;     ///< Start position of the token
+  String::const_iterator pos; ///< Start position of the token
   
   inline bool operator == (TokenType     t) const { return type  == t; }
   inline bool operator != (TokenType     t) const { return type  != t; }
@@ -61,7 +61,7 @@ enum OpenBrace
 /// Iterator over a string, one token at a time.
 /** Also stores errors found when tokenizing or parsing */
 class TokenIterator {
-  public:
+public:
   TokenIterator(const String& str, Packaged* package, bool string_mode, vector<ScriptParseError>& errors);
   
   /// Peek at the next token, doesn't move to the one after that
@@ -76,37 +76,26 @@ class TokenIterator {
    */
   void putBack();
   
-  /// Get a section of source code
-  /** Known problems: does not work correctly when crossing an include-file border */
-  String getSourceCode(size_t start, size_t end);
   /// Get the current line number
   int getLineNumber();
   
-  private:
-  String input;
-  size_t pos;
-  String filename;        ///< Filename of include files, "" for the main input
-  Packaged* package;        ///< Package the input is from
-  vector<Token>    buffer;    ///< buffer of unread tokens, front() = current
-  stack<OpenBrace> open_braces;  ///< braces/quotes we entered from script mode
-  bool             newline;    ///< Did we just pass a newline?
-  // more input?
-  struct MoreInput {
-    String input;
-    size_t pos;
-    String filename;
-    Packaged* package;
-  };
-  stack<MoreInput> more;    ///< Read tokens from here when we are done with the current input
+private:
+  String::const_iterator pos;
+  const String::const_iterator begin, end;
+  String filename; ///< Filename of include files, "" for the main input
+  vector<Token>    buffer; ///< buffer of unread tokens, front() = current
+  stack<OpenBrace> open_braces; ///< braces/quotes we entered from script mode
+  bool             newline; ///< Did we just pass a newline?
   
   /// Add a token to the buffer, with the current newline value, resets newline
-  void addToken(TokenType type, const String& value, size_t start);
+  void addToken(TokenType type, const String& value, String::const_iterator start);
   /// Read the next token, and add it to the buffer
   void readToken();
-  /// Read the next token which is a string (after the opening ")
-  void readStringToken();
+  /// Read the next token, which is a string
+  void readStringToken(bool string_mode = false);
   
-  public:
+public:
+  Packaged* package; ///< Package the input is from
   /// All errors found
   vector<ScriptParseError>& errors;
   /// Add an error message
@@ -117,7 +106,7 @@ class TokenIterator {
 
 // ----------------------------------------------------------------------------- : Characters
 
-bool isUnicodeAlpha(Char c) {
+bool isUnicodeAlpha(wxUniChar c) {
   #if defined(__WXMSW__)
     return false;
   #else
@@ -126,19 +115,21 @@ bool isUnicodeAlpha(Char c) {
   #endif
 }
 
-bool isAlpha_(Char c) { return isAlpha(c) || c==_('_'); }
-bool isAlnum_(Char c) { return isAlnum(c) || c==_('_') || isUnicodeAlpha(c); }
-bool isOper  (Char c) { return wxStrchr(_("+-*/!.@%^&:=<>;,"),c) != nullptr; }
-bool isLparen(Char c) { return c==_('(') || c==_('[') || c==_('{'); }
-bool isRparen(Char c) { return c==_(')') || c==_(']') || c==_('}'); }
-bool isDigitOrDot(Char c) { return isDigit(c) || c==_('.'); }
+bool isAlpha_(wxUniChar c) { return isAlpha(c) || c==_('_'); }
+bool isAlnum_(wxUniChar c) { return isAlnum(c) || c==_('_') || isUnicodeAlpha(c); }
+bool isOper  (wxUniChar c) { return wxStrchr(_("+-*/!.@%^&:=<>;,"),c) != nullptr; }
+bool isLparen(wxUniChar c) { return c==_('(') || c==_('[') || c==_('{'); }
+bool isRparen(wxUniChar c) { return c==_(')') || c==_(']') || c==_('}'); }
+bool isDigitOrDot(wxUniChar c) { return isDigit(c) || c==_('.'); }
 bool isLongOper(const String& s) { return s==_(":=") || s==_("==") || s==_("!=") || s==_("<=") || s==_(">="); }
 
+// moveme
 // ----------------------------------------------------------------------------- : Tokenizing
 
 TokenIterator::TokenIterator(const String& str, Packaged* package, bool string_mode, vector<ScriptParseError>& errors)
-  : input(str)
-  , pos(0)
+  : pos(str.begin())
+  , begin(str.begin())
+  , end(str.end())
   , package(package)
   , newline(false)
   , errors(errors)
@@ -146,7 +137,7 @@ TokenIterator::TokenIterator(const String& str, Packaged* package, bool string_m
   if (string_mode) {
     open_braces.push(BRACE_STRING_MODE);
     putBack();//dummy
-    readStringToken();
+    readStringToken(true);
   }
 }
 
@@ -164,78 +155,65 @@ const Token& TokenIterator::read() {
 }
 
 void TokenIterator::putBack() {
-  // Don't use addToken, because it canges newline
+  // Don't use addToken, because it changes newline
   // Also, we want to push_front
   Token t = {TOK_DUMMY, _(""), false};
   buffer.insert(buffer.begin(), t);
 }
 
-void TokenIterator::addToken(TokenType type, const String& value, size_t start) {
+void TokenIterator::addToken(TokenType type, const String& value, String::const_iterator start) {
   Token t = {type, value, newline, start};
   buffer.push_back(t);
   newline = false;
 }
 
 void TokenIterator::readToken() {
-  if (pos >= input.size()) {
-    // done with input, is there more?
-    if (!more.empty()) {
-      input    = more.top().input;
-      pos      = more.top().pos;
-      filename = more.top().filename;
-      package  = more.top().package;
-      more.pop();
-    } else {
-      // EOF
-      addToken(TOK_EOF, _("end of input"), input.size());
-    }
+  if (pos == end) {
+    addToken(TOK_EOF, "end of input", pos);
     return;
   }
   // read a character from the input
-  Char c = input.GetChar(pos++);
+  auto c = *pos;
   if (c == _('\n')) {
+    ++pos;
     newline = true;
   } else if (isSpace(c)) {
+    ++pos;
     // ignore
-  } else if (is_substr(input, pos-1, _("include file:"))) {
-    // include a file
-    // HACK: This is not really the right place for it, but it's the best I've got
-    // filename
-    pos += 12; // "nclude file:"
-    size_t eol = input.find_first_of(_("\r\n"), pos);
-    if (eol == String::npos) eol = input.size();
-    String include_file = trim(input.substr(pos, eol - pos));
-    // store the current input for later retrieval
-    MoreInput m = {input, eol, filename, package};
-    more.push(m);
-    // read the entire file, and start at the beginning of it
-    pos = 0;
-    filename = include_file;
-    auto stream = package_manager.openFileFromPackage(package, include_file);
-    eat_utf8_bom(*stream);
-    input = read_utf8_line(*stream, true);
+  } else if (is_substr(pos, end, "include file:")) {
+    pos += 13; // "include file:"
+    const char* newlines = "\r\n";
+    auto eol = find_first_of(pos,end, newlines,newlines+2);
+    String include_file = trim(String(pos, eol));
+    // include_file("filename")
+    addToken(TOK_NAME, "include_file", pos - 13);
+    addToken(TOK_LPAREN, "(", pos);
+    addToken(TOK_STRING, include_file, pos);
+    addToken(TOK_RPAREN, ")", eol);
+    pos = eol;
   } else if (isAlpha(c) || isUnicodeAlpha(c) || c == _('_') || (isDigit(c) && !buffer.empty() && buffer.back() == _("."))) {
     // name, or a number after a . token, as in array.0
-    size_t start = pos - 1;
-    while (pos < input.size() && isAlnum_(input.GetChar(pos))) ++pos;
-    addToken(TOK_NAME, canonical_name_form(input.substr(start, pos-start)), start); // convert name to canonical form
+    auto start = pos;
+    while (pos != end && isAlnum_(*pos)) ++pos;
+    addToken(TOK_NAME, canonical_name_form(String(start, pos)), start); // convert name to canonical form
   } else if (isDigit(c)) {
     // number
-    size_t start = pos - 1;
-    while (pos < input.size() && isDigitOrDot(input.GetChar(pos))) ++pos;
-    String num = input.substr(start, pos-start);
-    addToken(
-      num.find_first_of('.') == String::npos ? TOK_INT : TOK_DOUBLE,
-      num, start
-    );
+    auto start = pos;
+    TokenType type = TOK_INT;
+    while (pos != end && isDigitOrDot(*pos)) {
+      if (*pos == '.') type = TOK_DOUBLE;
+      ++pos;
+    }
+    addToken(type, String(start,pos), start);
   } else if (isOper(c)) {
     // operator
-    if (pos < input.size() && isLongOper(input.substr(pos - 1, 2))) {
+    if (pos+1 != end && isLongOper(String(pos, pos+2))) {
       // long operator
-      addToken(TOK_OPER, input.substr(pos - 1, 2), pos-1);
-      pos += 1;
+      addToken(TOK_OPER, String(pos, pos+2), pos);
+      pos += 2;
     } else {
-      addToken(TOK_OPER, input.substr(pos - 1, 1), pos-1);
+      addToken(TOK_OPER, String(pos, pos+1), pos);
+      ++pos;
     }
   } else if (c==_('"')) {
     // string
@@ -244,30 +222,34 @@ void TokenIterator::readToken() {
   } else if (c == _('}') && !open_braces.empty() && open_braces.top() != BRACE_PAREN) {
     // closing smart string, resume to string parsing
     //   "a{e}b"  -->  "a"  "{  e  }"  "b"
-    addToken(TOK_RPAREN, _("}\""), pos-1);
+    addToken(TOK_RPAREN, "}\"", pos);
     readStringToken();
   } else if (isLparen(c)) {
     // paranthesis/brace
     open_braces.push(BRACE_PAREN);
-    addToken(TOK_LPAREN, String(1,c), pos-1);
+    addToken(TOK_LPAREN, String(1,c), pos);
+    ++pos;
   } else if (isRparen(c)) {
     // paranthesis/brace
     if (!open_braces.empty()) open_braces.pop();
-    addToken(TOK_RPAREN, String(1,c), pos-1);
+    addToken(TOK_RPAREN, String(1,c), pos);
+    ++pos;
   } else if(c==_('#')) {
     // comment untill end of line
-    while (pos < input.size() && input[pos] != _('\n')) ++pos;
+    while (pos != end && *pos != '\n') ++pos;
   } else {
     add_error(_("Unknown character in script: '") + String(1,c) + _("'"));
     // just skip the character
+    ++pos;
   }
 }
 
-void TokenIterator::readStringToken() {
-  size_t start = max((size_t)1, pos) - 1;
+void TokenIterator::readStringToken(bool string_mode) {
+  auto start = pos;
+  if (!string_mode) ++pos;
   String str;
   while (true) {
-    if (pos >= input.size()) {
+    if (pos == end) {
       if (!open_braces.empty() && open_braces.top() == BRACE_STRING_MODE) {
         // in string mode: end of input = end of string
         addToken(TOK_STRING, str, start);
@@ -279,41 +261,41 @@ void TokenIterator::readStringToken() {
         return;
       }
     }
-    Char c = input.GetChar(pos++);
+    auto c = *pos++;
     // parse the string constant
-    if (c == _('"') && !open_braces.empty() && open_braces.top() == BRACE_STRING) {
+    if (c == '"' && !open_braces.empty() && open_braces.top() == BRACE_STRING) {
       // end of string
       addToken(TOK_STRING, str, start);
       open_braces.pop();
       return;
-    } else if (c == _('\\')) {
+    } else if (c == '\\') {
       // escape
-      if (pos >= input.size()) {
+      if (pos == end) {
         add_error(_("Unexpected end of input in string constant"));
         // fix up
         addToken(TOK_STRING, str, start);
         return;
       }
-      c = input.GetChar(pos++);
+      c = *pos++;
       if      (c == _('n')) str += _('\n');
       else if (c == _('r')) str += _('\r');
       else if (c == _('t')) str += _('\t');
       else if (c == _('&')); // escape for nothing
-      else if (c == _('<')) str += _('\1'); // escape for <
+      else if (c == _('<')) str += _('\1'); // escape for < in tagged string
       else if (c == _('\\') || c == _('"') || c == _('\'') || c == _('{') || c == _('}')) {
         str += c; // \ or { or " or ', don't warn about these, since they look escape-worthy
-      } else if (c >= _('0') && c <= _('9')) {
+      } else if (c >= '0' && c <= '9') {
         // numeric escape
-        int i = 0;
-        while (c >= _('0') && c <= _('9')) {
-          i = i * 10 + static_cast<int>(c - _('0'));
-          c = input.GetChar(pos++);
+        int i = static_cast<int>(c - '0');
+        while (pos != end && *pos >= '0' && *pos <= '9') {
+          i = i * 10 + static_cast<int>(c - *pos);
+          ++pos;
         }
-        pos--;
-        str += static_cast<Char>(i); // ignore
+        str += static_cast<wxUniChar>(i);
       } else {
         add_error(String::Format(_("Invalid string escape sequence: \"\\%c\""),c));
-        str += _('\\') + c; // ignore
+        str += _('\\');
+        str += c; // ignore error
       }
     } else if (c == _('{')) {
       // smart string
@@ -327,38 +309,36 @@ void TokenIterator::readStringToken() {
   }
 }
 
-int line_number(size_t pos, const String& input) {
+int line_number(String::const_iterator pos, String::const_iterator begin) {
   int line = 1;
-  for (size_t i = 0 ; i < input.size() && i < pos ; ++i) {
-    if (input.GetChar(i) == _('\n')) line++;
+  for ( ; begin != pos ; ++begin) {
+    if (*begin == '\n') line++;
   }
   return line;
 }
 
 void TokenIterator::add_error(const String& message) {
-  if (!errors.empty() && errors.back().start == pos) return; // already an error here
+  size_t error_pos = pos - begin;
+  if (!errors.empty() && errors.back().start == error_pos) return; // already an error here
   // add error message
-  errors.push_back(ScriptParseError(pos, line_number(pos,input), filename, message));
+  errors.push_back(ScriptParseError(error_pos, line_number(pos,begin), filename, message));
 }
+
 void TokenIterator::expected(const String& expected, const Token* opening) {
-  size_t error_pos = peek(0).pos;
-  if (!errors.empty() && errors.back().start == pos) return; // already an error here
+  auto next_token_pos = peek(0).pos;
+  size_t error_pos = next_token_pos - begin;
+  if (!errors.empty() && errors.back().start == error_pos) return; // already an error here
   // add error message
   if (opening) {
-    errors.push_back(ScriptParseError(opening->pos, error_pos, line_number(opening->pos,input), filename, opening->value, expected, peek(0).value));
+    size_t open_pos = opening->pos - begin;
+    errors.push_back(ScriptParseError(open_pos, error_pos, line_number(opening->pos,begin), filename, opening->value, expected, peek(0).value));
   } else {
-    errors.push_back(ScriptParseError(error_pos, line_number(error_pos,input), filename, expected, peek(0).value));
+    errors.push_back(ScriptParseError(error_pos, line_number(next_token_pos,begin), filename, expected, peek(0).value));
   }
 }
 
-
-String TokenIterator::getSourceCode(size_t start, size_t end) {
-  start = min(start, input.size());
-  end   = min(end,   input.size());
-  return input.substr(start, end-start);
-}
 int TokenIterator::getLineNumber() {
-  return line_number(peek(0).pos, input);
+  return line_number(peek(0).pos, begin);
 }
 
 // ----------------------------------------------------------------------------- : Parsing
@@ -414,17 +394,21 @@ ExprType parseOper(TokenIterator& input, Script& script, Precedence min_prec, In
 /// Parse call arguments, "(...)"
 void parseCallArguments(TokenIterator& input, Script& script, vector<Variable>& arguments);
 
+ExprType parseTopLevel(TokenIterator& input, Script& script) {
+  ExprType type = parseOper(input, script, PREC_ALL);
+  Token eof = input.read();
+  if (eof != TOK_EOF) {
+    input.expected(_("end of input"));
+  }
+  return type;
+}
 
 ScriptP parse(const String& s, Packaged* package, bool string_mode, vector<ScriptParseError>& errors_out) {
   errors_out.clear();
   // parse
   TokenIterator input(s, package, string_mode, errors_out);
   ScriptP script(new Script);
-  ExprType type = parseOper(input, *script, PREC_ALL);
-  Token eof = input.read();
-  if (eof != TOK_EOF) {
-    input.expected(_("end of input"));
-  }
+  ExprType type = parseTopLevel(input, *script);
   // were there fatal errors?
   if (type == EXPR_FAILED) {
     return ScriptP();
@@ -656,13 +640,13 @@ ExprType parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
     } else if (token == _("assert")) {
       // assert(condition)
       expectToken(input, _("("));
-      size_t start = input.peek().pos;
+      auto start = input.peek().pos;
       int line = input.getLineNumber();
       size_t function_pos = script.getConstants().size();
       script.addInstruction(I_PUSH_CONST, script_warning);
       parseOper(input, script, PREC_ALL); // condition
-      size_t end = input.peek().pos;
-      String message = String::Format(_("Assertion failure on line %d:\n   expected: "), line) + input.getSourceCode(start,end);
+      auto end = input.peek().pos;
+      String message = String::Format(_("Assertion failure on line %d:\n   expected: "), line) + String(start,end);
       expectToken(input, _(")"), &token);
       if (script.getInstructions().back().instr == I_BINARY && script.getInstructions().back().instr2 == I_EQ) {
         // compile "assert(x == y)" into
@@ -684,6 +668,23 @@ ExprType parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
         script.addInstruction(I_NOP,  SCRIPT_VAR_input);     // (input:)
       }
       return EXPR_STATEMENT;
+    } else if (token == _("include_file")) {
+      // Include a file
+      expectToken(input, _("("));
+      Token token = input.read();
+      if (token != TOK_STRING) {
+        input.expected(_("filename"));
+        return EXPR_FAILED;
+      }
+      expectToken(input, _(")"), &token);
+      // include the file
+      // read the entire file, and start at the beginning of it
+      String const& filename = token.value;
+      auto stream = package_manager.openFileFromPackage(input.package, filename);
+      eat_utf8_bom(*stream);
+      String included_input = read_utf8_line(*stream, true);
+      TokenIterator included_tokens(included_input, input.package, false, input.errors);
+      return parseTopLevel(included_tokens, script);
     } else {
       // variable
       Variable var = string_to_variable(token.value);
