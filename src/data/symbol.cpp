@@ -144,6 +144,10 @@ SymbolPartP read_new<SymbolPart>(Reader& reader) {
   }
 }
 
+void after_reading(SymbolPart& part, Version v) {
+  part.after_reading(v);
+}
+
 // ----------------------------------------------------------------------------- : SymbolShape
 
 IMPLEMENT_REFLECTION_ENUM(SymbolShapeCombine) {
@@ -161,22 +165,22 @@ IMPLEMENT_REFLECTION(SymbolShape) {
   REFLECT(points);
 }
 
-void after_reading(SymbolShape& shape, Version version) {
+void SymbolShape::after_reading(Version version) {
   // Fixes after reading
   // enforce constraints
-  shape.enforceConstraints();
+  enforceConstraints();
   if (version == Version()) {
     // this is a <= 0.1.2 symbol, points range [0...500] instead of [0...1]
-    shape.updateBounds();
-    if (shape.bounds.max.x < 100 || shape.bounds.max.y < 100) return;
+    updateBounds();
+    if (bounds.max.x < 100 || bounds.max.y < 100) return;
     // adjust it
-    FOR_EACH(p, shape.points) {
+    FOR_EACH(p, points) {
       p->pos          /= 500.0;
       p->delta_before /= 500.0;
       p->delta_after  /= 500.0;
     }
-    if (shape.name.empty()) shape.name = _("Shape");
-    shape.updateBounds();
+    if (name.empty()) name = _("Shape");
+    updateBounds();
   }
 }
 
@@ -325,7 +329,11 @@ IMPLEMENT_REFLECTION(SymbolGroup) {
 
 IMPLEMENT_REFLECTION(Symbol) {
   REFLECT(parts);
-  REFLECT_IF_READING updateBounds();
+}
+
+void Symbol::after_reading(Version v) {
+  SymbolGroup::after_reading(v);
+  updateBounds();
 }
 
 double Symbol::aspectRatio() const {

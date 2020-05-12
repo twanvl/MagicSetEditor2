@@ -169,9 +169,12 @@ class SymbolPart : public IntrusivePtrVirtualBase {
   virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity) = 0;
   
   DECLARE_REFLECTION_VIRTUAL();
+  virtual void after_reading(Version) {}
+  friend void after_reading(SymbolPart&, Version);
 };
 
 template <> SymbolPartP read_new<SymbolPart>(Reader& reader);
+void after_reading(SymbolPart&, Version);
 
 // ----------------------------------------------------------------------------- : SymbolShape
 
@@ -221,8 +224,8 @@ class SymbolShape : public SymbolPart {
   virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
   
   DECLARE_REFLECTION_OVERRIDE();
+  void after_reading(Version) override;
 };
-void after_reading(SymbolShape&, Version);
 
 // ----------------------------------------------------------------------------- : SymbolGroup
 
@@ -289,6 +292,7 @@ class Symbol : public SymbolGroup {
   double aspectRatio() const;
   
   DECLARE_REFLECTION_OVERRIDE();
+  void after_reading(Version) override;
 };
 
 /// A default symbol: a square
