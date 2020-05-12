@@ -14,33 +14,33 @@
 // ----------------------------------------------------------------------------- : Alignment
 
 // Alignment in a textbox, specifies both horizontal and vertical alignment
-enum Alignment
-// horizontal
-{  ALIGN_LEFT        = 0x01
-,  ALIGN_CENTER      = 0x02
-,  ALIGN_RIGHT        = 0x04
-,  ALIGN_HORIZONTAL    = ALIGN_LEFT | ALIGN_CENTER | ALIGN_RIGHT
-// horizontal filling
-,  ALIGN_STRETCH      = 0x10
-,  ALIGN_JUSTIFY_WORDS    = 0x20
-,  ALIGN_JUSTIFY_ALL    = 0x40
-,  ALIGN_FILL        = ALIGN_STRETCH | ALIGN_JUSTIFY_WORDS | ALIGN_JUSTIFY_ALL
-// horizontal fill modifiers
-,  ALIGN_IF_OVERFLOW    = 0x1000 // only fill if text_width > box_width
-,  ALIGN_IF_SOFTBREAK    = 0x2000 // only fill before soft line breaks
-// vertical
-,  ALIGN_TOP        = 0x100
-,  ALIGN_MIDDLE      = 0x200
-,  ALIGN_BOTTOM      = 0x400
-,  ALIGN_VERTICAL      = ALIGN_TOP | ALIGN_MIDDLE | ALIGN_BOTTOM
-// modifiers
-// common combinations
-,  ALIGN_TOP_LEFT      = ALIGN_TOP    | ALIGN_LEFT
-,  ALIGN_TOP_CENTER    = ALIGN_TOP    | ALIGN_CENTER
-,  ALIGN_TOP_RIGHT      = ALIGN_TOP    | ALIGN_RIGHT
-,  ALIGN_MIDDLE_LEFT    = ALIGN_MIDDLE | ALIGN_LEFT
-,  ALIGN_MIDDLE_CENTER    = ALIGN_MIDDLE | ALIGN_CENTER
-,  ALIGN_MIDDLE_RIGHT    = ALIGN_MIDDLE | ALIGN_RIGHT
+enum Alignment {
+  // horizontal
+  ALIGN_LEFT          = 0x01,
+  ALIGN_CENTER        = 0x02,
+  ALIGN_RIGHT         = 0x04,
+  ALIGN_HORIZONTAL    = ALIGN_LEFT | ALIGN_CENTER | ALIGN_RIGHT,
+  // horizontal filling
+  ALIGN_STRETCH       = 0x10,
+  ALIGN_JUSTIFY_WORDS = 0x20,
+  ALIGN_JUSTIFY_ALL   = 0x40,
+  ALIGN_FILL          = ALIGN_STRETCH | ALIGN_JUSTIFY_WORDS | ALIGN_JUSTIFY_ALL,
+  // horizontal fill modifiers
+  ALIGN_IF_OVERFLOW   = 0x1000, // only fill if text_width > box_width
+  ALIGN_IF_SOFTBREAK  = 0x2000, // only fill before soft line breaks
+  // vertical
+  ALIGN_TOP           = 0x100,
+  ALIGN_MIDDLE        = 0x200,
+  ALIGN_BOTTOM        = 0x400,
+  ALIGN_VERTICAL      = ALIGN_TOP | ALIGN_MIDDLE | ALIGN_BOTTOM,
+  // modifiers
+  // common combinations
+  ALIGN_TOP_LEFT      = ALIGN_TOP    | ALIGN_LEFT,
+  ALIGN_TOP_CENTER    = ALIGN_TOP    | ALIGN_CENTER,
+  ALIGN_TOP_RIGHT     = ALIGN_TOP    | ALIGN_RIGHT,
+  ALIGN_MIDDLE_LEFT   = ALIGN_MIDDLE | ALIGN_LEFT,
+  ALIGN_MIDDLE_CENTER = ALIGN_MIDDLE | ALIGN_CENTER,
+  ALIGN_MIDDLE_RIGHT  = ALIGN_MIDDLE | ALIGN_RIGHT,
 };
 
 
