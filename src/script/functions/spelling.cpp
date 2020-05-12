@@ -105,9 +105,9 @@ SCRIPT_FUNCTION(check_spelling) {
     SCRIPT_RETURN(input);
   }
   SpellChecker* checkers[3] = {nullptr};
-  checkers[0] = &SpellChecker::get(language);
+  checkers[0] = SpellChecker::get(language);
   if (!extra_dictionary.empty()) {
-    checkers[1] = &SpellChecker::get(extra_dictionary,language);
+    checkers[1] = SpellChecker::get(extra_dictionary,language);
   }
   // what will the missspelling tag be?
   String tag = _("error-spelling:");
@@ -168,7 +168,8 @@ SCRIPT_FUNCTION(check_spelling_word) {
     // no language -> spelling checking
     SCRIPT_RETURN(true);
   } else {
-    bool correct = SpellChecker::get(language).spell(input);
+    auto checker = SpellChecker::get(language);
+    bool correct = !checker || checker->spell(input);
     SCRIPT_RETURN(correct);
   }
 }

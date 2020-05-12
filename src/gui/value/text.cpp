@@ -518,11 +518,11 @@ void spellcheck_language_at(const String& str, size_t error_pos, SpellChecker** 
   size_t pos2 = min(tag.find_first_of(_(':'),pos+1), tag.size());
   String language = tag.substr(pos+1,pos2-pos-1);
   if (language.empty()) return;
-  out[0] = &SpellChecker::get(language);
+  out[0] = SpellChecker::get(language);
   if (pos2 >= tag.size()) return;
   String extra = tag.substr(pos2+1);
   if (extra.empty()) return;
-  out[1] = &SpellChecker::get(extra,language);
+  out[1] = SpellChecker::get(extra,language);
 }
 
 void get_spelling_suggestions(const String& str, size_t error_pos, vector<String>& suggestions_out) {

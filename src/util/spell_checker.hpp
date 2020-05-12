@@ -24,13 +24,16 @@ DECLARE_POINTER_TYPE(SpellChecker);
 
 /// A spelling checker for a particular language
 class SpellChecker : public Hunspell, public IntrusivePtrBase<SpellChecker> {
-  public:
+public:
+  SpellChecker(const char* aff_path, const char* dic_path);
   /// Get a SpellChecker object for the given language.
-  /** Note: This is not threadsafe yet */
-  static SpellChecker& get(const String& language);
+  /** Returns nullptr on error
+   *  Note: This is not threadsafe yet */
+  static SpellChecker* get(const String& language);
   /// Get a SpellChecker object for the given language and filename
-  /** Note: This is not threadsafe yet */
-  static SpellChecker& get(const String& filename, const String& language);
+  /** Returns nullptr on error
+   *  Note: This is not threadsafe yet */
+  static SpellChecker* get(const String& filename, const String& language);
   /// Destroy all cached SpellChecker objects
   static void destroyAll();
 
@@ -42,12 +45,11 @@ class SpellChecker : public Hunspell, public IntrusivePtrBase<SpellChecker> {
   /// Give spelling suggestions
   void suggest(const String& word, vector<String>& suggestions_out);
 
-  private:
+private:
   /// Convert between String and dictionary encoding
   wxCSConv encoding;
   bool convert_encoding(const String& word, CharBuffer& out);
 
-  SpellChecker(const char* aff_path, const char* dic_path);
   static map<String,SpellCheckerP> spellers; //< Cached checkers for each language
 };
 

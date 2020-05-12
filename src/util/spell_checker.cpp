@@ -15,7 +15,7 @@
 
 map<String,SpellCheckerP> SpellChecker::spellers;
 
-SpellChecker& SpellChecker::get(const String& language) {
+SpellChecker* SpellChecker::get(const String& language) {
   SpellCheckerP& speller = spellers[language];
   if (!speller) {
     String local_dir  = package_manager.getDictionaryDir(true);
@@ -23,19 +23,17 @@ SpellChecker& SpellChecker::get(const String& language) {
     String aff_path = language + _(".aff");
     String dic_path = language + _(".dic");
     if (wxFileExists(local_dir + aff_path) && wxFileExists(local_dir + dic_path)) {
-      speller = SpellCheckerP(new SpellChecker((local_dir + aff_path).mb_str(),
-                                               (local_dir + dic_path).mb_str()));
+      speller = make_intrusive<SpellChecker>((local_dir + aff_path).mb_str(), (local_dir + dic_path).mb_str());
     } else if (wxFileExists(global_dir + aff_path) && wxFileExists(global_dir + dic_path)) {
-      speller = SpellCheckerP(new SpellChecker((global_dir + aff_path).mb_str(),
-                                               (global_dir + dic_path).mb_str()));
+      speller = make_intrusive<SpellChecker>((global_dir + aff_path).mb_str(), (global_dir + dic_path).mb_str());
     } else {
-      throw Error(_("Dictionary not found for language: ") + language);
+      queue_message(MESSAGE_ERROR, _("Dictionary not found for language: ") + language);
     }
   }
-  return *speller;
+  return speller.get();
 }
 
-SpellChecker& SpellChecker::get(const String& filename, const String& language) {
+SpellChecker* SpellChecker::get(const String& filename, const String& language) {
   SpellCheckerP& speller = spellers[filename + _(".") + language];
   if (!speller) {
     Packaged* package = nullptr;
@@ -44,20 +42,20 @@ SpellChecker& SpellChecker::get(const String& filename, const String& language) 
     String global_dir = package_manager.getDictionaryDir(false);
     String aff_path = language + _(".aff");
     String dic_path = language + _(".dic");
-    if (wxFileExists(prefix + aff_path) && wxFileExists(prefix + dic_path)) {
-      speller = SpellCheckerP(new SpellChecker((prefix + aff_path).mb_str(),
-                                               (prefix + dic_path).mb_str()));
-    } else if (wxFileExists(local_dir + aff_path) && wxFileExists(prefix + dic_path)) {
-      speller = SpellCheckerP(new SpellChecker((local_dir + aff_path).mb_str(),
-                                               (prefix + dic_path).mb_str()));
-    } else if (wxFileExists(global_dir + aff_path) && wxFileExists(prefix + dic_path)) {
-      speller = SpellCheckerP(new SpellChecker((global_dir + aff_path).mb_str(),
-                                               (prefix + dic_path).mb_str()));
-    } else {
-      throw Error(_("Dictionary '") + filename + _("' not found for language: ") + language);
+    if (wxFileExists(prefix + dic_path)) {
+      if (wxFileExists(prefix + aff_path)) {
+        speller = make_intrusive<SpellChecker>((prefix + aff_path).mb_str(), (prefix + dic_path).mb_str());
+      } else if (wxFileExists(local_dir + aff_path)) {
+        speller = make_intrusive<SpellChecker>((local_dir + aff_path).mb_str(), (prefix + dic_path).mb_str());
+      } else if (wxFileExists(global_dir + aff_path)) {
+        speller = make_intrusive<SpellChecker>((global_dir + aff_path).mb_str(), (prefix + dic_path).mb_str());
+      }
+    }
+    if (!speller) {
+      queue_message(MESSAGE_ERROR, _("Dictionary '") + filename + _("' not found for language: ") + language);
     }
   }
-  return *speller;
+  return speller.get();
 }
 
 SpellChecker::SpellChecker(const char* aff_path, const char* dic_path)
