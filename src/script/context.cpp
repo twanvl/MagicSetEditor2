@@ -394,7 +394,7 @@ public:
   }
 
   ScriptValueP eval(Context& ctx, bool openScope) const override {
-    #if USE_SCRIPT_PROFILING
+    #if USE_SCRIPT_PROFILING && 0 // this is very slow
       Timer timer;
       {
         // execute a

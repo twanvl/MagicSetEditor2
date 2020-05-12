@@ -12,7 +12,7 @@
 #include <script/script.hpp>
 #include <script/context.hpp>
 
-#ifndef USE_SCRIPT_PROFILING
+#if !defined(USE_SCRIPT_PROFILING) && defined(_DEBUG)
 #define USE_SCRIPT_PROFILING 1
 #endif
 
