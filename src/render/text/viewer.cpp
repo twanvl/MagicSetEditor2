@@ -13,18 +13,18 @@
 // ----------------------------------------------------------------------------- : Line
 
 struct TextViewer::Line {
-  size_t         start;    ///< Index of the first character in this line
-  size_t         end_or_soft;  ///< Index just beyond the last non-soft character
-  vector<double> positions;  ///< x position of each character in this line, gives the number of characters + 1, never empty
-  double         top;      ///< y position of (the top of) this line
-  double         line_height;  ///< The height of this line in pixels
-  LineBreak      break_after;  ///< Is there a saparator after this line?
+  size_t         start;       ///< Index of the first character in this line
+  size_t         end_or_soft; ///< Index just beyond the last non-soft character
+  vector<double> positions;   ///< x position of each character in this line, gives the number of characters + 1, never empty
+  double         top;         ///< y position of (the top of) this line
+  double         line_height; ///< The height of this line in pixels
+  LineBreak      break_after; ///< Is there a saparator after this line?
   Alignment      alignment;   ///< Alignment of this line
   bool           justifying;  ///< Is the text justified? Only true when *really* justifying.
   
   Line()
     : start(0), end_or_soft(0), top(0), line_height(0)
-    , break_after(BREAK_NO), justifying(false)
+    , break_after(LineBreak::NO), justifying(false)
   {}
   
   /// The position (just beyond) the bottom of this line
@@ -142,7 +142,7 @@ void TextViewer::drawSeparators(RotatedDC& dc) {
       y = (y + l.top) / 2;
       dc.DrawLine(RealPoint(0, y), RealPoint(dc.getInternalRect().width, y));
     }
-    separator = l.break_after == BREAK_LINE;
+    separator = l.break_after == LineBreak::LINE;
     y = y2;
   }
   // separator at the end?
@@ -375,9 +375,9 @@ TextLayoutP TextViewer::extractLayoutInfo() const {
       update_size(*block, l);
       update_size(*layout, l);
     }
-    if (l.break_after == BREAK_LINE) {
+    if (l.break_after == LineBreak::LINE) {
       paragraph = block = nullptr;
-    } else if (l.break_after == BREAK_HARD) {
+    } else if (l.break_after == LineBreak::HARD) {
       paragraph = nullptr;
     }
   }
@@ -569,21 +569,21 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
     bool break_now     = false;
     bool accept_word   = false; // the current word should be added to the line
     bool hide_breaker  = true;  // hide the \n or _(' ') that caused a line break
-    if (c.break_after == BREAK_SOFT || c.break_after == BREAK_HARD || c.break_after == BREAK_LINE) {
+    if (c.break_after == LineBreak::SOFT || c.break_after == LineBreak::HARD || c.break_after == LineBreak::LINE) {
       break_now   = true;
       accept_word = true;
       line.break_after = c.break_after;
-    } else if (c.break_after == BREAK_SPACE && style.field().multi_line) {
+    } else if (c.break_after == LineBreak::SPACE && style.field().multi_line) {
       // Soft break == end of word
       accept_word = true;
-    } else if (c.break_after == BREAK_MAYBE && style.direction == TOP_TO_BOTTOM) {
+    } else if (c.break_after == LineBreak::MAYBE && style.direction == TOP_TO_BOTTOM) {
       break_now   = true;
       accept_word = true;
       hide_breaker = false;
-      line.break_after = BREAK_SOFT;
+      line.break_after = LineBreak::SOFT;
     }
     // Add size of the character
-    if (c.break_after != BREAK_LINE) {
+    if (c.break_after != LineBreak::LINE) {
       // ^^ HACK: don't count the line height of <line> tags, if they are the only thing on a line
       //          then the linebreak is 'ignored'.
       word_size = add_horizontal(word_size, c.size);
@@ -607,12 +607,12 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
             accept_word = true;
             hide_breaker = false;
             word_too_long = true;
-            line.break_after = BREAK_SOFT;
+            line.break_after = LineBreak::SOFT;
           }
         } else {
           // line would become too long, break before the current word
           break_now = true;
-          line.break_after = BREAK_SOFT;
+          line.break_after = LineBreak::SOFT;
         }
       }
     }
@@ -654,14 +654,14 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
       // push
       lines.push_back(line);
       // reset line object for next line
-      double line_height_multiplier = line.break_after == BREAK_HARD ? style.line_height_hard
-                                    : line.break_after == BREAK_LINE ? style.line_height_line
-                                    :                                  style.line_height_soft;
+      double line_height_multiplier = line.break_after == LineBreak::HARD ? style.line_height_hard
+                                    : line.break_after == LineBreak::LINE ? style.line_height_line
+                                    :                                       style.line_height_soft;
       line.top += line.line_height * line_height_multiplier;
       line.start = word_start;
       line.positions.clear();
-      if (line.break_after == BREAK_LINE) line.line_height = 0;
-      line.break_after = BREAK_NO;
+      if (line.break_after == LineBreak::LINE) line.line_height = 0;
+      line.break_after = LineBreak::NO;
       // reset line_size
       line_size = RealSize(lineLeft(dc, style, line.top), 0);
       while (line.top < style.height && line_size.width + 1 >= style.width - style.padding_right) {
@@ -693,7 +693,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
     // per paragraph alignment
     size_t start = 0;
     for (size_t last = 0 ; last < lines.size() ; ++last) {
-      if (lines[last].break_after != BREAK_SOFT || last == lines.size()) {
+      if (lines[last].break_after != LineBreak::SOFT || last == lines.size()) {
         max_height = max(max_height, lines[last].bottom() - lines[start].top);
         start = last + 1;
       }
@@ -728,7 +728,7 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
     size_t start = 0;
     int n = 0;
     for (size_t last = 0 ; last < lines.size() ; ++last) {
-      if (lines[last].break_after != BREAK_SOFT || last == lines.size()) {
+      if (lines[last].break_after != LineBreak::SOFT || last == lines.size()) {
         alignParagraph(start, last + 1, chars, style, RealRect(0, style.padding_top+n*style.paragraph_height, s.width, style.paragraph_height));
         start = last + 1;
         ++n;
@@ -767,9 +767,9 @@ void TextViewer::alignParagraph(size_t start_line, size_t end_line, const vector
       double sum = 0;
       for (size_t li = start_line ; li < end_line ; ++li) {
         const Line& l = lines[li];
-        if ((soft && l.break_after == BREAK_SOFT)
-         || (hard && l.break_after == BREAK_HARD)
-         || (line && l.break_after == BREAK_LINE)) sum += l.line_height;
+        if ((soft && l.break_after == LineBreak::SOFT)
+         || (hard && l.break_after == LineBreak::HARD)
+         || (line && l.break_after == LineBreak::LINE)) sum += l.line_height;
       }
       if (sum == 0) break;
       // how much do we need to add?
@@ -780,9 +780,9 @@ void TextViewer::alignParagraph(size_t start_line, size_t end_line, const vector
         Line& l = lines[li];
         l.top  += add;
         // adjust next line by..
-        if ((soft && l.break_after == BREAK_SOFT)
-         || (hard && l.break_after == BREAK_HARD)
-         || (line && l.break_after == BREAK_LINE)) add += to_add * l.line_height;
+        if ((soft && l.break_after == LineBreak::SOFT)
+         || (hard && l.break_after == LineBreak::HARD)
+         || (line && l.break_after == LineBreak::LINE)) add += to_add * l.line_height;
       }
       height += add;
     }
@@ -806,7 +806,7 @@ void TextViewer::alignParagraph(size_t start_line, size_t end_line, const vector
 void TextViewer::Line::alignHorizontal(const vector<CharInfo>& chars, const TextStyle& style, const RealRect& s) {
   double width = this->width();
   bool should_fill = (alignment & ALIGN_IF_OVERFLOW  ? width > s.width : true)
-                  && (alignment & ALIGN_IF_SOFTBREAK ? break_after == BREAK_SOFT || !style.field().multi_line : true);
+                  && (alignment & ALIGN_IF_SOFTBREAK ? break_after == LineBreak::SOFT || !style.field().multi_line : true);
   if ((alignment & ALIGN_JUSTIFY_ALL) && should_fill) {
     // justify text, by characters
     justifying = true;
@@ -823,13 +823,13 @@ void TextViewer::Line::alignHorizontal(const vector<CharInfo>& chars, const Text
     double hdelta = s.width - width; // amount of space to distribute
     int count = 0;                   // distribute it among this many word breaks
     for (size_t k = start + 1 ; k < end_or_soft - 1 ; ++k) {
-      if (chars[k].break_after == BREAK_SPACE) ++count;
+      if (chars[k].break_after == LineBreak::SPACE) ++count;
     }
     if (count == 0) count = 1;       // prevent div by 0
     int i = 0; size_t j = start;
     FOR_EACH(c, positions) {
       c += s.x + hdelta * i / count;
-      if (j < end_or_soft && chars[j++].break_after == BREAK_SPACE) i++;
+      if (j < end_or_soft && chars[j++].break_after == LineBreak::SPACE) i++;
     }
   } else if ((alignment & ALIGN_STRETCH) && should_fill) {
     // stretching, don't center or align right

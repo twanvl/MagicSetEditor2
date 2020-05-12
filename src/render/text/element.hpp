@@ -23,23 +23,23 @@ class SymbolFontRef;
 // ----------------------------------------------------------------------------- : TextElement
 
 /// Information on a linebreak
-enum LineBreak
-{  BREAK_NO    // no line break ever
-,  BREAK_MAYBE    // break here when in "direction:vertical" mode
-,  BREAK_SPACE    // optional line break (' ')
-,  BREAK_SOFT    // always a line break, spacing as a soft break
-,  BREAK_HARD    // always a line break ('\n')
-,  BREAK_LINE    // line break with a separator line (<line>)
+enum class LineBreak {
+  NO,    // no line break ever
+  MAYBE, // break here when in "direction:vertical" mode
+  SPACE, // optional line break (' ')
+  SOFT,  // always a line break, spacing as a soft break
+  HARD,  // always a line break ('\n')
+  LINE,  // line break with a separator line (<line>)
 };
 
 /// Information on a character in a TextElement
 struct CharInfo {
   RealSize  size;             ///< Size of this character
-  LineBreak break_after : 31; ///< How/when to break after it?
+  LineBreak break_after : 16; ///< How/when to break after it?
   bool      soft : 1;         ///< Is this a 'soft' character? soft characters are ignored for alignment
   
   explicit CharInfo()
-    : break_after(BREAK_NO), soft(true)
+    : break_after(LineBreak::NO), soft(true)
   {}
   inline CharInfo(RealSize size, LineBreak break_after, bool soft = false)
     : size(size), break_after(break_after), soft(soft)

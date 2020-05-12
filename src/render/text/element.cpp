@@ -205,8 +205,8 @@ struct TextElementsFromString {
     } else {
       // text, possibly mixed with symbols
       DrawWhat what = soft > 0 ? DRAW_ACTIVE : DRAW_NORMAL;
-      LineBreak line_break = line > 0 ? BREAK_LINE :
-                             soft_line > 0 ? BREAK_SOFT : BREAK_HARD;
+      LineBreak line_break = line > 0 ? LineBreak::LINE :
+                             soft_line > 0 ? LineBreak::SOFT : LineBreak::HARD;
       if (kwpph > 0 || param > 0) {
         // bracket the text
         content = String(LEFT_ANGLE_BRACKET) + content + RIGHT_ANGLE_BRACKET;

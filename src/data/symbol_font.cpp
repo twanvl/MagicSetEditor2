@@ -387,7 +387,7 @@ void SymbolFont::getCharInfo(RotatedDC& dc, double font_size, const SplitSymbols
     RealSize size = dc.trInvS(symbolSize(dc.trS(font_size), sym));
     size.width /= count; // divide into count parts
     for (size_t i = 0 ; i < count ; ++i) {
-      out.push_back(CharInfo(size, i == count - 1 ? BREAK_MAYBE : BREAK_NO));
+      out.push_back(CharInfo(size, i == count - 1 ? LineBreak::MAYBE : LineBreak::NO));
     }
   }
 }
