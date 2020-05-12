@@ -26,6 +26,18 @@ template <> void Writer::handle(const Color& col) {
   handle(format_color(col));
 }
 
+int parse_hex(Char c) {
+  if (c >= '0' && c <= '9') return c - '0';
+  if (c >= 'A' && c <= 'F') return c - 'A' + 10;
+  if (c >= 'a' && c <= 'f') return c - 'a' + 10;
+  return -1;
+}
+int parse_hex(Char c1, Char c2) {
+  int x1 = parse_hex(c1);
+  int x2 = parse_hex(c2);
+  if (x1 >= 0 && x2 >= 0) return 16*x1 + x2;
+  return -1;
+}
 
 optional<Color> parse_color(const String& v) {
   UInt r,g,b,a;
@@ -33,6 +45,21 @@ optional<Color> parse_color(const String& v) {
     return Color(r, g, b);
   } else if (wxSscanf(v.c_str(),_("rgba(%u,%u,%u,%u)"),&r,&g,&b,&a)) {
     return Color(r, g, b, a);
+  } else if (v.size() > 0 && v[0] == '#') {
+    if (v.size() == 4) {
+      int r = parse_hex(v[1]), g = parse_hex(v[2]), b = parse_hex(v[3]);
+      if (r >= 0 && g >= 0 && b >= 0) return Color(17 * r, 17 * g, 17 * b);
+    } else if (v.size() == 5) {
+      int r = parse_hex(v[1]), g = parse_hex(v[2]), b = parse_hex(v[3]), a = parse_hex(v[4]);
+      if (r >= 0 && g >= 0 && b >= 0 && a >= 0) return Color(17 * r, 17 * g, 17 * b, 17 * a);
+    } else if (v.size() == 7) {
+      int r = parse_hex(v[1], v[2]), g = parse_hex(v[3],v[4]), b = parse_hex(v[5],v[6]);
+      if (r >= 0 && g >= 0 && b >= 0) return Color(r, g, b);
+    } else if (v.size() == 9) {
+      int r = parse_hex(v[1], v[2]), g = parse_hex(v[3],v[4]), b = parse_hex(v[5],v[6]), a = parse_hex(v[7],v[8]);
+      if (r >= 0 && g >= 0 && b >= 0 && a >= 0) return Color(r, g, b, a);
+    }
+    return nullopt;
   } else if (v == _("transparent")) {
     return Color(0,0,0,0);
   } else {
@@ -41,7 +68,7 @@ optional<Color> parse_color(const String& v) {
     if (c.Ok()) {
       return Color(c);
     } else {
-      return optional<Color>();
+      return nullopt;
     }
   }
 }
@@ -49,8 +76,6 @@ optional<Color> parse_color(const String& v) {
 String format_color(Color col) {
   if (col.Alpha() == 255) {
     return String::Format(_("rgb(%u,%u,%u)"), col.Red(), col.Green(), col.Blue());
-  } else if (col.Alpha() == 0) {
-    return _("transparent");
   } else {
     return String::Format(_("rgba(%u,%u,%u,%u)"), col.Red(), col.Green(), col.Blue(), col.Alpha());
   }

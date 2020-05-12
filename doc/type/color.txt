@@ -5,13 +5,17 @@ In files and scritps a color can be represented as
 <pre><span class='hl-kw'>rgb</span>(<i>red_component</i>, <i>green_component</i>, <i>blue_component</i>)</pre>
 where red_component, green_component and blue_component are numbers between 0 and 255 (inclusive).
 
-In some places MSE also supports colors with a transparency value, notated as
+In most places MSE also supports colors with a transparency value, notated as
 <pre><span class='hl-kw'>rgba</span>(<i>red_component</i>, <i>green_component</i>, <i>blue_component</i>, <i>alpha_component</i>)</pre>
 An alpha value of @0@ indicates a transparent color, an alpha value of @255@ is completely opaque.
 
+You can also use HTML style hexadecimal colors,
+<pre>#<i>rgb</i>, #<i>rgba</i>, #<i>rrggbb</i>, #<i>rrggbbaa</i></pre>
+For example, <tt>#ff0000</tt> is red, as is <tt>#f00</tt>
+
 --Named colors--
 MSE also supports named colors, for instance @"white"@ is the same as @rgb(255,255,255)@.
-For a full list of supported colors, see [[http://www.wxwidgets.org/manuals/stable/wx_wxcolourdatabase.html|the wxWidgets documentation]].
+For a full list of supported colors, see [[https://docs.wxwidgets.org/3.0/classwx_colour_database.html|the wxWidgets documentation]].
 In addition, the named color @"transparent"@ stands for the completely transparent color, @rgba(0,0,0,0)@.
 
 In scripts named colors are represented as [[type:string]]s.

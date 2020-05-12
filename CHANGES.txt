@@ -19,6 +19,7 @@ Bug fixes:
 
 Template features:
  * Added <font:...> tag to change the font inside a text field.
+ * Colors can now be written using hex notation, #rrggbb / #rrggbbaa, and short hex notation (#rgb / #rgba)
 
 Scripting:
  * Added type_name function
