@@ -580,7 +580,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
     if ((submatch % 2) == 0) {
       // parameter
       KeywordParam& kwp = *kw.parameters[(submatch - 2) / 2];
-      String param = untagged.substr(part_start_u, part_len_u); // untagged version
+      String param = match.str((int)submatch); // untagged version
       // strip separator_before
       String separator_before, separator_after;
       Regex::Results sep_match;
