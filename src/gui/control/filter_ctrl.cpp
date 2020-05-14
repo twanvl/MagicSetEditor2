@@ -32,24 +32,14 @@ protected:
 
 // ----------------------------------------------------------------------------- : FilterControl
 
-/// Text control that forwards focus events to the parent
-class TextCtrlWithFocus : public wxTextCtrl {
-public:
-  DECLARE_EVENT_TABLE();
-  void forwardFocusEvent(wxFocusEvent&);
-  void forwardKeyEvent(wxKeyEvent&);
-};
-
 FilterCtrl::FilterCtrl(wxWindow* parent, int id, String const& placeholder)
-  : wxControl(parent, id, wxDefaultPosition, wxSize(160,-1), wxSTATIC_BORDER)
+  : wxTextCtrl(parent, id, _(""), wxDefaultPosition, wxSize(160, -1), wxBORDER_THEME)
   , changing(false)
   , placeholder(placeholder)
 {
   wxColour bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
   SetBackgroundColour(bg);
   SetCursor(wxCURSOR_IBEAM);
-  filter_ctrl = new TextCtrlWithFocus();
-  filter_ctrl->Create(this, wxID_ANY, _(""), wxDefaultPosition, wxSize(130,-1), wxNO_BORDER);
   clear_button = new HoverButton(this, wxID_ANY, _("btn_clear_filter"), bg, false);
   clear_button->SetCursor(*wxSTANDARD_CURSOR);
   onSize();
@@ -68,24 +58,31 @@ void FilterCtrl::setFilter(const String& new_value, bool event) {
   }
 }
 
+void FilterCtrl::focusAndSelect() {
+  SetFocus();
+  if (!value.empty()) {
+    SetSelection(-1,-1);
+  }
+}
+
 void FilterCtrl::update() {
   changing = true;
   if (!value.empty() || hasFocus()) {
-    filter_ctrl->SetValue(value);
+    SetValue(value);
     wxColour fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-    filter_ctrl->SetDefaultStyle(wxTextAttr(fg));
-    filter_ctrl->SetForegroundColour(fg);
+    SetDefaultStyle(wxTextAttr(fg));
+    SetForegroundColour(fg);
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    filter_ctrl->SetFont(font);
+    SetFont(font);
   } else {
-    filter_ctrl->SetValue(placeholder);
+    SetValue(placeholder);
     wxColour fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
     wxColour bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-    filter_ctrl->SetDefaultStyle(wxTextAttr(lerp(fg,bg,0.5)));
-    filter_ctrl->SetForegroundColour(lerp(fg,bg,0.5));
+    SetDefaultStyle(wxTextAttr(lerp(fg,bg,0.5)));
+    SetForegroundColour(lerp(fg,bg,0.5));
     wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     font.SetStyle(wxFONTSTYLE_ITALIC);
-    filter_ctrl->SetFont(font);
+    SetFont(font);
   }
   clear_button->Show(!value.empty());
   changing = false;
@@ -93,7 +90,7 @@ void FilterCtrl::update() {
 
 void FilterCtrl::onChangeEvent(wxCommandEvent&) {
   if (!changing) {
-    setFilter(filter_ctrl->GetValue(),true);
+    setFilter(GetValue(),true);
   }
 }
 void FilterCtrl::onChar(wxKeyEvent& ev) {
@@ -114,24 +111,23 @@ void FilterCtrl::onSizeEvent(wxSizeEvent&) {
 }
 void FilterCtrl::onSize() {
   wxSize s = GetClientSize();
-  wxSize fs = filter_ctrl->GetBestSize();
   wxSize cs = clear_button->GetBestSize();
   int margin = 2;
-  filter_ctrl ->SetSize(margin, max(margin,(s.y-fs.y)/2), s.x - cs.x - 3*margin, fs.y);
   clear_button->SetSize(s.x - cs.x - margin, (s.y-cs.y)/2, cs.x, cs.y);
 }
 
-void FilterCtrl::onSetFocus(wxFocusEvent&) {
-  filter_ctrl->SetFocus();
+void FilterCtrl::onSetFocus(wxFocusEvent& ev) {
   update();
+  ev.Skip();
 }
-void FilterCtrl::onKillFocus(wxFocusEvent&) {
+void FilterCtrl::onKillFocus(wxFocusEvent& ev) {
   update();
+  ev.Skip();
 }
 
 bool FilterCtrl::hasFocus() {
   wxWindow* focus = wxWindow::FindFocus();
-  return focus == this || focus == filter_ctrl || focus == clear_button;
+  return focus == this || focus == clear_button;
 }
 
 BEGIN_EVENT_TABLE(FilterCtrl, wxControl)
@@ -142,19 +138,3 @@ BEGIN_EVENT_TABLE(FilterCtrl, wxControl)
   EVT_KILL_FOCUS(FilterCtrl::onKillFocus)
   EVT_CHAR      (FilterCtrl::onChar)
 END_EVENT_TABLE()
-
-// ----------------------------------------------------------------------------- : TextCtrlWithFocus
-
-void TextCtrlWithFocus::forwardFocusEvent(wxFocusEvent& ev) {
-  GetParent()->HandleWindowEvent(ev);
-}
-void TextCtrlWithFocus::forwardKeyEvent(wxKeyEvent& ev) {
-  GetParent()->HandleWindowEvent(ev);
-}
-
-BEGIN_EVENT_TABLE(TextCtrlWithFocus, wxTextCtrl)
-  EVT_SET_FOCUS (TextCtrlWithFocus::forwardFocusEvent)
-  EVT_KILL_FOCUS(TextCtrlWithFocus::forwardFocusEvent)
-  EVT_CHAR      (TextCtrlWithFocus::forwardKeyEvent)
-END_EVENT_TABLE()
-

@@ -1,7 +1,7 @@
 mse version: 2.0.2
 installer group: translations/English
 full name: English
-version: 2029-05-09
+version: 2020-05-15
 icon: usgb.png
 
 ############################################################## Menu items
@@ -47,6 +47,7 @@ menu:
 	cards:			&Cards
 	previous card:		Select &Previous Card	PgUp
 	next card:			Select &Next Card	PgDn
+	search cards:			&Search Cards	Ctrl+K
 	add card:			&Add Card	Ctrl+Enter
 	add cards:			Add &Multiple Cards...
 	remove card:		&Delete Selected Card
@@ -60,6 +61,7 @@ menu:
 	keywords:		&Keywords
 	previous keyword:	Select &Previous Keyword	PgUp
 	next keyword:		Select &Next Keyword	PgDn
+	search keywords:			&Search Keywords	Ctrl+K
 	add keyword:		&Add Keyword	Ctrl+Enter
 	remove keyword:		&Remove Select Keyword	 Del
 	
@@ -81,13 +83,13 @@ menu:
 	
 	window:			&Window
 	new window:			&New Window
-	cards tab:			&Cards	(Alt+1)
-	set info tab:		&Set Information	(Alt+2)
-	style tab:			St&yle	(Alt+3)
-	keywords tab:		&Keywords	(Alt+4)
-	stats tab:			S&tatistics	(Alt+5)
-	random pack tab:	&Random Packs	(Alt+6)
-	console tab:		&Console	(Alt+7)
+	cards tab:			&Cards	Alt+1
+	set info tab:		&Set Information	Alt+2
+	style tab:			St&yle	Alt+3
+	keywords tab:		&Keywords	Alt+4
+	stats tab:			S&tatistics	Alt+5
+	random pack tab:	&Random Packs	Alt+6
+	console tab:		&Console	Alt+7
 	
 	help:			&Help
 	index:				&Index...	F1
@@ -161,6 +163,7 @@ help:
 	#cards:
 	previous card:		Selects the previous card in the list
 	next card:			Selects the next card in the list
+	search cards:		Filter the card list using search terms
 	add card:			Add a new, blank, card to this set
 	add cards:			Add multiple cards to the set
 	remove card:		Delete the selected card from this set
@@ -175,6 +178,7 @@ help:
 	#keywords:
 	previous keyword:	Selects the previous keyword in the list
 	next keyword:		Selects the next keyword in the list
+	search keywords:		Filter the keyword list using search terms
 	add keyword:		Add a new keyword to this set
 	remove keyword:		Delete the selected keyword from this set
 	
@@ -421,10 +425,10 @@ tooltip:
 label:
 	# Cards tab
 	card notes:			Card notes:
-	search cards:		Search for cards...
+	search cards:		Search cards (Ctrl+K)
 	
 	# Keywords tab
-	search keywords:	Search for keywords...
+	search keywords:	Search keywords (Ctrl+K)
 	keyword:			Keyword
 	match:				Matches
 	mode:				Mode

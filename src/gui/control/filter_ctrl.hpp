@@ -12,12 +12,11 @@
 #include <data/filter.hpp>
 
 class HoverButton;
-class TextCtrlWithFocus;
 
 // ----------------------------------------------------------------------------- : FilterCtrl
 
 /// A search/filter textbox
-class FilterCtrl : public wxControl {
+class FilterCtrl : public wxTextCtrl {
 public:
   FilterCtrl(wxWindow* parent, int id, String const& placeholder);
   
@@ -26,9 +25,10 @@ public:
   void clearFilter(bool send_event = false) { setFilter(String(),send_event); }
   bool hasFilter() const { return !value.empty(); }
   String const& getFilterString() const { return value; }
+  void focusAndSelect();
   
   template <typename T>
-  intrusive_ptr<Filter<T> > getFilter() const {
+  intrusive_ptr<Filter<T>> getFilter() const {
     if (hasFilter()) {
       return make_intrusive<QuickFilter<T>>(getFilterString());
     } else {
@@ -41,7 +41,6 @@ private:
   bool changing;
   String value;
   String placeholder;
-  TextCtrlWithFocus* filter_ctrl;
   HoverButton* clear_button;
   
   void update();
@@ -54,5 +53,6 @@ private:
   void onSize();
   void onSetFocus(wxFocusEvent&);
   void onKillFocus(wxFocusEvent&);
+  void onPaint(wxPaintEvent&);
 };
 

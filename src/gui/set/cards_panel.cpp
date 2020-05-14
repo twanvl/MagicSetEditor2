@@ -67,6 +67,7 @@ CardsPanel::CardsPanel(Window* parent, int id)
   menuCard = new wxMenu();
     add_menu_item_tr(menuCard, ID_CARD_PREV, nullptr, "previous card");
     add_menu_item_tr(menuCard, ID_CARD_NEXT, nullptr, "next card");
+    add_menu_item_tr(menuCard, ID_CARD_SEARCH, nullptr, "search cards");
     menuCard->AppendSeparator();
     add_menu_item_tr(menuCard, ID_CARD_ADD, "card_add", "add_card");
     insertManyCardsMenu = add_menu_item_tr(menuCard, ID_CARD_ADD_MULT, "card_add_multiple", "add cards");
@@ -302,6 +303,9 @@ void CardsPanel::onCommand(int id) {
     case ID_CARD_NEXT:
       // Note: Forwarded events may cause this to occur even at the bottom.
       if (card_list->canSelectNext()) card_list->selectNext();
+      break;
+    case ID_CARD_SEARCH:
+      filter->focusAndSelect();
       break;
     case ID_CARD_ADD:
       set->actions.addAction(make_unique<AddCardAction>(*set));

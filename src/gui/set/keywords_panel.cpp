@@ -104,6 +104,7 @@ void KeywordsPanel::initControls() {
   menuKeyword = new wxMenu();
     add_menu_item_tr(menuKeyword, ID_KEYWORD_PREV, nullptr, "previous_keyword");
     add_menu_item_tr(menuKeyword, ID_KEYWORD_NEXT, nullptr, "next_keyword");
+    add_menu_item_tr(menuKeyword, ID_KEYWORD_SEARCH, nullptr, "search keywords");
     menuKeyword->AppendSeparator();
     add_menu_item_tr(menuKeyword, ID_KEYWORD_ADD, "keyword_add", "add_keyword");
     // NOTE: space after "Del" prevents wx from making del an accellerator
@@ -173,6 +174,9 @@ void KeywordsPanel::onCommand(int id) {
       break;
     case ID_KEYWORD_NEXT:
       list->selectNext();
+      break;
+    case ID_KEYWORD_SEARCH:
+      filter->focusAndSelect();
       break;
     case ID_KEYWORD_ADD:
       set->actions.addAction(make_unique<AddKeywordAction>(*set));
