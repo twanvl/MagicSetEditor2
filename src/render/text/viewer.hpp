@@ -139,7 +139,10 @@ private:
   void prepareLinesTryScales(RotatedDC& dc, const String& text, const TextStyle& style, vector<CharInfo>& chars_out);
   /// Prepare the lines, layout the text; at a specific scale
   /** Stores output in lines_out */
-  bool prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style, bool stop_if_too_long, vector<Line>& lines_out) const;
+  bool prepareLinesAtScale(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style, bool stop_if_too_long, vector<Line>& lines_out) const;
+  /// Move the line down until it fits in the masked area
+  /// Return the line's size
+  RealSize fitLineWidth(Line& line, RotatedDC& dc, const TextStyle& style) const;
   /// Align the lines within the textbox
   void alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style);
   /// Align the lines of a single paragraph (a set of lines)

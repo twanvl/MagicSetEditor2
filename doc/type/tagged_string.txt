@@ -18,6 +18,9 @@ This is written as the character with code 1 in files.
 | @<color:???>@		The text inside the tag is rendered with the given [[type:color]].
 | @<size:???>@		The text inside the tag is rendered with the given font size in points, for example @"<size:12>text</size>"@ makes the text 12 points. The text is scaled down proportionally when it does not fit in a text box and the @scale down to@ attribute allows it.
 | @<font:???>@		The text inside the tag is rendered with the given font family.
+| @<align:???>@			The block inside the tag is aligned with the given horizontal [[type:alignment]]
+| @<margin:??:??>@			The block inside the tag has additional left and right (optional) margins of the specified size in pixels.
+| @<li>@			The text inside the tag is treated as a list marker, meaning that if the line wraps it will be indented to match the content of the @<li>@ tag.
 | @<line>@		Line breaks inside this tag use the [[prop:style:line height line]], and they show a horizontal line.
 | @<soft-line>@		Line breaks inside this tag use the [[prop:style:soft line height]].
 | @<atom>@		An atomic piece of text. The cursor can never be inside it; it is selected as a whole.
@@ -25,7 +28,6 @@ This is written as the character with code 1 in files.
 | @<code>@		The text inside the tag is rendered in a monospace font. This is used for syntax highlighting script code.
 | @<code-kw>@		The text inside the tag is highlighted as a keyword in source code.
 | @<code-str>@		The text inside the tag is highlighted as a string in source code.
-
 
 --Other tags--
 ! Tag			Description

@@ -16,48 +16,6 @@ DECLARE_POINTER_TYPE(FontTextElement);
 
 // ----------------------------------------------------------------------------- : TextElements
 
-void TextElements::draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const {
-  FOR_EACH_CONST(e, elements) {
-    size_t start_ = max(start, e->start);
-    size_t end_   = min(end,   e->end);
-    if (start_ < end_) {
-      e->draw(dc, scale,
-              RealRect(rect.x + xs[start_-start] - xs[0], rect.y,
-                       xs[end_-start] - xs[start_-start], rect.height),
-              xs + start_ - start, what, start_, end_);
-    }
-    if (end <= e->end) return; // nothing can be after this
-  }
-}
-
-void TextElements::getCharInfo(RotatedDC& dc, double scale, size_t start, size_t end, vector<CharInfo>& out) const {
-  FOR_EACH_CONST(e, elements) {
-    // characters before this element, after the previous
-    while (out.size() < e->start) {
-      out.push_back(CharInfo());
-    }
-    e->getCharInfo(dc, scale, out);
-  }
-  while (out.size() < end) {
-    out.push_back(CharInfo());
-  }
-}
-
-double TextElements::minScale() const {
-  double m = 0.0001;
-  FOR_EACH_CONST(e, elements) {
-    m = max(m, e->minScale());
-  }
-  return m;
-}
-double TextElements::scaleStep() const {
-  double m = 1;
-  FOR_EACH_CONST(e, elements) {
-    m = min(m, e->scaleStep());
-  }
-  return m;
-}
-
 // Colors for <atom-param> tags
 Color param_colors[] =
   { Color(0,170,0)
@@ -72,25 +30,34 @@ const size_t param_colors_count = sizeof(param_colors) / sizeof(param_colors[0])
 // Helper class for TextElements::fromString, to allow persistent formating state accross recusive calls
 struct TextElementsFromString {
   // What formatting is enabled?
-  int bold, italic, symbol;
-  int soft, kwpph, param, line, soft_line;
-  int code, code_kw, code_string, param_ref, error;
-  int param_id;
+  int bold = 0, italic = 0, symbol = 0;
+  int soft = 0, kwpph = 0, param = 0, line = 0, soft_line = 0;
+  int code = 0, code_kw = 0, code_string = 0, param_ref = 0;
+  int param_id = 0;
   vector<Color> colors;
   vector<double> sizes;
   vector<String> fonts;
-  /// put angle brackets around the text?
-  bool bracket;
+  vector<pair<double,double>> margins;
+  vector<Alignment> aligns;
+
+  const TextStyle& style;
+  Context& ctx;
+  vector<TextParagraph>& paragraphs;
   
-  TextElementsFromString()
-    : bold(0), italic(0), symbol(0), soft(0), kwpph(0), param(0), line(0), soft_line(0)
-    , code(0), code_kw(0), code_string(0), param_ref(0), error(0)
-    , param_id(0), bracket(false) {}
-  
+  TextElementsFromString(TextElements& out, const String& text, const TextStyle& style, Context& ctx)
+    : style(style), ctx(ctx), paragraphs(out.paragraphs)
+  {
+    out.start = 0;
+    out.end = text.size();
+    paragraphs.emplace_back();
+    paragraphs.back().start = 0;
+    fromString(out.children, text, 0, text.size());
+    paragraphs.back().end = text.size();
+  }
+
+private:
   // read TextElements from a string
-  void fromString(TextElements& te, const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx) {
-    te.elements.clear();
-    end = min(end, text.size());
+  void fromString(vector<TextElementP>& elements, const String& text, size_t start, size_t end) {
     size_t text_start = start;
     // for each character...
     for (size_t pos = start ; pos < end ; ) {
@@ -98,7 +65,8 @@ struct TextElementsFromString {
       if (c == _('<')) {
         if (text_start < pos) {
           // text element before this tag?
-          addText(te, text, text_start, pos, style, ctx);
+          addText(elements, text, text_start, pos);
+          addParagraphs(text, text_start, pos);
         }
         // a (formatting) tag
         size_t tag_start = pos;
@@ -175,18 +143,54 @@ struct TextElementsFromString {
         else if (is_substr(text, tag_start, _("</atom-param"))) param       -= 1;
         else if (is_substr(text, tag_start, _("<atom"))) {
           // 'atomic' indicator
+          #if 0
+            // it would be nice if we could have semi-transparent brushes
+            Color color = style.font.color; color.a /= 5;
+          #else
+            Color fg = style.font.color;
+            Color color = fg.r+fg.g+fg.b < 255*2 ? Color(210,210,210) : Color(60,60,60);
+          #endif
           size_t end_tag = min(end, match_close_tag(text, tag_start));
-          intrusive_ptr<AtomTextElement> e(new AtomTextElement(pos, end_tag));
-          fromString(e->elements, text, pos, end_tag, style, ctx);
-          te.elements.push_back(e);
+          intrusive_ptr<AtomTextElement> e = make_intrusive<AtomTextElement>(pos, end_tag, color);
+          fromString(e->children, text, pos, end_tag);
+          elements.push_back(e);
           pos = skip_tag(text, end_tag);
         } else if (is_substr(text, tag_start, _( "<error"))) {
           // error indicator
           size_t end_tag = min(end, match_close_tag(text, tag_start));
-          intrusive_ptr<ErrorTextElement> e(new ErrorTextElement(pos, end_tag));
-          fromString(e->elements, text, pos, end_tag, style, ctx);
-          te.elements.push_back(e);
+          intrusive_ptr<ErrorTextElement> e = make_intrusive<ErrorTextElement>(pos, end_tag);
+          fromString(e->children, text, pos, end_tag);
+          elements.push_back(e);
           pos = skip_tag(text, end_tag);
+        } else if (is_substr(text, tag_start, _("</li"))) {
+          // end of bullet point, set margin here
+          paragraphs.back().margin_end_char = pos;
+        } else if (is_substr(text, tag_start, _("<margin"))) {
+          size_t colon = text.find_first_of(_(">:"), tag_start);
+          if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
+            size_t colon2 = text.find_first_of(_(">:"), colon+1);
+            double margin_left = 0., margin_right = 0.;
+            text.substr(colon + 1, colon2 - colon - 2).ToDouble(&margin_left);
+            text.substr(colon2 + 1, pos - colon2 - 2).ToDouble(&margin_right);
+            if (!margins.empty()) {
+              margin_left += margins.back().first;
+              margin_right += margins.back().second;
+            }
+            margins.emplace_back(margin_left, margin_right);
+            paragraphs.back().margin_left = margin_left;
+            paragraphs.back().margin_right = margin_right;
+          }
+        } else if (is_substr(text, tag_start, _("</margin"))) {
+          if (!margins.empty()) margins.pop_back();
+        } else if (is_substr(text, tag_start, _("<align"))) {
+          size_t colon = text.find_first_of(_(">:"), tag_start);
+          if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
+            Alignment align = alignment_from_string(text.substr(colon+1, pos-colon-2));
+            aligns.push_back(align);
+            paragraphs.back().alignment = align;
+          }
+        } else if (is_substr(text, tag_start, _("</align"))) {
+          if (!aligns.empty()) aligns.pop_back();
         } else {
           // ignore other tags
         }
@@ -199,18 +203,19 @@ struct TextElementsFromString {
     }
     if (text_start < end) {
       // remaining text at the end
-      addText(te, text, text_start, end, style, ctx);
+      addText(elements, text, text_start, end);
+      addParagraphs(text, text_start, end);
     }
   }
   
 private:
   /// Create a text element for a piece of text, text[start..end)
-  void addText(TextElements& te, const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx) {
+  void addText(vector<TextElementP>& elements, const String& text, size_t start, size_t end) {
     String content = untag(text.substr(start, end - start));
     assert(content.size() == end-start);
     // use symbol font?
     if (symbol > 0 && style.symbol_font.valid()) {
-      te.elements.push_back(make_intrusive<SymbolTextElement>(content, start, end, style.symbol_font, &ctx));
+      elements.push_back(make_intrusive<SymbolTextElement>(content, start, end, style.symbol_font, &ctx));
     } else {
       // text, possibly mixed with symbols
       DrawWhat what = soft > 0 ? DRAW_ACTIVE : DRAW_NORMAL;
@@ -221,8 +226,7 @@ private:
         content = String(LEFT_ANGLE_BRACKET) + content + RIGHT_ANGLE_BRACKET;
         start -= 1;
         end   += 1;
-      }
-      if (style.always_symbol && style.symbol_font.valid()) {
+      } else if (style.always_symbol && style.symbol_font.valid()) {
         // mixed symbols/text, autodetected by symbol font
         size_t text_pos = 0;
         size_t pos = 0;
@@ -233,9 +237,9 @@ private:
             if (text_pos < pos) {
               // text before it?
               if (!font) font = makeFont(style);
-              te.elements.push_back(make_intrusive<FontTextElement>(content.substr(text_pos, pos-text_pos), start+text_pos, start+pos, font, what, line_break));
+              elements.push_back(make_intrusive<FontTextElement>(content.substr(text_pos, pos-text_pos), start+text_pos, start+pos, font, what, line_break));
             }
-            te.elements.push_back(make_intrusive<SymbolTextElement>(content.substr(pos,n), start+pos, start+pos+n, style.symbol_font, &ctx));
+            elements.push_back(make_intrusive<SymbolTextElement>(content.substr(pos,n), start+pos, start+pos+n, style.symbol_font, &ctx));
             text_pos = pos += n;
           } else {
             ++pos;
@@ -243,10 +247,30 @@ private:
         }
         if (text_pos < pos) {
           if (!font) font = makeFont(style);
-          te.elements.push_back(make_intrusive<FontTextElement>(content.substr(text_pos), start+text_pos, end, font, what, line_break));
+          elements.push_back(make_intrusive<FontTextElement>(content.substr(text_pos), start+text_pos, end, font, what, line_break));
         }
       } else {
-        te.elements.push_back(make_intrusive<FontTextElement>(content, start, end, makeFont(style), what, line_break));
+        elements.push_back(make_intrusive<FontTextElement>(content, start, end, makeFont(style), what, line_break));
+      }
+    }
+  }
+  // Find paragraph breaks in text
+  void addParagraphs(const String& text, size_t start, size_t end) {
+    if (line == 0 && soft_line > 0) return;
+    for (size_t i = start; i < end; ++i) {
+      wxUniChar c = text.GetChar(i);
+      if (c == '\n') {
+        paragraphs.back().end = i + 1;
+        paragraphs.emplace_back();
+        paragraphs.back().start = i + 1;
+        paragraphs.back().margin_end_char = i + 1;
+        if (!margins.empty()) {
+          paragraphs.back().margin_left  = margins.back().first;
+          paragraphs.back().margin_right = margins.back().second;
+        }
+        if (!aligns.empty()) {
+          paragraphs.back().alignment = aligns.back();
+        }
       }
     }
   }
@@ -271,18 +295,12 @@ private:
   }
 };
 
-void TextElements::fromString(const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx) {
-  TextElementsFromString f;
-  f.fromString(*this, text, start, end, style, ctx);
-}
-/*
-// ----------------------------------------------------------------------------- : CompoundTextElement
-
-void CompoundTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, DrawWhat what, size_t start, size_t end) const {
-  elements.draw(dc, scale, rect, what, start, end);
-}
-RealSize CompoundTextElement::charSize(RotatedDC& dc, double scale, size_t index) const {
-  return elements.charSize(rot, scale, index);
+void TextElements::clear() {
+  children.clear();
+  paragraphs.clear();
 }
 
-*/
+void TextElements::fromString(const String& text, const TextStyle& style, Context& ctx) {
+  clear();
+  TextElementsFromString f(*this, text, style, ctx);
+}

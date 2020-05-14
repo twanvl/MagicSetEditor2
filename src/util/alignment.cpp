@@ -35,7 +35,7 @@ RealPoint align_in_rect(Alignment align, const RealSize& to_align, const RealRec
 // ----------------------------------------------------------------------------- : Reflection stuff
 
 /// Convert a String to an Alignment
-Alignment from_string(const String& s) {
+Alignment alignment_from_string(const String& s) {
   int al = ALIGN_TOP_LEFT;
   if (s.find(_("left"))             !=String::npos) al = ALIGN_LEFT             | (al & ~ALIGN_HORIZONTAL);
   if (s.find(_("center"))           !=String::npos) al = ALIGN_CENTER           | (al & ~ALIGN_HORIZONTAL);
@@ -85,7 +85,7 @@ String to_string(Alignment align) {
 // we need custom io, because there can be both a horizontal and a vertical component
 
 template <> void Reader::handle(Alignment& align) {
-  align = from_string(getValue());
+  align = alignment_from_string(getValue());
 }
 template <> void Writer::handle(const Alignment& align) {
   handle(to_string(align));

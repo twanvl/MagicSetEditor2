@@ -27,7 +27,7 @@ enum class LineBreak {
   NO,    // no line break ever
   MAYBE, // break here when in "direction:vertical" mode
   SPACE, // optional line break (' ')
-  SOFT,  // always a line break, spacing as a soft break
+  SOFT,  // always a line break, spacing as a soft break, doesn't end paragraphs
   HARD,  // always a line break ('\n')
   LINE,  // line break with a separator line (<line>)
 };
@@ -58,7 +58,7 @@ public:
   /// Draw a subsection section of the text in the given rectangle
   /** xs give the x coordinates for each character
    *  this->start <= start < end <= this->end <= text.size() */
-  virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const = 0;
+  virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const = 0;
   /// Get information on all characters in the range [start...end) and store them in out
   virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const = 0;
   /// Return the minimum scale factor allowed (starts at 1)
@@ -67,75 +67,41 @@ public:
   virtual double scaleStep() const = 0;
 };
 
-// ----------------------------------------------------------------------------- : TextElements
-
-/// A list of text elements
-class TextElements {
-public:
-  /// Draw all the elements (as need to show the range start..end)
-  void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
-  // Get information on all characters in the range [start...end) and store them in out
-  void getCharInfo(RotatedDC& dc, double scale, size_t start, size_t end, vector<CharInfo>& out) const;
-  /// Return the minimum scale factor allowed by all elements
-  double minScale() const;
-  /// Return the steps the scale factor should take
-  double scaleStep() const;
-  
-  /// The actual elements
-  /** They must be in order of positions and not overlap, i.e.
-   *    i < j  ==>  elements[i].end <= elements[j].start
-   */
-  vector<TextElementP> elements;
-  
-  /// Find the element that contains the given index, if there is any
-  vector<TextElementP>::const_iterator findByIndex(size_t index) const;
-  
-  /// Read the elements from a string
-  void fromString(const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx);
-};
-
 // ----------------------------------------------------------------------------- : SimpleTextElement
 
-/// A text element that just shows text
-class SimpleTextElement : public TextElement {
-public:
-  SimpleTextElement(const String& content, size_t start, size_t end)
-    : TextElement(start, end), content(content)
-  {}
-  String content;  ///< Text to show
-};
-
 /// A text element that uses a normal font
-class FontTextElement : public SimpleTextElement {
+class FontTextElement : public TextElement {
 public:
   FontTextElement(const String& content, size_t start, size_t end, const FontP& font, DrawWhat draw_as, LineBreak break_style)
-    : SimpleTextElement(content, start, end)
+    : TextElement(start, end), content(content)
     , font(font), draw_as(draw_as), break_style(break_style)
   {}
   
-  virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
-  virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
-  virtual double minScale() const;
-  virtual double scaleStep() const;
+  void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const override;
+  void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const override;
+  double minScale() const override;
+  double scaleStep() const override;
 private:
+  String    content;  ///< Text to show
   FontP     font;
   DrawWhat  draw_as;
   LineBreak break_style;
 };
 
 /// A text element that uses a symbol font
-class SymbolTextElement : public SimpleTextElement {
+class SymbolTextElement : public TextElement {
 public:
   SymbolTextElement(const String& content, size_t start, size_t end, const SymbolFontRef& font, Context* ctx)
-    : SimpleTextElement(content, start, end)
+    : TextElement(start, end), content(content)
     , font(font), ctx(*ctx)
   {}
   
-  virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
-  virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
-  virtual double minScale() const;
-  virtual double scaleStep() const;
+  void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const override;
+  void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const override;
+  double minScale() const override;
+  double scaleStep() const override;
 private:
+  String content;
   const SymbolFontRef& font; // owned by TextStyle
   Context& ctx;
 };
@@ -147,20 +113,26 @@ class CompoundTextElement : public TextElement {
 public:
   CompoundTextElement(size_t start, size_t end) : TextElement(start, end) {}
   
-  virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
-  virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
-  virtual double minScale() const;
-  virtual double scaleStep() const;
-  
-  TextElements elements; ///< the elements
+  void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const override;
+  void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const override;
+  double minScale() const override;
+  double scaleStep() const override;
+
+  /// Children of this element
+  /** They must be in order of positions and not overlap, i.e.
+   *    i < j  ==>  elements[i].end <= elements[j].start
+   */
+  vector<TextElementP> children;
 };
 
-/// A TextElement drawn using a grey background
+/// A TextElement drawn using a colored background
 class AtomTextElement : public CompoundTextElement {
 public:
-  AtomTextElement(size_t start, size_t end) : CompoundTextElement(start, end) {}
+  AtomTextElement(size_t start, size_t end, Color background_color) : CompoundTextElement(start, end), background_color(background_color) {}
   
-  virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
+  void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const override;
+private:
+  Color background_color;
 };
 
 /// A TextElement drawn using a red wavy underline
@@ -168,6 +140,30 @@ class ErrorTextElement : public CompoundTextElement {
 public:
   ErrorTextElement(size_t start, size_t end) : CompoundTextElement(start, end) {}
   
-  virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
+  void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const override;
 };
 
+// ----------------------------------------------------------------------------- : TextElements
+
+class TextParagraph {
+public:
+  optional<Alignment> alignment;
+  double margin_left = 0., margin_right = 0.;
+  //double margin_top = 0., margin_bottom = 0.; // TODO: more margin options?
+  size_t start = String::npos, end = String::npos;
+  size_t margin_end_char = 0; // end position of characters that are added to the margin (i.e. bullet points)
+};
+
+/// A list of text elements extracted from a string
+class TextElements : public CompoundTextElement {
+public:
+  TextElements() : CompoundTextElement(String::npos,String::npos) {}
+
+  /// Information on the paragraphs/blocks in the string
+  /// Text segments separated by newlines are considered paragraphs
+  vector<TextParagraph> paragraphs;
+
+  void clear();
+  /// Read the elements from a string
+  void fromString(const String& text, const TextStyle& style, Context& ctx);
+};

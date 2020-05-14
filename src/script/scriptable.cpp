@@ -14,7 +14,6 @@
 #include <script/value.hpp>
 #include <gfx/color.hpp>
 
-Alignment from_string(const String&);
 void parse_enum(const String&,Direction&);
 
 // ----------------------------------------------------------------------------- : Store
@@ -26,7 +25,7 @@ void store(const ScriptValueP& val, bool&   var)              { var = val->toBoo
 void store(const ScriptValueP& val, Color&  var)              { var = val->toColor(); }
 void store(const ScriptValueP& val, Defaultable<String>& var) { var.assign(val->toString()); }
 void store(const ScriptValueP& val, Defaultable<Color>&  var) { var.assign(val->toColor()); }
-void store(const ScriptValueP& val, Alignment& var)           { var = from_string(val->toString()); }
+void store(const ScriptValueP& val, Alignment& var)           { var = alignment_from_string(val->toString()); }
 void store(const ScriptValueP& val, Direction& var)           { parse_enum(val->toString(),var); }
 
 // ----------------------------------------------------------------------------- : OptionalScript

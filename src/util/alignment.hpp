@@ -55,6 +55,8 @@ double align_delta_y(Alignment align, double box_height, double obj_height);
  */
 RealPoint align_in_rect(Alignment align, const RealSize& to_align, const RealRect& outer);
 
+Alignment alignment_from_string(const String&);
+
 // ----------------------------------------------------------------------------- : Direction
 
 /// Direction to place something in
