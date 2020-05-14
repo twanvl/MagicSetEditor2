@@ -226,7 +226,9 @@ private:
         content = String(LEFT_ANGLE_BRACKET) + content + RIGHT_ANGLE_BRACKET;
         start -= 1;
         end   += 1;
-      } else if (style.always_symbol && style.symbol_font.valid()) {
+      }
+      // render as symbols or as text?
+      if (style.always_symbol && style.symbol_font.valid()) {
         // mixed symbols/text, autodetected by symbol font
         size_t text_pos = 0;
         size_t pos = 0;
