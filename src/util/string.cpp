@@ -88,40 +88,6 @@ String reverse_string(String const& input) {
   return reversed;
 }
 
-// ----------------------------------------------------------------------------- : Words
-
-String last_word(const String& s) {
-  size_t endLastWord   = s.find_last_not_of(_(' '));
-  size_t startLastWord = s.find_last_of(    _(' '), endLastWord);
-  if (endLastWord == String::npos) {
-    return String(); // empty string
-  } else if (startLastWord == String::npos) {
-    return s.substr(0, endLastWord + 1);// first word
-  } else {
-    return s.substr(startLastWord + 1, endLastWord - startLastWord);
-  }
-}
-
-String strip_last_word(const String& s) {
-  size_t endLastWord   = s.find_last_not_of(_(' '));
-  size_t startLastWord = s.find_last_of(_(' '), endLastWord);
-  if (endLastWord == String::npos || startLastWord == String::npos) {
-    return String(); // single word or empty string
-  } else {
-    return s.substr(0, startLastWord + 1);
-  }
-}
-
-const String word_start_chars = String(_("[({\"\'")) + LEFT_SINGLE_QUOTE + LEFT_DOUBLE_QUOTE;
-const String word_end_chars   = String(_("])}.,;:?!\"\'")) + RIGHT_SINGLE_QUOTE + RIGHT_DOUBLE_QUOTE;
-
-bool is_word_start_punctuation(Char c) {
-  return word_start_chars.find_first_of(c) != String::npos;
-}
-bool is_word_end_punctuation(Char c) {
-  return word_end_chars.find_first_of(c) != String::npos;
-}
-
 // ----------------------------------------------------------------------------- : Caseing
 
 /// Quick check to see if the substring starting at the given iterator is equal to some given string

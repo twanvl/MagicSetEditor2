@@ -132,17 +132,6 @@ String replace_all(const String& heystack, const String& needle, const String& r
 /// Reverses a string, Note: std::reverse doesn't work with wxString
 String reverse_string(String const& input);
 
-// ----------------------------------------------------------------------------- : Words
-
-/// Returns the last word in a string
-String last_word(const String&);
-
-/// Remove the last word from a string, leaves whitespace before that word
-String strip_last_word(const String&);
-
-bool is_word_start_punctuation(Char c);
-bool is_word_end_punctuation(Char c);
-
 // ----------------------------------------------------------------------------- : Caseing
 
 /// Make each word in a string start with an upper case character.
