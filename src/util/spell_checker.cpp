@@ -110,13 +110,6 @@ bool SpellChecker::spell(const String& word) {
   return Hunspell::spell(str);
 }
 
-bool SpellChecker::spell_with_punctuation(const String& word) {
-  size_t start = 0, end = String::npos;
-  trim_punctuation(word, start, end);
-  if (start >= end) return true; // just punctuation is wrong
-  return spell(word.substr(start,end-start));
-}
-
 void SpellChecker::suggest(const String& word, vector<String>& suggestions_out) {
   CharBuffer str;
   if (!convert_encoding(word,str)) return;

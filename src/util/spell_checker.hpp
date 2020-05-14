@@ -39,8 +39,6 @@ public:
 
   /// Check the spelling of a single word
   bool spell(const String& word);
-  /// Check the spelling of a single word, ignore punctuation
-  bool spell_with_punctuation(const String& word);
 
   /// Give spelling suggestions
   void suggest(const String& word, vector<String>& suggestions_out);
