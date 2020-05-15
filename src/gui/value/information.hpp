@@ -19,7 +19,7 @@ class InfoValueEditor : public InfoValueViewer, public ValueEditor {
 public:
   DECLARE_VALUE_EDITOR(Info);
   
-  virtual void determineSize(bool);
-  virtual bool drawLabel() const { return false; }
+  void determineSize(bool) override;
+  bool drawLabel() const override { return false; }
 };
 

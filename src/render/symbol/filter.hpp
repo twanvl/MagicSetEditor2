@@ -62,9 +62,9 @@ public:
   inline SolidFillSymbolFilter(const Color& fill_color, const Color& border_color)
     : fill_color(fill_color), border_color(border_color)
   {}
-  virtual Color color(double x, double y, SymbolSet point) const;
-  virtual String fillType() const;
-  virtual bool operator == (const SymbolFilter& that) const;
+  Color color(double x, double y, SymbolSet point) const override;
+  String fillType() const override;
+  bool operator == (const SymbolFilter& that) const override;
 private:
   Color fill_color, border_color;
   DECLARE_REFLECTION_OVERRIDE();
@@ -95,9 +95,9 @@ public:
   LinearGradientSymbolFilter(const Color& fill_color_1, const Color& border_color_1, const Color& fill_color_2, const Color& border_color_2
                             ,double center_x, double center_y, double end_x, double end_y);
   
-  virtual Color color(double x, double y, SymbolSet point) const;
-  virtual String fillType() const;
-  virtual bool operator == (const SymbolFilter& that) const;
+  Color color(double x, double y, SymbolSet point) const override;
+  String fillType() const override;
+  bool operator == (const SymbolFilter& that) const override;
   
   /// return time on the gradient, used by GradientSymbolFilter::color
   inline double t(double x, double y) const;
@@ -117,9 +117,9 @@ public:
     : GradientSymbolFilter(fill_color_1, border_color_1, fill_color_2, border_color_2)
   {}
   
-  virtual Color color(double x, double y, SymbolSet point) const;
-  virtual String fillType() const;
-  virtual bool operator == (const SymbolFilter& that) const;
+  Color color(double x, double y, SymbolSet point) const override;
+  String fillType() const override;
+  bool operator == (const SymbolFilter& that) const override;
   
   /// return time on the gradient, used by GradientSymbolFilter::color
   inline double t(double x, double y) const;

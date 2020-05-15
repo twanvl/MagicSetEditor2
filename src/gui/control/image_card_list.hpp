@@ -23,10 +23,10 @@ public:
   ~ImageCardList();
   ImageCardList(Window* parent, int id, long additional_style = 0);
 protected:
-  virtual int  OnGetItemImage(long pos) const;
-  virtual void onRebuild();
-  virtual void onBeforeChangeSet();
-  virtual bool allowModify() const { return true; }
+  int  OnGetItemImage(long pos) const override;
+  void onRebuild() override;
+  void onBeforeChangeSet() override;
+  bool allowModify() const override { return true; }
 private:
   DECLARE_EVENT_TABLE();
   void onIdle(wxIdleEvent&);
@@ -50,8 +50,8 @@ public:
   
 protected:
   /// Get only the subset of the cards
-  virtual void getItems(vector<VoidP>& out) const;
-  virtual void onChangeSet();
+  void getItems(vector<VoidP>& out) const override;
+  void onChangeSet() override;
   
   private:  
   CardListFilterP filter;  ///< Filter with which this.cards is made

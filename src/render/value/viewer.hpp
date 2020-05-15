@@ -63,12 +63,12 @@ public:
   virtual void onValueChange() {}
   /// Called when a (scripted) property of the associated style has changed
   /** Default: redraws the viewer if needed */
-  virtual void onStyleChange(int changes);
+  void onStyleChange(int changes) override;
   /// Called when an action is performed on the associated value
   virtual void onAction(const Action&, bool undone) { onValueChange(); }
   
   /// Convert this viewer to an editor, if possible
-  virtual ValueEditor* getEditor() { return 0; }
+  virtual ValueEditor* getEditor() { return nullptr; }
   
   DataViewer& viewer;  ///< Our parent object
 protected:

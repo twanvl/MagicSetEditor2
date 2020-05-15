@@ -37,7 +37,7 @@ public:
   
   ScriptableImage default_image; ///< Placeholder
   
-  virtual int update(Context&);
+  int update(Context&) override;
 };
 
 // ----------------------------------------------------------------------------- : ImageValue

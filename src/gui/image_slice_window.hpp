@@ -127,13 +127,13 @@ private:
   const AlphaMask& mask;
   
   bool mouse_down;
-  int mouseX, mouseY;    ///< starting mouse position
+  int mouseX, mouseY;     ///< starting mouse position
   wxRect start_selection; ///< selection in slice at start of dragging
   
   // --------------------------------------------------- : Events
   DECLARE_EVENT_TABLE();
   
-  wxSize DoGetBestSize() const;
+  wxSize DoGetBestSize() const override;
   
   void onLeftDown(wxMouseEvent&);
   void onLeftUp  (wxMouseEvent&);

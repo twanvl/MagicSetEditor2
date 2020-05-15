@@ -99,7 +99,7 @@ protected:
 
   // --------------------------------------------------- : Fixing wx issues
 
-  wxSize DoGetBestClientSize() const;
+  wxSize DoGetBestClientSize() const override;
 
   // --------------------------------------------------- : Data
   VoidP          selected_item;    ///< The currently selected item

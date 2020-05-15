@@ -22,11 +22,11 @@
 /// The file format of MSE1 files
 class MSE1FileFormat : public FileFormat {
 public:
-  virtual String extension()          { return _("mse"); }
-  virtual String name()               { return _("Magic Set Editor version 1 files (*.mse)"); }
-  virtual bool canImport()            { return true; }
-  virtual bool canExport(const Game&) { return false; }
-  virtual SetP importSet(const String& filename);
+  String extension() override          { return _("mse"); }
+  String name() override               { return _("Magic Set Editor version 1 files (*.mse)"); }
+  bool canImport() override            { return true; }
+  bool canExport(const Game&) override { return false; }
+  SetP importSet(const String& filename) override;
 };
 
 FileFormatP mse1_file_format() {

@@ -26,11 +26,11 @@ public:
   
 protected:
   /// Get only the subset of the cards
-  virtual void getItems(vector<VoidP>& out) const;
+  void getItems(vector<VoidP>& out) const override;
   
-  virtual void onChangeSet();
+  void onChangeSet() override;
   
-  private:  
+private:
   CardListFilterP filter;  ///< Filter with which this.cards is made
 };
 

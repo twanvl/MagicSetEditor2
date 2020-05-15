@@ -43,9 +43,9 @@ public:
   
   // --------------------------------------------------- : Set stuff
   
-  virtual void onBeforeChangeSet();
-  virtual void onChangeSet();
-  virtual void onAction(const Action&, bool);
+  void onBeforeChangeSet() override;
+  void onChangeSet() override;
+  void onAction(const Action&, bool) override;
   void updateUsageStatistics();
   
   // --------------------------------------------------- : Selection
@@ -58,35 +58,35 @@ public:
   
   // --------------------------------------------------- : Clipboard
   
-  bool canDelete() const;
-  bool canCopy()   const;
-  bool canPaste()  const;
+  bool canDelete() const override;
+  bool canCopy()   const override;
+  bool canPaste()  const override;
   // Try to perform a clipboard operation, return success
-  bool doCut();
-  bool doCopy();
-  bool doPaste();
-  bool doDelete();
+  bool doCut() override;
+  bool doCopy() override;
+  bool doPaste() override;
+  bool doDelete() override;
   
   // --------------------------------------------------- : The keywords
 protected:
   /// Get a list of all keywords
-  virtual void getItems(vector<VoidP>& out) const;
+  void getItems(vector<VoidP>& out) const override;
   /// Return the keyword at the given position in the sorted keyword list
   inline KeywordP getKeyword(long pos) const { return static_pointer_cast<Keyword>(getItem(pos)); }
   
   /// Send an 'item selected' event for the currently selected item (selected_item)
-  virtual void sendEvent();
+  void sendEvent() override;
   /// Compare keywords
-  virtual bool compareItems(void* a, void* b) const;
+  bool compareItems(void* a, void* b) const override;
   
   /// Get the text of an item in a specific column
   /** Overrides a function from wxListCtrl */
-  virtual String OnGetItemText (long pos, long col) const;
+  String OnGetItemText (long pos, long col) const override;
   /// Get the image of an item, by default no image is used
   /** Overrides a function from wxListCtrl */
-  virtual int    OnGetItemImage(long pos) const;
+  int OnGetItemImage(long pos) const override;
   /// Get the color for an item
-  virtual wxListItemAttr* OnGetItemAttr(long pos) const;
+  wxListItemAttr* OnGetItemAttr(long pos) const override;
   
 private:
   void storeColumns();

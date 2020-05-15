@@ -23,11 +23,11 @@
 /// The file format of Mtg Editor files
 class MtgEditorFileFormat : public FileFormat {
 public:
-  virtual String extension()          { return _("set"); }
-  virtual String name()               { return _("Mtg Editor files (*.set)"); }
-  virtual bool canImport()            { return true; }
-  virtual bool canExport(const Game&) { return false; }
-  virtual SetP importSet(const String& filename);
+  String extension() override          { return _("set"); }
+  String name() override               { return _("Mtg Editor files (*.set)"); }
+  bool canImport() override            { return true; }
+  bool canExport(const Game&) override { return false; }
+  SetP importSet(const String& filename) override;
 private:
   // Filter: se filename -> image directory
   // based on MtgEditor's: CardSet.getImageFolder
@@ -115,17 +115,17 @@ SetP MtgEditorFileFormat::importSet(const String& filename) {
     } else if (line == _("#COST##########")) {                    // casting cost
       target = &current_card->value<TextValue>(_("casting cost")).value;
     } else if (line == _("#RARITY########") || line == _("#FREQUENCY#####")) {  // rarity
-      target = 0;
+      target = nullptr;
       line = file.ReadLine();
       if      (line == _("0")) current_card->value<ChoiceValue>(_("rarity")).value.assign(_("common"));
       else if (line == _("1")) current_card->value<ChoiceValue>(_("rarity")).value.assign(_("uncommon"));
       else                     current_card->value<ChoiceValue>(_("rarity")).value.assign(_("rare"));
     } else if (line == _("#COLOR#########")) {                    // card color
-      target = 0;
+      target = nullptr;
       line = file.ReadLine();
       current_card->value<ChoiceValue>(_("card color")).value.assign(line);
     } else if (line == _("#AUTOBG########")) {                    // card color.isDefault
-      target = 0;
+      target = nullptr;
       line = file.ReadLine();
       if (line == _("TRUE")) {
         current_card->value<ChoiceValue>(_("card color")).value.makeDefault();
@@ -143,7 +143,7 @@ SetP MtgEditorFileFormat::importSet(const String& filename) {
     } else if (line == _("#TOUGHNESS#####")) {                    // toughness
       target = &current_card->value<TextValue>(_("toughness")).value;
     } else if (line == _("#ILLUSTRATION##") || line == _("#ILLUSTRATION8#")) {    // image
-      target = 0;
+      target = nullptr;
       line = file.ReadLine();
       if (!wxFileExists(line)) {
         // based on card name and date
@@ -158,14 +158,14 @@ SetP MtgEditorFileFormat::importSet(const String& filename) {
         }
       }
     } else if (line == _("#TOMBSTONE#####")) {                    // tombstone
-      target = 0;
+      target = nullptr;
       line = file.ReadLine();
       current_card->value<ChoiceValue>(_("card symbol")).value.assign(
         line==_("TRUE") ? _("tombstone") : _("none")
       );
     } else {
       // normal text
-      if (target != 0) {                              // value of a text field
+      if (target != nullptr) {                              // value of a text field
         if (!target->isDefault()) target->mutate() += _("\n");
         target->mutate() += line;
       } else {

@@ -28,12 +28,12 @@ public:
   DECLARE_FIELD_TYPE(PackageChoice);
   
   OptionalScript     script;      ///< Script to apply to all values
-  String             match;      ///< Package filenames to match
-  String             initial;      ///< Initial value
+  String             match;       ///< Package filenames to match
+  String             initial;     ///< Initial value
   bool               required;    ///< Is selecting a package required?
-  String             empty_name;    ///< Displayed name for the empty value (if !required)
+  String             empty_name;  ///< Displayed name for the empty value (if !required)
   
-  virtual void initDependencies(Context&, const Dependency&) const;
+  void initDependencies(Context&, const Dependency&) const override;
 };
 
 // ----------------------------------------------------------------------------- : PackageChoiceStyle
@@ -46,7 +46,7 @@ public:
   
   Font font;  ///< Font to use for the text
   
-  virtual int update(Context&);
+  int update(Context&) override;
 };
 
 // ----------------------------------------------------------------------------- : PackageChoiceValue
@@ -59,9 +59,9 @@ public:
   
   ValueType package_name;  ///< The selected package
   
-  /// Get the package (if it is set)
+  /// Get the package (if it is set), otherwise return nullptr
   PackagedP getPackage() const;
   
-  virtual bool update(Context&);
+  bool update(Context&) override;
 };
 

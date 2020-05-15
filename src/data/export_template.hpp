@@ -34,9 +34,9 @@ public:
   OptionalScript          script;        ///< Export script, for multi file templates and initialization
   
   static String typeNameStatic();
-  virtual String typeName() const;
-  Version fileVersion() const;
-  virtual void validate(Version = app_version);
+  String typeName() const override;
+  Version fileVersion() const override;
+  void validate(Version = app_version) override;
   /// Loads the export template with a particular name
   static ExportTemplateP byName(const String & name);
 private:

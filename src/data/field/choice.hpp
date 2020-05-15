@@ -41,8 +41,8 @@ public:
   map<String,Color> choice_colors;      ///< Colors for the various choices (when color_cardlist)
   map<String,Color> choice_colors_cardlist;  ///< Colors for the various choices, for in the card list
   
-  virtual void initDependencies(Context&, const Dependency&) const;
-  virtual void after_reading(Version ver);
+  void initDependencies(Context&, const Dependency&) const override;
+  void after_reading(Version ver) override;
 };
 
 
@@ -174,10 +174,10 @@ public:
   /// Initialize image from choice_images
   void initImage();
   
-  virtual int  update(Context&);
-  virtual void initDependencies(Context&, const Dependency&) const;
-  virtual void checkContentDependencies(Context&, const Dependency&) const;
-  virtual void invalidate();
+  int update(Context&) override;
+  void initDependencies(Context&, const Dependency&) const override;
+  void checkContentDependencies(Context&, const Dependency&) const override;
+  void invalidate() override;
 };
 
 // ----------------------------------------------------------------------------- : ChoiceValue
@@ -194,6 +194,6 @@ public:
   
   ValueType value;  /// The name of the selected choice
   
-  virtual bool update(Context&);
+  bool update(Context&) override;
 };
 

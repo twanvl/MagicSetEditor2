@@ -34,14 +34,14 @@ public:
   TextField();
   DECLARE_FIELD_TYPE(Text);
   
-  OptionalScript script;      ///< Script to apply to all values
+  OptionalScript script;          ///< Script to apply to all values
   OptionalScript default_script;  ///< Script that generates the default value
   //%OptionalScript view_script;    ///< Script to apply before viewing
   //%OptionalScript unview_script;  ///< Script to apply after changes to the view
-  bool multi_line;        ///< Are newlines allowed in the text?
-  String default_name;      ///< Name of "default" value
+  bool multi_line;                ///< Are newlines allowed in the text?
+  String default_name;            ///< Name of "default" value
   
-  virtual void initDependencies(Context&, const Dependency&) const;
+  void initDependencies(Context&, const Dependency&) const override;
 };
 
 // ----------------------------------------------------------------------------- : TextStyle
@@ -95,9 +95,9 @@ public:
   double content_width, content_height;       ///< Size of the rendered text
   int    content_lines;                       ///< Number of rendered lines
   
-  virtual int  update(Context&);
-  virtual void initDependencies(Context&, const Dependency&) const;
-  virtual void checkContentDependencies(Context&, const Dependency&) const;
+  int  update(Context&) override;
+  void initDependencies(Context&, const Dependency&) const override;
+  void checkContentDependencies(Context&, const Dependency&) const override;
   
   /// Stretch factor to use
   double getStretch() const;
@@ -114,7 +114,7 @@ public:
   ValueType value;                ///< The text of this value
   Age       last_update;          ///< When was the text last changed?
   
-  virtual bool update(Context&);
+  bool update(Context&) override;
 };
 
 // ----------------------------------------------------------------------------- : TextValue
@@ -139,8 +139,8 @@ public:
   virtual void retrieve();
   
   /// Update underlying data
-  virtual void onAction(Action& a, bool undone);
+  void onAction(Action& a, bool undone) override;
   /// Editing the same underlying value?
-  virtual bool equals(const Value* that);
+  bool equals(const Value* that) override;
 };
 

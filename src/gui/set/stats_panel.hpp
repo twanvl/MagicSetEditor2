@@ -31,17 +31,17 @@ public:
   
   // --------------------------------------------------- : UI
   
-  virtual void onChangeSet();
-  virtual void onAction(const Action&, bool undone);
+  void onChangeSet() override;
+  void onAction(const Action&, bool undone) override;
   
-  virtual void initUI   (wxToolBar*, wxMenuBar*);
-  virtual void destroyUI(wxToolBar*, wxMenuBar*);
-  virtual void onUpdateUI(wxUpdateUIEvent&);
-  virtual void onCommand(int id);
+  void initUI   (wxToolBar*, wxMenuBar*) override;
+  void destroyUI(wxToolBar*, wxMenuBar*) override;
+  void onUpdateUI(wxUpdateUIEvent&) override;
+  void onCommand(int id) override;
   
   // --------------------------------------------------- : Selection
-  virtual CardP selectedCard() const;
-  virtual void selectCard(const CardP& card);
+  CardP selectedCard() const override;
+  void selectCard(const CardP& card) override;
   
   // --------------------------------------------------- : Data
 private:

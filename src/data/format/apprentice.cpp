@@ -43,7 +43,7 @@ public:
   /// Update the progress bar
   /** if the operation should be aborted, throws an AbortException
    */
-  virtual void onProgress(float progress, const String& message);
+  void onProgress(float progress, const String& message) override;
 };
 
 ExportProgressDialog::ExportProgressDialog(Window* parent, const String& title, const String& message)
@@ -133,8 +133,8 @@ public:
     : ApprDatabase(progress_target, _("Expan.dat"))
   {}
 protected:
-  virtual void doRead(wxInputStream& in);
-  virtual void doWrite(wxOutputStream& out);
+  void doRead(wxInputStream& in) override;
+  void doWrite(wxOutputStream& out) override;
   
 public:
   map<String,String> expansions; ///< code -> name
@@ -196,8 +196,8 @@ public:
   void removeSet(const String& code);
   
 protected:
-  virtual void doRead(wxInputStream& in);
-  virtual void doWrite(wxOutputStream& out);
+  void doRead(wxInputStream& in) override;
+  void doWrite(wxOutputStream& out) override;
   
 private:
   vector<ApprFormat> formats;
@@ -280,8 +280,8 @@ public:
   void removeSet(const String& code);
   
 protected:
-  virtual void doRead(wxInputStream& in);
-  virtual void doWrite(wxOutputStream& out);
+  void doRead(wxInputStream& in) override;
+  void doWrite(wxOutputStream& out) override;
   
 public:
   map<String,ApprDistro> distros;
@@ -295,7 +295,7 @@ void ApprDistroDatabase::removeSet(const String& code) {
 
 void ApprDistroDatabase::doRead(wxInputStream& in) {
   wxTextInputStream tin(in);
-  ApprDistro* last = 0;
+  ApprDistro* last = nullptr;
   while (!in.Eof()) {
     String l = trim(tin.ReadLine());
     if (l.size() > 2 && l.GetChar(0) == _('<')) {
@@ -365,8 +365,8 @@ public:
   void removeSet(const String& code);
   
 protected:
-  virtual void doRead(wxInputStream& in);
-  virtual void doWrite(wxOutputStream& out);
+  void doRead(wxInputStream& in) override;
+  void doWrite(wxOutputStream& out) override;
   
 public:
   vector<ApprCardRecordP> cards;
@@ -582,7 +582,7 @@ class ApprenticeExportWindow : public wxDialog, public WithProgress {
 public:
   ApprenticeExportWindow(Window* parent, const SetP& set);
   
-  virtual void onProgress(float p, const String& message);
+  void onProgress(float p, const String& message) override;
   void doStep(const String& s, float size);
   
 private:

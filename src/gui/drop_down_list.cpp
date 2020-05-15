@@ -26,7 +26,7 @@ public:
 private:
   DropDownList& list;
   
-  virtual bool ProcessEvent(wxEvent& ev) {
+  bool ProcessEvent(wxEvent& ev) override {
     int t = ev.GetEventType();
     if ( t == wxEVT_LEFT_DOWN      || t == wxEVT_RIGHT_DOWN
       || t == wxEVT_MOVE           || t == wxEVT_SIZE
@@ -98,7 +98,7 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
     dc.SetFont(*wxNORMAL_FONT);
     for (size_t i = 0 ; i < count ; ++i) {
       int text_width;
-      dc.GetTextExtent(capitalize(itemText(i)), &text_width, 0);
+      dc.GetTextExtent(capitalize(itemText(i)), &text_width, nullptr);
       item_size.width = max(item_size.width, text_width + icon_size.width + 14); // 14 = room for popup arrow + padding
     }
   }

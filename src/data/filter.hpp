@@ -64,7 +64,7 @@ template <typename T>
 class QuickFilter : public Filter<T> {
 public:
   QuickFilter(String const& query) : query(parse_quicksearch_query(query)) {}
-  virtual bool keep(T const& x) const {
+  bool keep(T const& x) const override {
     return match_quicksearch_query(query, x);
   }
 private:

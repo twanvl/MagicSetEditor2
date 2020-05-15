@@ -206,11 +206,11 @@ public:
   
   SymbolShape();
   
-  virtual String typeName() const;
-  virtual SymbolPartP clone() const;
-  virtual int icon() const { return combine; }
-  virtual       SymbolShape* isSymbolShape()       { return this; }
-  virtual const SymbolShape* isSymbolShape() const { return this; }
+  String typeName() const override;
+  SymbolPartP clone() const override;
+  int icon() const override { return combine; }
+        SymbolShape* isSymbolShape()       override { return this; }
+  const SymbolShape* isSymbolShape() const override { return this; }
   
   /// Get a control point, wraps around
   inline ControlPointP getPoint(int id) const {
@@ -221,7 +221,7 @@ public:
   void enforceConstraints();
   
   /// Calculate the position and size of the part using the given rotation matrix
-  virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
+  Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity) override;
   
   DECLARE_REFLECTION_OVERRIDE();
   void after_reading(Version) override;
@@ -236,15 +236,15 @@ public:
   
   SymbolGroup();
   
-  virtual String typeName() const;
-  virtual SymbolPartP clone() const;
-  virtual int icon() const { return SYMBOL_COMBINE_BORDER + 3; }
-  virtual       SymbolGroup* isSymbolGroup()       { return this; }
-  virtual const SymbolGroup* isSymbolGroup() const { return this; }
+  String typeName() const override;
+  SymbolPartP clone() const override;
+  int icon() const override { return SYMBOL_COMBINE_BORDER + 3; }
+        SymbolGroup* isSymbolGroup()       override { return this; }
+  const SymbolGroup* isSymbolGroup() const override { return this; }
   
-  virtual bool isAncestor(const SymbolPart& that) const;
+  bool isAncestor(const SymbolPart& that) const override;
   
-  virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
+  Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity) override;
   
   DECLARE_REFLECTION_OVERRIDE();
 };
@@ -268,14 +268,14 @@ public:
   
   SymbolSymmetry();
   
-  virtual String typeName() const;
-  virtual SymbolPartP clone() const;
-  virtual int icon() const { return kind + SYMBOL_COMBINE_BORDER + 1; }
-  virtual       SymbolSymmetry* isSymbolSymmetry()       { return this; }
-  virtual const SymbolSymmetry* isSymbolSymmetry() const { return this; }
+  String typeName() const override;
+  SymbolPartP clone() const override;
+  int icon() const override { return kind + SYMBOL_COMBINE_BORDER + 1; }
+        SymbolSymmetry* isSymbolSymmetry()       override { return this; }
+  const SymbolSymmetry* isSymbolSymmetry() const override { return this; }
   
   String expectedName() const;
-  virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
+  Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity) override;
   
   DECLARE_REFLECTION_OVERRIDE();
 };

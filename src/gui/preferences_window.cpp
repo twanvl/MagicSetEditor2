@@ -36,7 +36,7 @@ public:
 class GlobalPreferencesPage : public PreferencesPage {
 public:
   GlobalPreferencesPage(Window* parent);
-  void store();  
+  void store() override;  
   
 private:
   wxComboBox* language;
@@ -47,7 +47,7 @@ private:
 class DisplayPreferencesPage : public PreferencesPage {
 public:
   DisplayPreferencesPage(Window* parent);
-  void store();  
+  void store() override;  
   
 private:
   DECLARE_EVENT_TABLE();
@@ -74,7 +74,7 @@ private:
 class DirsPreferencesPage : public PreferencesPage {
 public:
   DirsPreferencesPage(Window* parent);
-  void store();
+  void store() override;
   
 private:
   DECLARE_EVENT_TABLE();
@@ -88,7 +88,7 @@ private:
 class UpdatePreferencesPage : public PreferencesPage {
 public:
   UpdatePreferencesPage(Window* parent);
-  void store();
+  void store() override;
   
 private:
   DECLARE_EVENT_TABLE();

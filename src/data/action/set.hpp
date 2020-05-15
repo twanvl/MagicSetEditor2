@@ -44,8 +44,8 @@ public:
   AddCardAction(AddingOrRemoving, Set& set, const CardP& card);
   AddCardAction(AddingOrRemoving, Set& set, const vector<CardP>& cards);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   const GenericAddAction<CardP> action;
 };
@@ -57,8 +57,8 @@ class ReorderCardsAction : public CardListAction {
 public:
   ReorderCardsAction(Set& set, size_t card_id1, size_t card_id2);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   //private:
   const size_t card_id1, card_id2;  ///< Positions of the two cards to swap
@@ -69,8 +69,8 @@ public:
 /// An action that affects the rendering/display/look of a set or cards in the set
 class DisplayChangeAction : public Action {
 public:
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
 };
 
 /// Changing the style of a a card
@@ -78,8 +78,8 @@ class ChangeCardStyleAction : public DisplayChangeAction {
 public:
   ChangeCardStyleAction(const CardP& card, const StyleSheetP& stylesheet);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   //private:
   CardP                   card;         ///< The affected card
@@ -93,8 +93,8 @@ class ChangeSetStyleAction : public DisplayChangeAction {
 public:
   ChangeSetStyleAction(Set& set, const CardP& card);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
 private:
   Set&        set;      ///< The affected set
@@ -109,8 +109,8 @@ class ChangeCardHasStylingAction : public DisplayChangeAction {
 public:
   ChangeCardHasStylingAction(Set& set, const CardP& card);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   //private:
   Set&                    set;          ///< The set to copy styling from
@@ -136,8 +136,8 @@ public:
   /// Add a newly allocated card
   AddPackAction(AddingOrRemoving, Set& set, const PackTypeP& pack);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   const GenericAddAction<PackTypeP> action;
 };
@@ -148,8 +148,8 @@ public:
   /// Add a newly allocated card
   ChangePackAction(Set& set, size_t pos, const PackTypeP& new_pack);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
 private:
   PackTypeP pack;

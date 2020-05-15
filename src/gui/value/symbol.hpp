@@ -21,12 +21,12 @@ class SymbolValueEditor : public SymbolValueViewer, public ValueEditor {
 public:
   DECLARE_VALUE_EDITOR(Symbol);
   
-  virtual void draw(RotatedDC& dc);
-  virtual bool onLeftDown  (const RealPoint& pos, wxMouseEvent&);
-  virtual bool onLeftUp    (const RealPoint& pos, wxMouseEvent&);
-  virtual bool onLeftDClick(const RealPoint& pos, wxMouseEvent&);
-  virtual bool onMotion    (const RealPoint& pos, wxMouseEvent&);
-  virtual void determineSize(bool);
+  void draw(RotatedDC& dc) override;
+  bool onLeftDown  (const RealPoint& pos, wxMouseEvent&) override;
+  bool onLeftUp    (const RealPoint& pos, wxMouseEvent&) override;
+  bool onLeftDClick(const RealPoint& pos, wxMouseEvent&) override;
+  bool onMotion    (const RealPoint& pos, wxMouseEvent&) override;
+  void determineSize(bool) override;
 private:
   /// Draw a button, buttons are numbered from the right
   void drawButton(RotatedDC& dc, int button, const String& text);

@@ -31,8 +31,8 @@ public:
   void setSelection(const vector<CardP>& cards);
   
 protected:
-  virtual int  OnGetItemImage(long pos) const;
-  virtual void onChangeSet();
+  int OnGetItemImage(long pos) const override;
+  void onChangeSet() override;
 private:
   DECLARE_EVENT_TABLE();
   

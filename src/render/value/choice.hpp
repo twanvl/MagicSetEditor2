@@ -19,9 +19,9 @@ class ChoiceValueViewer : public ValueViewer {
 public:
   DECLARE_VALUE_VIEWER(Choice) : ValueViewer(parent,style) {}
   
-  virtual bool prepare(RotatedDC& dc);
-  virtual void draw(RotatedDC& dc);
-  virtual void onStyleChange(int);
+  bool prepare(RotatedDC& dc) override;
+  void draw(RotatedDC& dc) override;
+  void onStyleChange(int) override;
 };
 
 bool prepare_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, const String& value);

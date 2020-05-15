@@ -104,12 +104,12 @@ inline intrusive_ptr<T> make_intrusive(Args&&... args) {
 /// Declares the type TypeP as a intrusive_ptr<Type>
 #define DECLARE_POINTER_TYPE(Type) \
   class Type; \
-  typedef intrusive_ptr<Type> Type##P;
+  typedef intrusive_ptr<Type> Type##P
 
 /// Declares the type TypeP as a shared_ptr<Type>
 #define DECLARE_SHARED_POINTER_TYPE(Type) \
   class Type; \
-  typedef shared_ptr<Type> Type##P;
+  typedef shared_ptr<Type> Type##P
 
 // ----------------------------------------------------------------------------- : Utility
 

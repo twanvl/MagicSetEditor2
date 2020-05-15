@@ -284,7 +284,7 @@ void SymbolPointEditor::onMouseDrag(const Vector2D& from, const Vector2D& to, wx
   Vector2D delta = to - from;
   if (selection == SELECTED_LINE && ev.AltDown()) {
     // Drag the curve
-    if (controlPointMoveAction) controlPointMoveAction = 0;
+    if (controlPointMoveAction) controlPointMoveAction = nullptr;
     if (!curveDragAction) {
       auto action = make_unique<CurveDragAction>(selected_line1, selected_line2);
       curveDragAction = action.get();

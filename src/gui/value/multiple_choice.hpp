@@ -21,13 +21,13 @@ public:
   DECLARE_VALUE_EDITOR(MultipleChoice);
   ~MultipleChoiceValueEditor();
   
-  virtual void onValueChange();
+  void onValueChange() override;
   
-  virtual void determineSize(bool force_fit);
+  void determineSize(bool force_fit) override;
   
-  virtual bool onLeftDown   (const RealPoint& pos, wxMouseEvent& ev);
-  virtual bool onChar(wxKeyEvent& ev);
-  virtual void onLoseFocus();
+  bool onLeftDown(const RealPoint& pos, wxMouseEvent& ev) override;
+  bool onChar(wxKeyEvent& ev) override;
+  void onLoseFocus() override;
   
 private:
   DropDownListP drop_down;

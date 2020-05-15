@@ -25,16 +25,16 @@ public:
   
   void onIdle(wxIdleEvent&);
   void onEnter(wxCommandEvent&);
-  virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
-  virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-  virtual void onUpdateUI(wxUpdateUIEvent&);
-  virtual void onCommand(int id);
+  void initUI   (wxToolBar* tb, wxMenuBar* mb) override;
+  void destroyUI(wxToolBar* tb, wxMenuBar* mb) override;
+  void onUpdateUI(wxUpdateUIEvent&) override;
+  void onCommand(int id) override;
   
   // --------------------------------------------------- : Clipboard
   
-  virtual bool canCut()   const;
-  virtual bool canCopy()  const;
-  virtual void doCopy();
+  bool canCut() const override;
+  bool canCopy() const override;
+  void doCopy() override;
   
 protected:
   void onChangeSet() override;

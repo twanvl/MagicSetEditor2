@@ -36,7 +36,7 @@ public:
   Defaultable<Color> initial;      ///< Initial choice of a new value, if not set the first choice is used
   String             default_name;  ///< Name of "default" value
   
-  virtual void initDependencies(Context&, const Dependency&) const;
+  void initDependencies(Context&, const Dependency&) const override;
 };
 
 /// A color that can be chosen for this field
@@ -63,7 +63,7 @@ public:
   double       bottom_width;    ///< Width of the colored region on the bottom side
   ImageCombine combine;         ///< How to combine image with the background
   
-  virtual int update(Context&);
+  int update(Context&) override;
 };
 
 // ----------------------------------------------------------------------------- : ColorValue
@@ -76,7 +76,7 @@ public:
   
   ValueType value;  ///< The value
   
-  virtual bool update(Context&);
+  bool update(Context&) override;
 };
 
 

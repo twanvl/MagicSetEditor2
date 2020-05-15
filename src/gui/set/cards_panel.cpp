@@ -284,13 +284,9 @@ void CardsPanel::onMenuOpen(wxMenuEvent& ev) {
   wxMenu* menu = editor->getMenu(ID_INSERT_SYMBOL);
   if (insertSymbolMenu->GetSubMenu() != menu || (menu && menu->GetParent() != menuFormat)) {
     // re-add the menu
-    fprintf(stderr,"insert1 %p %p\n", menuFormat,insertSymbolMenu);fflush(stderr);
     menuFormat->Remove(ID_INSERT_SYMBOL);
-    fprintf(stderr,"insert2\n");fflush(stderr);
     insertSymbolMenu->SetSubMenu(menu);
-    fprintf(stderr,"insert3\n");fflush(stderr);
     menuFormat->Append(insertSymbolMenu);
-    fprintf(stderr,"insert4\n");fflush(stderr);
   }
 }
 
@@ -418,7 +414,7 @@ void CardsPanel::doSelectAll() {
 class CardsPanel::SearchFindInfo : public FindInfo {
 public:
   SearchFindInfo(CardsPanel& panel, wxFindReplaceData& what) : FindInfo(what), panel(panel) {}
-  virtual bool handle(const CardP& card, const TextValueP& value, size_t pos, bool was_selection) {
+  bool handle(const CardP& card, const TextValueP& value, size_t pos, bool was_selection) override {
     // Select the card
     panel.card_list->setCard(card);
     return true;
@@ -430,7 +426,7 @@ private:
 class CardsPanel::ReplaceFindInfo : public FindInfo {
 public:
   ReplaceFindInfo(CardsPanel& panel, wxFindReplaceData& what) : FindInfo(what), panel(panel) {}
-  virtual bool handle(const CardP& card, const TextValueP& value, size_t pos, bool was_selection) {
+  bool handle(const CardP& card, const TextValueP& value, size_t pos, bool was_selection) override {
     // Select the card
     panel.card_list->setCard(card);
     // Replace
@@ -441,7 +437,7 @@ public:
       return true;
     }
   }
-  virtual bool searchSelection() const { return true; }
+  bool searchSelection() const override { return true; }
 private:
   CardsPanel& panel;
 };

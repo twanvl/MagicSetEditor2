@@ -20,12 +20,12 @@ class TextValueViewer : public ValueViewer {
 public:
   DECLARE_VALUE_VIEWER(Text) : ValueViewer(parent,style) {}
   
-  virtual bool prepare(RotatedDC& dc);
-  virtual void draw(RotatedDC& dc);
-  virtual void onValueChange();
-  virtual void onStyleChange(int);
-  virtual void onAction(const Action&, bool undone);
-  virtual double getStretch() const;
+  bool prepare(RotatedDC& dc) override;
+  void draw(RotatedDC& dc) override;
+  void onValueChange() override;
+  void onStyleChange(int) override;
+  void onAction(const Action&, bool undone) override;
+  double getStretch() const override;
   
 protected:
   TextViewer v;

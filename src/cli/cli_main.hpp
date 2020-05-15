@@ -20,9 +20,9 @@ public:
   /// The set is optional
   CLISetInterface(const SetP& set, bool quiet = false, bool run = true);
 protected:
-  virtual void onAction(const Action&, bool) {}
-  virtual void onChangeSet();
-  virtual void onBeforeChangeSet();
+  void onAction(const Action&, bool) override {}
+  void onChangeSet() override;
+  void onBeforeChangeSet() override;
 private:
   bool quiet;    ///< Supress prompts and other non-vital stuff
   bool running;  ///< Still running?

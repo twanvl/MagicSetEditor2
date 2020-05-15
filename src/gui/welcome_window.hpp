@@ -63,6 +63,6 @@ private:
   wxFont font_large, font_small;
   
 protected:
-  virtual void draw(DC& dc);
+  void draw(DC& dc) override;
 };
 

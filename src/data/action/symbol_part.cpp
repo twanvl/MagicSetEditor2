@@ -304,8 +304,8 @@ class SinglePointRemoveAction : public Action, public IntrusivePtrBase<SinglePoi
 public:
   SinglePointRemoveAction(const SymbolShapeP& shape, UInt position);
   
-  virtual String getName(bool to_undo) const { return _("Delete point"); }
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override { return _("Delete point"); }
+  void   perform(bool to_undo) override;
   
 private:
   SymbolShapeP shape;
@@ -390,8 +390,8 @@ class ControlPointRemoveAction : public Action {
 public:
   ControlPointRemoveAction(const SymbolShapeP& shape, const set<ControlPointP>& to_delete);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
 private:
   vector<SinglePointRemoveActionP> removals;

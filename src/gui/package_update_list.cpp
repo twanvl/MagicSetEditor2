@@ -128,23 +128,23 @@ public:
     buffer_size = m_parent_i_stream->LastRead();
   }
   
-  bool IsSeekable() const { return true; }
+  bool IsSeekable() const override { return true; }
 protected:
-  virtual size_t OnSysRead(void *buffer, size_t bufsize) {
+  size_t OnSysRead(void *buffer, size_t bufsize) override {
     size_t len = min(buffer_size - buffer_pos, bufsize);
     memcpy(buffer, this->buffer + buffer_pos, len);
     buffer_pos += len;
     m_parent_i_stream->Read((Byte*)buffer + len, bufsize - len);
     return m_parent_i_stream->LastRead() + len;
   }
-  virtual wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode) {
+  wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode) override {
     if      (mode == wxFromStart)   buffer_pos = seek;
     else if (mode == wxFromCurrent) buffer_pos += seek;
     else                            assert(false);
     assert(buffer_pos < buffer_size);
     return buffer_pos;
   }
-  virtual wxFileOffset OnSysTell() const {
+  wxFileOffset OnSysTell() const override {
     assert(buffer_pos < buffer_size);
     return buffer_pos;
   }
@@ -164,7 +164,7 @@ public:
     , list(list), ti(ti)
   {}
   
-  virtual Image generate() {
+  Image generate() override {
     wxURL url(ti->package->description->icon_url);
     unique_ptr<wxInputStream> isP(url.GetInputStream());
     if (!isP) return wxImage();
@@ -172,7 +172,7 @@ public:
     Image result(is2);
     return result;
   }
-  virtual void store(const Image& image) {
+  void store(const Image& image) override {
     if (!image.Ok()) return;
     ti->setIcon(image);
     list->Refresh(false);

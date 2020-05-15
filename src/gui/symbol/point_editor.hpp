@@ -19,13 +19,13 @@ class CurveDragAction;
 
 
 // Symbol editor for editing control points and handles
-class SymbolPointEditor : public SymbolEditorBase {
+class SymbolPointEditor final : public SymbolEditorBase {
 public:
   SymbolPointEditor(SymbolControl* control, const SymbolShapeP& part);
   
   // --------------------------------------------------- : Drawing
   
-  virtual void draw(DC& dc);
+  void draw(DC& dc) override;
   
 private:
   /// Draws a gradient on the selected line to indicate curve dragging
@@ -56,25 +56,25 @@ private:
 public:
   // --------------------------------------------------- : UI
   
-  virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
-  virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-  virtual void onUpdateUI(wxUpdateUIEvent&);
-  virtual void onCommand(int id);
-  virtual int modeToolId();
+  void initUI   (wxToolBar* tb, wxMenuBar* mb) override;
+  void destroyUI(wxToolBar* tb, wxMenuBar* mb) override;
+  void onUpdateUI(wxUpdateUIEvent&) override;
+  void onCommand(int id) override;
+  int modeToolId() override;
     
   // --------------------------------------------------- : Mouse events
   
-  virtual void onLeftDown  (const Vector2D& pos, wxMouseEvent& ev);
-  virtual void onLeftUp    (const Vector2D& pos, wxMouseEvent& ev);
-  virtual void onLeftDClick(const Vector2D& pos, wxMouseEvent& ev);
-  virtual void onMouseMove(const Vector2D& from, const Vector2D& to, wxMouseEvent& ev);
-  virtual void onMouseDrag(const Vector2D& from, const Vector2D& to, wxMouseEvent& ev);
+  void onLeftDown  (const Vector2D& pos, wxMouseEvent& ev) override;
+  void onLeftUp    (const Vector2D& pos, wxMouseEvent& ev) override;
+  void onLeftDClick(const Vector2D& pos, wxMouseEvent& ev) override;
+  void onMouseMove(const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) override;
+  void onMouseDrag(const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) override;
   
   // --------------------------------------------------- : Other events
   
-  virtual void onKeyChange(wxKeyEvent& ev);
-  virtual void onChar(wxKeyEvent& ev);
-  virtual bool isEditing();
+  void onKeyChange(wxKeyEvent& ev) override;
+  void onChar(wxKeyEvent& ev) override;
+  bool isEditing() override;
   
 private:
   // --------------------------------------------------- : Data

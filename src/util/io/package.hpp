@@ -316,9 +316,9 @@ inline void after_reading(Packaged& p, Version file_app_version) {
 /// A package that just contains a bunch of files that are used from other packages
 class IncludePackage : public Packaged {
 protected:
-  String typeName() const;
-  Version fileVersion() const;
-  DECLARE_REFLECTION();
+  String typeName() const override;
+  Version fileVersion() const override;
+  DECLARE_REFLECTION_OVERRIDE();
 };
 
 // ----------------------------------------------------------------------------- : Utility

@@ -58,7 +58,7 @@ public:
   
   void drawEditingHints(DC& dc);
   
-  void onAction(const Action&, bool) {}
+  void onAction(const Action&, bool) override {}
   
   
 private:

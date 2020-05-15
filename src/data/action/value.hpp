@@ -40,8 +40,8 @@ public:
     : valueP(value), card(nullptr), old_time_modified(wxDateTime::Now())
   {}
   
-  virtual String getName(bool to_undo) const;
-  virtual void perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   /// We know that the value is on the given card, add that information
   void isOnCard(Card* card);
@@ -69,9 +69,9 @@ class TextValueAction : public ValueAction {
 public:
   TextValueAction(const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name);
   
-  virtual String getName(bool to_undo) const;
-  virtual void perform(bool to_undo);
-  virtual bool merge(const Action& action);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
+  bool merge(const Action& action) override;
   
   inline const String& newValue() const { return new_value(); }
   
@@ -99,10 +99,10 @@ class TextToggleReminderAction : public ValueAction {
 public:
   TextToggleReminderAction(const TextValueP& value, size_t pos);
   
-  virtual String getName(bool to_undo) const;
-  virtual void perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
-  private:  
+private:
   size_t pos;  ///< Position of "<kw-"
   bool enable; ///< Should the reminder text be turned on or off?
   wxUniChar old; ///< Old value of the <kw- tag
@@ -114,7 +114,7 @@ public:
 class SimpleTextValueAction : public ValueAction {
 public:
   SimpleTextValueAction(const Card* card, const TextValueP& value, const Defaultable<String>& new_value);
-  virtual void perform(bool to_undo);
+  void perform(bool to_undo) override;
   bool merge(const SimpleTextValueAction& action);
 private:
   Defaultable<String> new_value;
@@ -125,8 +125,8 @@ class ReplaceAllAction : public Action {
 public:
   ~ReplaceAllAction();
   
-  virtual String getName(bool to_undo) const;
-  virtual void perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   vector<SimpleTextValueAction> actions;
 };
@@ -137,9 +137,9 @@ public:
 class ScriptValueEvent : public Action {
 public:
   inline ScriptValueEvent(const Card* card, const Value* value) : card(card), value(value) {}
-    
-  virtual String getName(bool to_undo) const;
-  virtual void perform(bool to_undo);
+  
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   const Card* card;   ///< Card the value is on
   const Value* value; ///< The modified value
@@ -152,8 +152,8 @@ public:
     : stylesheet(stylesheet), style(style)
   {}
   
-  virtual String getName(bool to_undo) const;
-  virtual void perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   const StyleSheet* stylesheet; ///< StyleSheet the style is for
   const Style*      style;      ///< The modified style

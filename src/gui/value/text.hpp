@@ -34,67 +34,67 @@ public:
   
   // --------------------------------------------------- : Events
   
-  virtual void onFocus();
-  virtual void onLoseFocus();
+  void onFocus() override;
+  void onLoseFocus() override;
   
-  virtual bool onLeftDown  (const RealPoint& pos, wxMouseEvent&);
-  virtual bool onLeftUp    (const RealPoint& pos, wxMouseEvent&);
-  virtual bool onLeftDClick(const RealPoint& pos, wxMouseEvent&);
-  virtual bool onRightDown (const RealPoint& pos, wxMouseEvent&);
-  virtual bool onMotion    (const RealPoint& pos, wxMouseEvent&);
-  virtual void onMouseLeave(const RealPoint& pos, wxMouseEvent&);
-  virtual bool onMouseWheel(const RealPoint& pos, wxMouseEvent&);
+  bool onLeftDown  (const RealPoint& pos, wxMouseEvent&) override;
+  bool onLeftUp    (const RealPoint& pos, wxMouseEvent&) override;
+  bool onLeftDClick(const RealPoint& pos, wxMouseEvent&) override;
+  bool onRightDown (const RealPoint& pos, wxMouseEvent&) override;
+  bool onMotion    (const RealPoint& pos, wxMouseEvent&) override;
+  void onMouseLeave(const RealPoint& pos, wxMouseEvent&) override;
+  bool onMouseWheel(const RealPoint& pos, wxMouseEvent&) override;
   
-  virtual bool onContextMenu(wxMenu& m, wxContextMenuEvent&);
-  virtual wxMenu* getMenu(int type) const;
-  virtual bool onCommand(int);
+  bool onContextMenu(wxMenu& m, wxContextMenuEvent&) override;
+  wxMenu* getMenu(int type) const override;
+  bool onCommand(int) override;
   
-  virtual bool onChar(wxKeyEvent&);
+  bool onChar(wxKeyEvent&) override;
   
   // --------------------------------------------------- : Actions
   
-  virtual void onValueChange();
-  virtual void onAction(const Action&, bool undone);
+  void onValueChange() override;
+  void onAction(const Action&, bool undone) override;
   
   // --------------------------------------------------- : Clipboard
   
-  virtual bool canCopy()  const;
-  virtual bool canPaste() const;
-  virtual bool doCopy();
-  virtual bool doPaste();
-  virtual bool doDelete();
+  bool canCopy() const override;
+  bool canPaste() const override;
+  bool doCopy() override;
+  bool doPaste() override;
+  bool doDelete() override;
   
   // --------------------------------------------------- : Formating
   
-  virtual bool canFormat(int type) const;
-  virtual bool hasFormat(int type) const;
-  virtual void doFormat(int type);
+  bool canFormat(int type) const override;
+  bool hasFormat(int type) const override;
+  void doFormat(int type) override;
   
   // --------------------------------------------------- : Selection
 
-  virtual bool canSelectAll() const { return true; }
-  virtual void doSelectAll();
-  virtual void select(size_t start, size_t end);
-  virtual size_t selectionStart() const { return selection_start; }
-  virtual size_t selectionEnd()   const { return selection_end; }
+  bool canSelectAll() const override { return true; }
+  void doSelectAll() override;
+  void select(size_t start, size_t end) override;
+  size_t selectionStart() const override { return selection_start; }
+  size_t selectionEnd()   const override { return selection_end; }
   
-  virtual void insert(const String& text, const String& action_name);
+  void insert(const String& text, const String& action_name) override;
   
   // --------------------------------------------------- : Search/replace
   
-  virtual bool search(FindInfo& find, bool from_start);
+  bool search(FindInfo& find, bool from_start) override;
 private:
   bool matchSubstr(const String& s, size_t pos, FindInfo& find);
 public:
   
   // --------------------------------------------------- : Other
   
-  virtual wxCursor cursor(const RealPoint& pos) const;
-  virtual void determineSize(bool force_fit = false);
-  virtual bool containsPoint(const RealPoint& p) const;
-  virtual RealRect boundingBox() const;
-  virtual void onShow(bool);
-  virtual void draw(RotatedDC&);
+  wxCursor cursor(const RealPoint& pos) const override;
+  void determineSize(bool force_fit = false) override;
+  bool containsPoint(const RealPoint& p) const override;
+  RealRect boundingBox() const override;
+  void onShow(bool) override;
+  void draw(RotatedDC&) override;
   
   // --------------------------------------------------- : Data
 private:

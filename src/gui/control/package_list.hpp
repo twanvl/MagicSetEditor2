@@ -53,9 +53,9 @@ public:
   
 protected:
   /// Draw an item
-  virtual void drawItem(DC& dc, int x, int y, size_t item);
+  void drawItem(DC& dc, int x, int y, size_t item) override;
   /// Return how many items there are in the list
-  virtual size_t itemCount() const;
+  size_t itemCount() const override;
   
 private:
   // The default icon to use

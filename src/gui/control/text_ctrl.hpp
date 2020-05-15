@@ -48,18 +48,18 @@ public:
   TextStyle& getStyle();
   
   /// Uses a native look
-  virtual bool nativeLook()  const { return true; }
-  virtual Rotation getRotation() const;
+  bool nativeLook() const override { return true; }
+  Rotation getRotation() const override;
   
-  virtual void draw(DC& dc);
+  void draw(DC& dc) override;
   
-  virtual bool AcceptsFocus() const;
+  bool AcceptsFocus() const override;
   
-  virtual void onChangeSet();
+  void onChangeSet() override;
   
 protected:
-  virtual void onInit();
-  virtual wxSize DoGetBestSize() const;
+  void onInit() override;
+  wxSize DoGetBestSize() const override;
   
 private:
   bool multi_line; ///< Multi line text control?

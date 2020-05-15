@@ -23,10 +23,10 @@ public:
   
   // --------------------------------------------------- : Utility for ValueViewers/Editors
   
-  virtual DrawWhat drawWhat(const ValueViewer*) const;
-  virtual bool viewerIsCurrent(const ValueViewer*) const;
+  DrawWhat drawWhat(const ValueViewer*) const override;
+  bool viewerIsCurrent(const ValueViewer*) const override;
   
-  virtual void addAction(unique_ptr<Action> action);
+  virtual void addAction(unique_ptr<Action> action) final;
   inline SetP getSetForActions() { return set; }
   
   // --------------------------------------------------- : Selection
@@ -42,7 +42,7 @@ public:
   /// Select the previous editable editor, returns false if the current editor is the first one
   bool selectPrevious();
   
-  virtual bool AcceptsFocus() const;
+  bool AcceptsFocus() const override;
   
   /// The next window in the tab order (optional)
   const wxWindow* next_in_tab_order;
@@ -90,9 +90,9 @@ public:
   
 protected:
   /// Create an editor for the given style (as opposed to a normal viewer)
-  virtual ValueViewerP makeViewer(const StyleP&);
+  ValueViewerP makeViewer(const StyleP&) override;
   
-  virtual void onInit();
+  void onInit() override;
   
   // --------------------------------------------------- : Data
   ValueViewer* current_viewer;  ///< The currently selected viewer

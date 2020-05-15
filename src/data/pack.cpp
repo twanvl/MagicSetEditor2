@@ -256,7 +256,7 @@ void PackInstance::generate(vector<CardP>* out) {
       // 1. the weights of each item, and of the cards
       vector<WeightedItem> weighted_items;
       FOR_EACH_CONST(item, pack_type.items) {
-        WeightedItem wi = {0,0,parent.gen()};
+        WeightedItem wi = {0,0,(int)parent.gen()};
         if (pack_type.select == SELECT_EQUAL_PROPORTIONAL) {
           wi.weight = item->weight * parent.get(item->name).total_weight;
         } else if (pack_type.select == SELECT_EQUAL_NONEMPTY) {
@@ -266,7 +266,7 @@ void PackInstance::generate(vector<CardP>* out) {
         }
         weighted_items.push_back(wi);
       }
-      WeightedItem wi = {cards.size(),0,parent.gen()};
+      WeightedItem wi = {(double)cards.size(),0,(int)parent.gen()};
       weighted_items.push_back(wi);
       // 2. divide the requested_copies among the cards and the items, taking the weights into account
       weighted_equal_divide(weighted_items, (int)requested_copies);

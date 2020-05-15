@@ -19,17 +19,17 @@ class ImageValueEditor : public ImageValueViewer, public ValueEditor {
 public:
   DECLARE_VALUE_EDITOR(Image);
   
-  virtual bool onLeftDClick(const RealPoint&, wxMouseEvent&);
+  bool onLeftDClick(const RealPoint&, wxMouseEvent&) override;
   
   // --------------------------------------------------- : Clipboard
   
-  virtual bool canCopy()  const;
-  virtual bool canPaste() const;
-  virtual bool doCopy();
-  virtual bool doPaste();
-  virtual bool doDelete();
+  bool canCopy() const override;
+  bool canPaste() const override;
+  bool doCopy() override;
+  bool doPaste() override;
+  bool doDelete() override;
   
-  virtual bool onChar(wxKeyEvent&);
+  bool onChar(wxKeyEvent&) override;
   
 private:
   // Open the image slice window showing the give image

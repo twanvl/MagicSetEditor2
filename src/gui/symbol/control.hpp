@@ -26,9 +26,9 @@ class SymbolControl : public wxControl, public SymbolViewer {
 public:
   SymbolControl(SymbolWindow* parent, int id, const SymbolP& symbol);
   
-  virtual void onChangeSymbol();
+  void onChangeSymbol() override;
   
-  virtual void onAction(const Action&, bool undone);
+  void onAction(const Action&, bool undone) override;
   
   // Forward command to editor
   void onExtraTool(wxCommandEvent& ev);

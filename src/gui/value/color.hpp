@@ -22,12 +22,12 @@ public:
   DECLARE_VALUE_EDITOR(Color);
   
   // --------------------------------------------------- : Events
-  virtual bool onLeftDown(const RealPoint& pos, wxMouseEvent& ev);
-  virtual bool onChar(wxKeyEvent& ev);
-  virtual void onLoseFocus();
+  bool onLeftDown(const RealPoint& pos, wxMouseEvent& ev) override;
+  bool onChar(wxKeyEvent& ev) override;
+  void onLoseFocus() override;
   
-  virtual void draw(RotatedDC& dc);
-  virtual void determineSize(bool);
+  void draw(RotatedDC& dc) override;
+  void determineSize(bool) override;
   
 private:
   DropDownListP drop_down;

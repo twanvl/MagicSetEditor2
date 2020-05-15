@@ -24,10 +24,10 @@ public:
   vector<String> choices;
   
 protected:
-  virtual size_t selection() const { return NO_SELECTION; }
-  virtual size_t itemCount() const { return choices.size(); }
-  virtual String itemText(size_t item) const { return choices.at(item); }
-  virtual void select(size_t item);
+  size_t selection() const override { return NO_SELECTION; }
+  size_t itemCount() const override { return choices.size(); }
+  String itemText(size_t item) const override { return choices.at(item); }
+  void select(size_t item) override;
 };
 
 // ----------------------------------------------------------------------------- : FilterControl

@@ -26,26 +26,26 @@ public:
   KeywordsPanel(Window* parent, int id);
   ~KeywordsPanel();
   
-  virtual void onChangeSet();
-  virtual void onAction(const Action&, bool);
+  void onChangeSet() override;
+  void onAction(const Action&, bool) override;
   
   // --------------------------------------------------- : UI
   
-  virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
-  virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-  virtual void onUpdateUI(wxUpdateUIEvent&);
-  virtual void onCommand(int id);
+  void initUI   (wxToolBar* tb, wxMenuBar* mb) override;
+  void destroyUI(wxToolBar* tb, wxMenuBar* mb) override;
+  void onUpdateUI(wxUpdateUIEvent&) override;
+  void onCommand(int id) override;
   
   // --------------------------------------------------- : Clipboard
-  virtual bool canCut() const;
-  virtual bool canCopy() const;
-  virtual bool canPaste() const;
-  virtual void doCut();
-  virtual void doCopy();
-  virtual void doPaste();
+  bool canCut() const override;
+  bool canCopy() const override;
+  bool canPaste() const override;
+  void doCut() override;
+  void doCopy() override;
+  void doPaste() override;
 
-  virtual bool canSelectAll() const;
-  virtual void doSelectAll();
+  bool canSelectAll() const override;
+  void doSelectAll() override;
 
 private:
   DECLARE_EVENT_TABLE();

@@ -43,8 +43,8 @@ public:
   static LocaleP byName(const String& name);
   
 protected:
-  String typeName() const;
-  Version fileVersion() const;
+  String typeName() const override;
+  Version fileVersion() const override;
   DECLARE_REFLECTION();
 };
 

@@ -43,24 +43,24 @@ public:
   
   // --------------------------------------------------- : UI
   
-  virtual void onBeforeChangeSet();
-  virtual void onChangeSet();
-  virtual void onAction(const Action&, bool undone);
+  void onBeforeChangeSet() override;
+  void onChangeSet() override;
+  void onAction(const Action&, bool undone) override;
   
-  virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
-  virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-  virtual void onUpdateUI(wxUpdateUIEvent&);
-  virtual void onCommand(int id);
+  void initUI   (wxToolBar* tb, wxMenuBar* mb) override;
+  void destroyUI(wxToolBar* tb, wxMenuBar* mb) override;
+  void onUpdateUI(wxUpdateUIEvent&) override;
+  void onCommand(int id) override;
   
   // --------------------------------------------------- : Selection
-  virtual CardP selectedCard() const;
-  virtual void selectCard(const CardP& card);
-  virtual void selectionChoices(ExportCardSelectionChoices& out);
+  CardP selectedCard() const override;
+  void selectCard(const CardP& card) override;
+  void selectionChoices(ExportCardSelectionChoices& out) override;
   
   // --------------------------------------------------- : Clipboard
   
-  virtual bool canCopy()  const;
-  virtual void doCopy();
+  bool canCopy() const override;
+  void doCopy() override;
   
 private:
   DECLARE_EVENT_TABLE();

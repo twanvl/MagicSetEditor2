@@ -157,9 +157,9 @@ protected:
 class Graph1D : public Graph {
 public:
   inline Graph1D(size_t axis) : axis(axis) {}
-  virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
-  virtual bool findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight, vector<int>& out) const;
-  virtual void setData(const GraphDataP& d);
+  void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const override;
+  bool findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight, vector<int>& out) const override;
+  void setData(const GraphDataP& d) override;
 protected:
   size_t axis;
   /// Find an item, return the position along the axis, or -1 if not found
@@ -172,7 +172,7 @@ protected:
 class Graph2D : public Graph {
 public:
   inline Graph2D(size_t axis1, size_t axis2) : axis1(axis1), axis2(axis2) {}
-  virtual void setData(const GraphDataP& d);
+  void setData(const GraphDataP& d) override;
 protected:
   size_t axis1, axis2;
   vector<UInt> values; // axis1.size * axis2.size array
@@ -184,33 +184,33 @@ protected:
 class BarGraph : public Graph1D {
 public:
   inline BarGraph(size_t axis) : Graph1D(axis) {}
-  virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
-  virtual int findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight) const;
+  void draw(RotatedDC& dc, int current, DrawLayer layer) const override;
+  int findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight) const override;
 };
 
 // A bar graph with stacked bars
 class BarGraph2D : public Graph2D {
 public:
   inline BarGraph2D(size_t axis_h, size_t axis_v) : Graph2D(axis_h, axis_v) {}
-  virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
-  virtual bool findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight, vector<int>& out) const;
+  void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const override;
+  bool findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight, vector<int>& out) const override;
 };
 
 /// A pie graph
 class PieGraph : public Graph1D {
 public:
   inline PieGraph(size_t axis) : Graph1D(axis) {}
-  virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
-  virtual int findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight) const;
+  void draw(RotatedDC& dc, int current, DrawLayer layer) const override;
+  int findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight) const override;
 };
 
 /// A scatter plot
 class ScatterGraph : public Graph2D {
 public:
   inline ScatterGraph(size_t axis1, size_t axis2) : Graph2D(axis1, axis2) {}
-  virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
-  virtual bool findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight, vector<int>& out) const;
-  virtual void setData(const GraphDataP& d);
+  void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const override;
+  bool findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight, vector<int>& out) const override;
+  void setData(const GraphDataP& d) override;
 protected:
   UInt max_value;
   double max_value_x, max_value_y; ///< highest sum of two adjacent scaled values (radii)
@@ -221,7 +221,7 @@ protected:
 class ScatterGraphPlus : public ScatterGraph {
 public:
   inline ScatterGraphPlus(size_t axis1, size_t axis2, size_t axis3) : ScatterGraph(axis1, axis2), axis3(axis3) {}
-  virtual void setData(const GraphDataP& d);
+  void setData(const GraphDataP& d) override;
 protected:
   size_t axis3;
   vector<UInt> values3D; // axis1.size * axis2.size * axis3.size array
@@ -232,7 +232,7 @@ protected:
 class ScatterPieGraph : public ScatterGraphPlus {
 public:
   inline ScatterPieGraph(size_t axis1, size_t axis2, size_t axis3) : ScatterGraphPlus(axis1, axis2, axis3) {}
-  virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
+  void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const override;
 };
 
 /// The legend, used for pie graphs
@@ -241,9 +241,9 @@ public:
   inline GraphLegend(size_t axis, Alignment alignment, bool reverse = false)
     : Graph1D(axis), alignment(alignment), reverse(reverse)
   {}
-  virtual RealSize determineSize(RotatedDC& dc) const;
-  virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
-  virtual int findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight) const;
+  RealSize determineSize(RotatedDC& dc) const override;
+  void draw(RotatedDC& dc, int current, DrawLayer layer) const override;
+  int findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight) const override;
 private:
   mutable RealSize size, item_size;
   Alignment alignment;
@@ -256,9 +256,9 @@ public:
   inline GraphStats(size_t axis, Alignment alignment)
     : Graph1D(axis), alignment(alignment)
   {}
-  virtual RealSize determineSize(RotatedDC& dc) const;
-  virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
-  virtual void setData(const GraphDataP& d);
+  RealSize determineSize(RotatedDC& dc) const override;
+  void draw(RotatedDC& dc, int current, DrawLayer layer) const override;
+  void setData(const GraphDataP& d) override;
 private:
   mutable RealSize size, item_size;
   mutable double label_width;
@@ -281,8 +281,8 @@ public:
   inline GraphLabelAxis(size_t axis, Direction direction, bool rotate = false, DrawLines draw_lines = DRAW_LINES_NO, bool label = false)
     : Graph1D(axis), direction(direction), rotate(rotate), draw_lines(draw_lines), label(label)
   {}
-  virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
-  virtual int findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight) const;
+  void draw(RotatedDC& dc, int current, DrawLayer layer) const override;
+  int findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight) const override;
 private:
   Direction direction;
   int levels;
@@ -295,7 +295,7 @@ private:
 class GraphValueAxis : public Graph1D {
 public:
   inline GraphValueAxis(size_t axis, bool highlight_value) : Graph1D(axis), highlight_value(highlight_value) {}
-  virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
+  void draw(RotatedDC& dc, int current, DrawLayer layer) const override;
 private:
   bool highlight_value;
 };
@@ -310,9 +310,9 @@ public:
     , margin_left(margin_left), margin_top(margin_top), margin_right(margin_right), margin_bottom(margin_bottom)
     , upside_down(upside_down)
   {}
-  virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
-  virtual bool findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight, vector<int>& out) const;
-  virtual void setData(const GraphDataP& d);
+  void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const override;
+  bool findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight, vector<int>& out) const override;
+  void setData(const GraphDataP& d) override;
 private:
   const GraphP graph;
   double margin_left, margin_top, margin_right, margin_bottom;
@@ -322,9 +322,9 @@ private:
 /// A display containing multiple graphs
 class GraphContainer : public Graph {
 public:
-  virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
-  virtual bool findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight, vector<int>& out) const;
-  virtual void setData(const GraphDataP& d);
+  void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const override;
+  bool findItem(const RealPoint& pos, const RealRect& screen_rect, bool tight, vector<int>& out) const override;
+  void setData(const GraphDataP& d) override;
   
   void add(const GraphP& graph);
 private:

@@ -19,7 +19,7 @@ class InfoValueViewer : public ValueViewer {
 public:
   DECLARE_VALUE_VIEWER(Info) : ValueViewer(parent,style) {}
   
-  virtual void draw(RotatedDC& dc);
+  void draw(RotatedDC& dc) override;
 };
 
 

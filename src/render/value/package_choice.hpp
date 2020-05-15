@@ -19,7 +19,7 @@ class PackageChoiceValueViewer : public ValueViewer {
 public:
   DECLARE_VALUE_VIEWER(PackageChoice) : ValueViewer(parent,style) { initItems(); }
   
-  virtual void draw(RotatedDC& dc);
+  void draw(RotatedDC& dc) override;
   
   struct Item{
     String package_name;

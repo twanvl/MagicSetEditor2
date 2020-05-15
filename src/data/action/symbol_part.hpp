@@ -54,8 +54,8 @@ class ControlPointMoveAction : public ExtendableAction {
 public:
   ControlPointMoveAction(const set<ControlPointP>& points);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   /// Update this action to move some more
   void move(const Vector2D& delta);
@@ -76,8 +76,8 @@ class HandleMoveAction : public ExtendableAction {
 public:
   HandleMoveAction(const SelectedHandle& handle);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   /// Update this action to move some more
   void move(const Vector2D& delta);
@@ -115,8 +115,8 @@ class SegmentModeAction : public Action {
 public:
   SegmentModeAction(const ControlPointP& p1, const ControlPointP& p2, SegmentMode mode);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
 protected:
   ControlPointUpdate point1, point2;
@@ -129,8 +129,8 @@ class LockModeAction : public Action {
 public:
   LockModeAction(const ControlPointP& p, LockMode mode);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
 private:
   ControlPointUpdate point;  ///< The affected point
@@ -145,9 +145,9 @@ class CurveDragAction : public SegmentModeAction {
 public:
   CurveDragAction(const ControlPointP& point1, const ControlPointP& point2);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
-    
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
+  
   // Move the curve by this much, it is grabbed at time t
   void move(const Vector2D& delta, double t);
 };
@@ -160,8 +160,8 @@ public:
   /// Insert a new point in shape, after position insertAfter_, at the time t on the segment
   ControlPointAddAction(const SymbolShapeP& shape, UInt insert_after, double t);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   inline ControlPointP getNewPoint() const { return new_point; }
   
@@ -188,8 +188,8 @@ class SymmetryMoveAction : public Action {
 public:
   SymmetryMoveAction(SymbolSymmetry& symmetry, bool is_handle);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   /// Update this action to move some more
   void move(const Vector2D& delta);
@@ -211,8 +211,8 @@ class SymmetryTypeAction : public Action {
 public:
   SymmetryTypeAction(SymbolSymmetry& symmetry, SymbolSymmetryType type);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
 private:
   SymbolSymmetry&    symmetry;
   SymbolSymmetryType type;
@@ -227,8 +227,8 @@ class SymmetryCopiesAction : public Action {
 public:
   SymmetryCopiesAction(SymbolSymmetry& symmetry, int copies);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
 private:
   SymbolSymmetry& symmetry;
   int             copies;

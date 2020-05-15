@@ -69,7 +69,7 @@ class DataViewer : public SetView {
   void setCard(const CardP& card, bool refresh = false);
   
   /// Clear data
-  virtual void onChangeSet();
+  void onChangeSet() override;
   
   // --------------------------------------------------- : The viewers
 private:
@@ -88,7 +88,7 @@ protected:
   virtual ValueViewerP makeViewer(const StyleP&);
   
   /// Update the viewers and forward actions
-  virtual void onAction(const Action&, bool undone);
+  void onAction(const Action&, bool undone) override;
   
   /// Notification that the total image has changed
   virtual void onChange() {}

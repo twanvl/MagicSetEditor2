@@ -25,12 +25,12 @@ public:
   ~ChoiceValueEditor();
   
   // --------------------------------------------------- : Events
-  virtual bool onLeftDown(const RealPoint& pos, wxMouseEvent& ev);
-  virtual bool onChar(wxKeyEvent& ev);
-  virtual void onLoseFocus();
+  bool onLeftDown(const RealPoint& pos, wxMouseEvent& ev) override;
+  bool onChar(wxKeyEvent& ev) override;
+  void onLoseFocus() override;
   
-  virtual void draw(RotatedDC& dc);
-  virtual void determineSize(bool);
+  void draw(RotatedDC& dc) override;
+  void determineSize(bool) override;
   
 private:
   DropDownListP drop_down;
@@ -93,9 +93,9 @@ public:
   DropDownChoiceList(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group);
   
 protected:
-  virtual void   onShow();
-  virtual void   select(size_t item);
-  virtual size_t selection() const;
-  virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const;
+  void   onShow() override;
+  void   select(size_t item) override;
+  size_t selection() const override;
+  DropDownList* createSubMenu(ChoiceField::ChoiceP group) const override;
 };
 

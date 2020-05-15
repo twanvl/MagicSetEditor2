@@ -20,14 +20,14 @@ class DropDownColorList : public DropDownList {
 public:
   DropDownColorList(Window* parent, ColorValueEditor& cve);
   
-  protected:    
-  virtual size_t itemCount() const;
-  virtual bool   lineBelow(size_t item) const;
-  virtual String itemText(size_t item) const;
-  virtual void   drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
+protected:
+  size_t itemCount() const override;
+  bool   lineBelow(size_t item) const override;
+  String itemText(size_t item) const override;
+  void   drawIcon(DC& dc, int x, int y, size_t item, bool selected) const override;
   
-  virtual void   select(size_t item);
-  virtual size_t selection() const;
+  void   select(size_t item) override;
+  size_t selection() const override;
   
 private:
   ColorValueEditor& cve;

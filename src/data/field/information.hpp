@@ -28,9 +28,9 @@ public:
   InfoField() { editable = false; }
   DECLARE_FIELD_TYPE(Text);
   
-  OptionalScript script;      ///< Script to apply to all values
+  OptionalScript script; ///< Script to apply to all values
   
-  virtual void initDependencies(Context&, const Dependency&) const;
+  void initDependencies(Context&, const Dependency&) const override;
 };
 
 // ----------------------------------------------------------------------------- : InfoStyle
@@ -41,14 +41,14 @@ public:
   InfoStyle(const InfoFieldP&);
   DECLARE_STYLE_TYPE(Info);
   
-  Font font;                  ///< Font to use for the text
-  Alignment alignment;            ///< Alignment inside the box
-  double padding_left, padding_right;      ///< Padding
+  Font font;                           ///< Font to use for the text
+  Alignment alignment;                 ///< Alignment inside the box
+  double padding_left, padding_right;  ///< Padding
   double padding_top, padding_bottom;
   Color background_color;
   
-  virtual int  update(Context&);
-  virtual void initDependencies(Context&, const Dependency&) const;
+  int update(Context&) override;
+  void initDependencies(Context&, const Dependency&) const override;
 };
 
 // ----------------------------------------------------------------------------- : InfoValue
@@ -61,6 +61,6 @@ public:
   
   ValueType value;
   
-  virtual bool update(Context&);
+  bool update(Context&) override;
 };
 

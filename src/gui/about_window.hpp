@@ -41,7 +41,7 @@ class HoverButtonBase : public wxControl {
 public:
   HoverButtonBase(Window* parent, int id, bool accepts_focus = true);
   
-  virtual bool AcceptsFocus() const;
+  bool AcceptsFocus() const override;
   
   virtual void SetHelpText(const String& s) { help_text = s; }
   
@@ -90,14 +90,14 @@ private:
   Bitmap bg_normal, bg_hover, bg_focus, bg_down; ///< Bitmaps for the states of the button
   Color background;
   
-  virtual wxSize DoGetBestSize() const;
+  wxSize DoGetBestSize() const override;
   
   const Bitmap* last_drawn;
   const Bitmap* toDraw() const;
 protected:
   int drawDelta() const;
-  virtual void refreshIfNeeded();
-  virtual void draw(DC& dc);
+  void refreshIfNeeded() override;
+  void draw(DC& dc) override;
 };
 
 

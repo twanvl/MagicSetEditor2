@@ -17,35 +17,35 @@ class SymmetryMoveAction;
 // ----------------------------------------------------------------------------- : SymbolSymmetryEditor
 
 /// Editor for adding symmetries
-class SymbolSymmetryEditor : public SymbolEditorBase {
+class SymbolSymmetryEditor final : public SymbolEditorBase {
 public:
   /** The symmetry parameter is optional, if it is not set, then only new ones can be created */
   SymbolSymmetryEditor(SymbolControl* control, const SymbolSymmetryP& symmetry);
   
   // --------------------------------------------------- : Drawing
   
-  virtual void draw(DC& dc);
+  void draw(DC& dc) override;
   
   // --------------------------------------------------- : UI
   
-  virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
-  virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-  virtual void onUpdateUI(wxUpdateUIEvent&);
-  virtual void onCommand(int id);
-  virtual int modeToolId();
+  void initUI   (wxToolBar* tb, wxMenuBar* mb) override;
+  void destroyUI(wxToolBar* tb, wxMenuBar* mb) override;
+  void onUpdateUI(wxUpdateUIEvent&) override;
+  void onCommand(int id) override;
+  int modeToolId() override;
   
   // --------------------------------------------------- : Mouse events
   
-  virtual void onLeftDown   (const Vector2D& pos, wxMouseEvent& ev);
-  virtual void onLeftUp     (const Vector2D& pos, wxMouseEvent& ev);
-  virtual void onMouseMove  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev);
-  virtual void onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev);
+  void onLeftDown   (const Vector2D& pos, wxMouseEvent& ev) override;
+  void onLeftUp     (const Vector2D& pos, wxMouseEvent& ev) override;
+  void onMouseMove  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) override;
+  void onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) override;
   
   // --------------------------------------------------- : Other events
   
-  virtual void onKeyChange(wxKeyEvent& ev);
+  void onKeyChange(wxKeyEvent& ev) override;
   
-  virtual bool isEditing();
+  bool isEditing() override;
   
   // --------------------------------------------------- : Data
 private:

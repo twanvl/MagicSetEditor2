@@ -460,7 +460,7 @@ bool SetWindow::askSaveAndContinue() {
         set->actions.setSavePoint();
         return true;
       }
-    } catch (Error e) {
+    } catch (Error const& e) {
       // something went wrong with saving, don't proceed
       handle_error(e);
       return false;

@@ -29,7 +29,7 @@ public:
   UnzoomedDataViewer(bool use_zoom_settings)
     : use_zoom_settings(use_zoom_settings)
   {}
-  virtual Rotation getRotation() const;
+  Rotation getRotation() const override;
 private:
   bool use_zoom_settings;
 };

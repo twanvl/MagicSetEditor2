@@ -32,24 +32,24 @@ public:
   /// Invalidate and redraw the entire viewer
   void redraw();
   /// Invalidate and redraw (the area of) a single value viewer
-  virtual void redraw(const ValueViewer&);
+  void redraw(const ValueViewer&) override;
   
   /// The rotation to use
-  virtual Rotation getRotation() const;
+  Rotation getRotation() const override;
   
-  virtual bool AcceptsFocus() const { return false; }
+  bool AcceptsFocus() const override { return false; }
   
 protected:
   /// Return the desired size of control
-  virtual wxSize DoGetBestSize() const;
+  wxSize DoGetBestSize() const override;
   
-  virtual void onChange();
-  virtual void onChangeSize();
+  void onChange() override;
+  void onChangeSize() override;
   
   /// Should the given viewer be drawn?
   bool shouldDraw(const ValueViewer&) const;
   
-  virtual void drawViewer(RotatedDC& dc, ValueViewer& v);
+  void drawViewer(RotatedDC& dc, ValueViewer& v) override;
   
 private:
   DECLARE_EVENT_TABLE();

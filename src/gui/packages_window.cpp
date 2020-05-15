@@ -57,7 +57,7 @@ private:
   wxMutex lock;
   
   struct Thread : public wxThread {
-    virtual ExitCode Entry();
+    ExitCode Entry() override;
   };
 };
 
@@ -104,7 +104,7 @@ public:
   
   void setPackage(const InstallablePackageP& package);
   
-  virtual wxSize DoGetBestSize() const;
+  wxSize DoGetBestSize() const override;
 private:
   InstallablePackageP package;
   

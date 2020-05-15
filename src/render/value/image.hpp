@@ -21,9 +21,9 @@ class ImageValueViewer : public ValueViewer {
 public:
   DECLARE_VALUE_VIEWER(Image) : ValueViewer(parent,style) {}
   
-  virtual void draw(RotatedDC& dc);
-  virtual void onValueChange();
-  virtual void onStyleChange(int);
+  void draw(RotatedDC& dc) override;
+  void onValueChange() override;
+  void onStyleChange(int) override;
       
 private:
   Bitmap bitmap; ///< Cached bitmap

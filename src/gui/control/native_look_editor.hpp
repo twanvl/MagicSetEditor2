@@ -21,16 +21,16 @@ public:
   NativeLookEditor(Window* parent, int id, long style = wxBORDER_THEME);
   
   /// Uses a native look
-  virtual bool nativeLook()  const { return true; }
-  virtual Rotation getRotation() const;
+  bool nativeLook() const override { return true; }
+  Rotation getRotation() const override;
   
-  virtual void draw(DC& dc);
-  virtual void drawViewer(RotatedDC& dc, ValueViewer& v);
+  void draw(DC& dc) override;
+  void drawViewer(RotatedDC& dc, ValueViewer& v) override;
   
 protected:
   // Best size doesn't really matter, as long as it is not too small
-  virtual wxSize DoGetBestSize() const;
-  virtual void onInit();
+  wxSize DoGetBestSize() const override;
+  void onInit() override;
   
 private:
   static const int margin      = 6;
@@ -57,9 +57,9 @@ class SetInfoEditor : public NativeLookEditor {
 public:
   SetInfoEditor(Window* parent, int id, long style = wxBORDER_THEME);
   
-  virtual Package& getStylePackage() const;
+  Package& getStylePackage() const override;
 protected:
-  virtual void onChangeSet();
+  void onChangeSet() override;
 };
 
 // ----------------------------------------------------------------------------- : StylingEditor
@@ -74,7 +74,7 @@ public:
   /// Show the styling for given card
   void showCard(const CardP& card);
 protected:
-  virtual void onChangeSet();
+  void onChangeSet() override;
 };
 
 // ----------------------------------------------------------------------------- : ExportOptionsEditor
@@ -87,7 +87,7 @@ public:
   /// Show the options for given export template
   void showExport(const ExportTemplateP& export_template);
   
-  virtual Package& getStylePackage() const;
+  Package& getStylePackage() const override;
 private:
   ExportTemplateP export_template;
 };

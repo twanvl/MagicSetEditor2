@@ -19,8 +19,8 @@ DECLARE_POINTER_TYPE(ScriptRegex);
 /// A regular expression for use in a script
 class ScriptRegex : public ScriptValue, public Regex {
 public:
-  virtual ScriptType type() const { return SCRIPT_REGEX; }
-  virtual String typeName() const { return _("regex"); }
+  ScriptType type() const override { return SCRIPT_REGEX; }
+  String typeName() const override { return _("regex"); }
   
   ScriptRegex(const String& code) {
     assign(code);

@@ -107,6 +107,6 @@ private:
   
 protected:
   /// Respond to actions by updating scripts
-  void onAction(const Action&, bool undone);
+  void onAction(const Action&, bool undone) override;
 };
 

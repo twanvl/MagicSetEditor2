@@ -55,13 +55,13 @@ class CardsPrintout : public wxPrintout {
 public:
   CardsPrintout(PrintJobP const& job);
   /// Number of pages, and something else I don't understand...
-  virtual void GetPageInfo(int* pageMin, int* pageMax, int* pageFrom, int* pageTo);
+  void GetPageInfo(int* pageMin, int* pageMax, int* pageFrom, int* pageTo) override;
   /// Again, 'number of pages', strange wx interface
-  virtual bool HasPage(int page);
+  bool HasPage(int page) override;
   /// Determine the layout
-  virtual void OnPreparePrinting();
+  void OnPreparePrinting() override;
   /// Print a page
-  virtual bool OnPrintPage(int page);
+  bool OnPrintPage(int page) override;
   
 private:
   PrintJobP job; ///< Cards to print
@@ -175,7 +175,7 @@ PrintJobP make_print_job(Window* parent, const SetP& set, const ExportCardSelect
       s2->Add(s3, 1, wxEXPAND | wxALL, 8);
       wxSizer* s4 = new wxStaticBoxSizer(wxVERTICAL, &wnd, L"Settings");
         s4->Add(space, 1, wxALL | wxALIGN_TOP, 8);
-      s2->Add(s4, 1, wxEXPAND | wxALL & ~wxLEFT, 8);
+      s2->Add(s4, 1, wxEXPAND | (wxALL & ~wxLEFT), 8);
     s->Add(s2, 1, wxEXPAND);
     s->Add(wnd.CreateButtonSizer(wxOK | wxCANCEL) , 0, wxEXPAND | wxALL, 8);
   s->SetSizeHints(&wnd);

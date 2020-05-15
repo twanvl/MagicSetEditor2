@@ -59,13 +59,13 @@ public:
     : ValueAction(value), new_value(new_value)
   {}
   
-  virtual void perform(bool to_undo) {
+  void perform(bool to_undo) override {
     ValueAction::perform(to_undo);
     swap_value(static_cast<T&>(*valueP), new_value);
     valueP->onAction(*this, to_undo); // notify value
   }
   
-  virtual bool merge(const Action& action) {
+  bool merge(const Action& action) override {
     if (!ALLOW_MERGE) return false;
     TYPE_CASE(action, SimpleValueAction) {
       if (action.valueP == valueP) {

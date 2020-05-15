@@ -114,18 +114,18 @@ public:
   /// Clear the order_cache used by positionOfCard
   void clearOrderCache();
   
-  virtual String typeName() const;
-  Version fileVersion() const;
+  String typeName() const override;
+  Version fileVersion() const override;
   /// Validate that the set is correctly loaded
-  virtual void validate(Version = app_version);
+  void validate(Version = app_version) override;
   
 protected:
-  virtual VCSP getVCS() {
+  VCSP getVCS() override {
     return vcs;
   }
 
 private:
-  DECLARE_REFLECTION();
+  DECLARE_REFLECTION_OVERRIDE();
   template <typename Handler>
   void reflect_cards(Handler& handler);
   

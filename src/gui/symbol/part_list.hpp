@@ -31,9 +31,9 @@ public:
   SymbolPartList(Window* parent, int id, SymbolPartsSelection& selection, SymbolP symbol = SymbolP());
   
   /// Another symbol is being viewed
-  virtual void onChangeSymbol();
+  void onChangeSymbol() override;
   /// Event handler for changes to the symbol
-  virtual void onAction(const Action&, bool);
+  void onAction(const Action&, bool) override;
   
   /// Update the control
   void update();
@@ -41,7 +41,7 @@ public:
   void updateParts(const set<SymbolPartP>& parts);
   
 protected:
-  virtual wxSize DoGetBestSize() const;
+  wxSize DoGetBestSize() const override;
 private:
   SymbolPartsSelection& selection; ///< Store selection here
   int number_of_items;
@@ -75,7 +75,7 @@ private:
   void onChar(wxKeyEvent& ev);
   void onPaint(wxPaintEvent&);
   void onSize(wxSizeEvent&);
-  void OnDraw(DC& dc);
+  void OnDraw(DC& dc) override;
   
   void sendEvent(int type);
   

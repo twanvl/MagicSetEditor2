@@ -21,24 +21,24 @@ public:
   
   // --------------------------------------------------- : UI
   
-  virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
-  virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-  virtual void onUpdateUI(wxUpdateUIEvent&);
-  virtual void onCommand(int id);
+  void initUI   (wxToolBar* tb, wxMenuBar* mb) override;
+  void destroyUI(wxToolBar* tb, wxMenuBar* mb) override;
+  void onUpdateUI(wxUpdateUIEvent&) override;
+  void onCommand(int id) override;
   
   // --------------------------------------------------- : Clipboard
   
-  virtual bool canCut() const;
-  virtual bool canCopy() const;
-  virtual bool canPaste() const;
-  virtual bool canSelectAll() const;
-  virtual void doCut();
-  virtual void doCopy();
-  virtual void doPaste();
-  virtual void doSelectAll();
+  bool canCut() const override;
+  bool canCopy() const override;
+  bool canPaste() const override;
+  bool canSelectAll() const override;
+  void doCut() override;
+  void doCopy() override;
+  void doPaste() override;
+  void doSelectAll() override;
   
 protected:
-  virtual void onChangeSet();
+  void onChangeSet() override;
   
 private:
   SetInfoEditor* editor;

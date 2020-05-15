@@ -36,8 +36,8 @@ public:
   vector<CardP> cards;
   
 protected:
-  virtual void getItems(vector<VoidP>& out) const;
-  virtual void onChangeSet();
+  void getItems(vector<VoidP>& out) const override;
+  void onChangeSet() override;
 };
 
 RandomCardList::RandomCardList(Window* parent, int id, long style)
@@ -68,7 +68,7 @@ public:
   PackTotalsPanel(Window* parent, int id, PackGenerator& generator, bool show_all = false)
     : wxPanel(parent,id), generator(generator), show_all(show_all) {}
   void setGame(const GameP& game);
-  virtual wxSize DoGetBestSize() const;
+  virtual wxSize DoGetBestSize() const override;
 private:
   DECLARE_EVENT_TABLE();
   GameP game;
@@ -157,7 +157,7 @@ public:
     , interactive(interactive)
     , buddy(nullptr)
   {}
-  void draw(DC& dc) {
+  void draw(DC& dc) override {
     Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
     Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
     // clear background
@@ -176,7 +176,7 @@ public:
     dc.GetTextExtent(label,&w,&h);
     dc.DrawText(interactive && hover ? label + _("...") : label, 2, (s.y-h)/2);
   }
-  wxSize DoGetBestSize() const {
+  wxSize DoGetBestSize() const override {
     int w,h;
     wxClientDC dc(const_cast<SelectableLabel*>(this));
     dc.SetFont(*wxNORMAL_FONT);
@@ -186,7 +186,7 @@ public:
   void setBuddy(wxWindow* buddy) {
     this->buddy = buddy;
   }
-  virtual void onClick() {
+  void onClick() override {
     if (buddy) buddy->SetFocus();
   }
   void onDoubleClick(wxMouseEvent&) {

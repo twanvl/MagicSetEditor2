@@ -27,27 +27,27 @@ public:
   CardsPanel(Window* parent, int id);
   ~CardsPanel();
   
-  virtual void onChangeSet();
+  void onChangeSet() override;
   
   // --------------------------------------------------- : UI
   
-  virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
-  virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-  virtual void onUpdateUI(wxUpdateUIEvent&);
-  virtual void onCommand(int id);
-  virtual void onMenuOpen(wxMenuEvent&);
+  void initUI   (wxToolBar* tb, wxMenuBar* mb) override;
+  void destroyUI(wxToolBar* tb, wxMenuBar* mb) override;
+  void onUpdateUI(wxUpdateUIEvent&) override;
+  void onCommand(int id) override;
+  void onMenuOpen(wxMenuEvent&) override;
   
   // --------------------------------------------------- : Actions
   
-  virtual bool wantsToHandle(const Action&, bool undone) const;
+  bool wantsToHandle(const Action&, bool undone) const override;
   
   // --------------------------------------------------- : Clipboard
-  virtual bool canCut() const;
-  virtual bool canCopy() const;
-  virtual bool canPaste() const;
-  virtual void doCut();
-  virtual void doCopy();
-  virtual void doPaste();
+  bool canCut() const override;
+  bool canCopy() const override;
+  bool canPaste() const override;
+  void doCut() override;
+  void doCopy() override;
+  void doPaste() override;
   
   // --------------------------------------------------- : Text selection
 
@@ -56,11 +56,11 @@ public:
 
   // --------------------------------------------------- : Searching (find/replace)
 
-  virtual bool canFind()    const { return true; }
-  virtual bool canReplace() const { return true; }
-  virtual bool doFind      (wxFindReplaceData&);
-  virtual bool doReplace   (wxFindReplaceData&);
-  virtual bool doReplaceAll(wxFindReplaceData&);
+  bool canFind()    const override { return true; }
+  bool canReplace() const override { return true; }
+  bool doFind      (wxFindReplaceData&) override;
+  bool doReplace   (wxFindReplaceData&) override;
+  bool doReplaceAll(wxFindReplaceData&) override;
 private:
   /// Do a search or replace action for the given FindInfo in all cards
   bool search(FindInfo& find, bool from_start);
@@ -71,9 +71,9 @@ private:
 public:
 
   // --------------------------------------------------- : Selection
-  virtual CardP selectedCard() const;
-  virtual void selectCard(const CardP& card);
-  virtual void selectFirstCard();
+  CardP selectedCard() const override;
+  void selectCard(const CardP& card) override;
+  void selectFirstCard() override;
 
 private:
   // --------------------------------------------------- : Controls
@@ -92,7 +92,7 @@ private:
   void updateNotesPosition();
   // before Layout, call updateNotesPosition.
   // NOTE: docs say this function returns void, but the code says bool
-  virtual bool Layout();
+  bool Layout() override;
   
   // --------------------------------------------------- : Menus & tools
   wxMenu* menuCard, *menuFormat;

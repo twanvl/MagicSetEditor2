@@ -22,11 +22,11 @@ const double min_item_size = thumbnail_size;
 class ChoiceThumbnailRequest : public ThumbnailRequest {
 public:
   ChoiceThumbnailRequest(ValueViewer* cve, int id, bool from_disk, bool thread_safe);
-  virtual Image generate();
-  virtual void store(const Image&);
+  Image generate() override;
+  void store(const Image&) override;
 
   bool isThreadSafe;
-  virtual bool threadSafe() const {return isThreadSafe;}
+  bool threadSafe() const override {return isThreadSafe;}
 private:
   int id;
   

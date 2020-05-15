@@ -20,12 +20,12 @@ public:
   DropDownPackageChoiceList(Window* parent, PackageChoiceValueEditor* editor);
   
 protected:
-  virtual size_t itemCount() const;
-  virtual String itemText(size_t item) const;
-  virtual bool   lineBelow(size_t item) const;
-  virtual void   drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
-  virtual void   select(size_t selection);
-  virtual size_t selection() const;
+  size_t itemCount() const override;
+  String itemText(size_t item) const override;
+  bool   lineBelow(size_t item) const override;
+  void   drawIcon(DC& dc, int x, int y, size_t item, bool selected) const override;
+  void   select(size_t selection) override;
+  size_t selection() const override;
   
 private:
   PackageChoiceValueEditor& editor;

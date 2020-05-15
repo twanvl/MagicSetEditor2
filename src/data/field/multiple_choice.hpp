@@ -38,7 +38,7 @@ public:
   Scriptable<Direction> direction;  ///< In what direction are choices layed out?
   Scriptable<double> spacing;      ///< Spacing between choices (images) in pixels
   
-  virtual int  update(Context&);
+  int update(Context&) override;
 };
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValue
@@ -51,7 +51,7 @@ class MultipleChoiceValue : public ChoiceValue {
 public:
   inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field, false) {}
   DECLARE_HAS_FIELD(MultipleChoice);
-  virtual ValueP clone() const;
+  ValueP clone() const override;
   
   String last_change; ///< Which of the choices was selected/deselected last?
   
@@ -64,7 +64,7 @@ public:
   /// Splits the value, stores the selected choices in the out parameter
   void get(vector<String>& out) const;
   
-  virtual bool update(Context&);
+  bool update(Context&) override;
   
 private:
   DECLARE_REFLECTION();

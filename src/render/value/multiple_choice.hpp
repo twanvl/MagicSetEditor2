@@ -19,9 +19,9 @@ class MultipleChoiceValueViewer : public ValueViewer {
 public:
   DECLARE_VALUE_VIEWER(MultipleChoice) : ValueViewer(parent,style), item_height(0) {}
   
-  virtual bool prepare(RotatedDC& dc);
-  virtual void draw(RotatedDC& dc);
-  virtual void onStyleChange(int);
+  bool prepare(RotatedDC& dc) override;
+  void draw(RotatedDC& dc) override;
+  void onStyleChange(int) override;
 protected:
   double item_height; ///< Height of a single item, or 0 if non uniform
 private:

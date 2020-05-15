@@ -47,24 +47,24 @@ public:
 
 protected:
   /// Get all items
-  virtual void getItems(vector<VoidP>& out) const;
+  void getItems(vector<VoidP>& out) const override;
   /// Return the AutoReplace at the given position in the sorted list
   inline AutoReplaceP getAR(long pos) const { return static_pointer_cast<AutoReplace>(getItem(pos)); }
 
   /// Send an 'item selected' event for the currently selected item (selected_item)
-  virtual void sendEvent();
+  void sendEvent() override;
   /// Compare items
-  virtual bool compareItems(void* a, void* b) const;
-  virtual bool mustSort() const { return true; }
+  bool compareItems(void* a, void* b) const override;
+  bool mustSort() const override { return true; }
 
   /// Get the text of an item in a specific column
   /** Overrides a function from wxListCtrl */
-  virtual String OnGetItemText (long pos, long col) const;
+  String OnGetItemText (long pos, long col) const override;
   /// Get the image of an item, by default no image is used
   /** Overrides a function from wxListCtrl */
-  virtual int    OnGetItemImage(long pos) const;
+  int OnGetItemImage(long pos) const override;
   /// Get the color for an item
-  virtual wxListItemAttr* OnGetItemAttr(long pos) const;
+  wxListItemAttr* OnGetItemAttr(long pos) const override;
 
   mutable wxListItemAttr item_attr; // for OnGetItemAttr
 };

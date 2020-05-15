@@ -42,7 +42,7 @@ class ThumbnailThreadWorker : public wxThread {
 public:
   ThumbnailThreadWorker(ThumbnailThread* parent);
   
-  virtual ExitCode Entry();
+  ExitCode Entry() override;
   
   ThumbnailRequestP current; ///< Request we are working on
   ThumbnailThread*  parent;

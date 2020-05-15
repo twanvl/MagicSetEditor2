@@ -138,13 +138,13 @@ protected:
 
 #define DECLARE_VALUE_EDITOR(Type) \
     Type##ValueEditor(DataEditor& parent, const Type##StyleP& style); \
-    virtual ValueEditor* getEditor() { return this; } \
-    private: \
+    ValueEditor* getEditor() override { return this; } \
+  private: \
     /** Retrieve the parent editor object */ \
-    inline DataEditor& editor() const { \
+    inline DataEditor& editor() const override { \
       return static_cast<DataEditor&>(viewer); \
     } \
-    public:
+  public:
 
 #define IMPLEMENT_VALUE_EDITOR(Type) \
   ValueViewerP Type##Style::makeEditor(DataEditor& parent) { \

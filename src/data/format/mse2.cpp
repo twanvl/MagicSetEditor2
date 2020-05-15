@@ -16,12 +16,12 @@
 /// The file format of MSE2 files
 class MSE2FileFormat : public FileFormat {
 public:
-  virtual String extension()          { return _("mse-set"); }
-  virtual String matches()            { return _("*.mse-set;set"); }
-  virtual String name()               { return _("Magic Set Editor sets (*.mse-set)"); }
-  virtual bool canImport()            { return true; }
-  virtual bool canExport(const Game&) { return true; }
-  virtual SetP importSet(const String& filename) {
+  String extension() override          { return _("mse-set"); }
+  String matches() override            { return _("*.mse-set;set"); }
+  String name() override               { return _("Magic Set Editor sets (*.mse-set)"); }
+  bool canImport() override            { return true; }
+  bool canExport(const Game&) override { return true; }
+  SetP importSet(const String& filename) override {
     wxString set_name = filename;
     // Strip "/set" or "/set.mset-set" from the end, this allows opening directories as set files
     if (filename.EndsWith(_(".mse-set/set")) || filename.EndsWith(_(".mse-set\\set"))) {
@@ -34,7 +34,7 @@ public:
     settings.addRecentFile(set_name);
     return set;
   }
-  virtual void exportSet(Set& set, const String& filename, bool is_copy) {
+  void exportSet(Set& set, const String& filename, bool is_copy) override {
     if (is_copy) {
       set.saveCopy(filename);
     } else {

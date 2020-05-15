@@ -43,9 +43,9 @@ public:
   void addPackage(Packaged& package);
   
 protected:
-  virtual String typeName() const;
-  virtual Version fileVersion() const;
-  virtual void validate(Version file_app_version);
+  String typeName() const override;
+  Version fileVersion() const override;
+  void validate(Version file_app_version) override;
   DECLARE_REFLECTION();
 };
 

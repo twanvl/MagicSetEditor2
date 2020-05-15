@@ -19,8 +19,8 @@ class SymbolValueViewer : public ValueViewer {
 public:
   DECLARE_VALUE_VIEWER(Symbol) : ValueViewer(parent,style) {}
   
-  virtual void draw(RotatedDC& dc);
-  void onValueChange();
+  void draw(RotatedDC& dc) override;
+  void onValueChange() override;
   
 protected:
   vector<Bitmap> symbols;  ///< Cached images

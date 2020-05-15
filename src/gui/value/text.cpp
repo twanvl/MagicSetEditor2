@@ -116,15 +116,15 @@ public:
   inline WordListPosP getPos() const { return pos; }
   
 protected:
-  virtual void          redrawArrowOnParent();
-  virtual size_t        itemCount() const             { return items.size(); }
-  virtual bool          lineBelow(size_t item) const  { return items[item].flags & FLAG_LINE_BELOW; }
-  virtual String        itemText(size_t item) const   { return items[item].name; }
-  virtual void          drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
-  virtual DropDownList* submenu(size_t item) const;
-  virtual size_t        selection() const;
-  virtual void          select(size_t item);
-  virtual bool          stayOpen(size_t selection) const;
+  void          redrawArrowOnParent() override;
+  size_t        itemCount() const override             { return items.size(); }
+  bool          lineBelow(size_t item) const override  { return items[item].flags & FLAG_LINE_BELOW; }
+  String        itemText(size_t item) const override   { return items[item].name; }
+  void          drawIcon(DC& dc, int x, int y, size_t item, bool selected) const override;
+  DropDownList* submenu(size_t item) const override;
+  size_t        selection() const override;
+  void          select(size_t item) override;
+  bool          stayOpen(size_t selection) const override;
 private:
   TextValueEditor& tve;
   WordListPosP pos;
@@ -887,7 +887,7 @@ void TextValueEditor::showCaret() {
         // TODO : high quality?
         dc.SetFont(style().font.toWxFont(1.0));
         int hi;
-        dc.GetTextExtent(_(" "), 0, &hi);
+        dc.GetTextExtent(_(" "), nullptr, &hi);
         #ifdef __WXGTK__
           // HACK: Some fonts don't get the descender height set correctly.
           int charHeight = dc.GetCharHeight();

@@ -22,25 +22,25 @@ class StylePanel : public SetWindowPanel {
 public:
   StylePanel(Window* parent, int id);
   
-  virtual void onChangeSet();
-  virtual void onAction(const Action&, bool undone);
+  void onChangeSet() override;
+  void onAction(const Action&, bool undone) override;
   
   // --------------------------------------------------- : UI
   
-  virtual void initUI(wxToolBar*, wxMenuBar*);
+  void initUI(wxToolBar*, wxMenuBar*) override;
   
   // --------------------------------------------------- : Clipboard
-  virtual bool canCut() const;
-  virtual bool canCopy() const;
-  virtual bool canPaste() const;
-  virtual bool canSelectAll() const;
-  virtual void doCut();
-  virtual void doCopy();
-  virtual void doPaste();
-  virtual void doSelectAll();
+  bool canCut() const override;
+  bool canCopy() const override;
+  bool canPaste() const override;
+  bool canSelectAll() const override;
+  void doCut() override;
+  void doCopy() override;
+  void doPaste() override;
+  void doSelectAll() override;
   
   // --------------------------------------------------- : Selection
-  virtual void selectCard(const CardP& card);
+  void selectCard(const CardP& card) override;
   
 private:
   DECLARE_EVENT_TABLE();
@@ -58,7 +58,7 @@ private:
   
   /// Determine the best size for the list of stylesheets based on available space
   void updateListSize();
-  virtual bool Layout();
+  bool Layout() override;
   
   /// Actual intialization of the controls
   void initControls();

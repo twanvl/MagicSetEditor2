@@ -51,7 +51,7 @@ public:
   /// Should return true if this panel wants to get focus to show an action
   virtual bool wantsToHandle(const Action&, bool undone) const { return false; }
   /// Handle an action that changes the current set
-  virtual void onAction(const Action&, bool undone) {}
+  virtual void onAction(const Action&, bool undone) override {}
   
   // --------------------------------------------------- : Clipboard
   virtual bool canPaste() const { return false; }    ///< Is pasting possible?

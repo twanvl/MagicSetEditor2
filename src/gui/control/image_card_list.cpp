@@ -57,7 +57,7 @@ public:
       wxDateTime::Now())  // TODO: Find mofication time of card image
     , filename(filename)
   {}
-  virtual Image generate() {
+  Image generate() override {
     try {
       ImageCardList* parent = (ImageCardList*)owner;
       Image image;
@@ -72,7 +72,7 @@ public:
       return Image();
     }
   }
-  virtual void store(const Image& img) {
+  void store(const Image& img) override {
     // add finished bitmap to the imagelist
     ImageCardList* parent = (ImageCardList*)owner;
     if (img.Ok()) {
@@ -83,7 +83,7 @@ public:
     }
   }
 
-  virtual bool threadSafe() const {return true;}
+  bool threadSafe() const override {return true;}
 private:
   LocalFileName filename;
 };

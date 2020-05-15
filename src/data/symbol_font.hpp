@@ -68,8 +68,8 @@ public:
   Image getImage(double font_size, const DrawableSymbol& symbol);
   
   static String typeNameStatic();
-  virtual String typeName() const;
-  Version fileVersion() const;
+  String typeName() const override;
+  Version fileVersion() const override;
   
   /// Generate a 'insert symbol' menu.
   /** This class owns the menu!
@@ -112,9 +112,9 @@ public:
 // ----------------------------------------------------------------------------- : InsertSymbolMenu
 
 enum MenuItemType
-{  ITEM_CODE    ///< Name gives the code to insert
-,  ITEM_CUSTOM    ///< Use a dialog box
-,  ITEM_LINE    ///< A menu separator
+{  ITEM_CODE     ///< Name gives the code to insert
+,  ITEM_CUSTOM   ///< Use a dialog box
+,  ITEM_LINE     ///< A menu separator
 ,  ITEM_SUBMENU  ///< A submenu
 };
 
@@ -153,11 +153,11 @@ public:
   /// Is a font loaded?
   bool valid() const;
     
-  Scriptable<String>    name;        ///< Font package name, can be changed with script
-  Scriptable<double>    size;        ///< Size of the font
-  double                scale_down_to;  ///< Mimumum size of the font
-  Scriptable<Alignment> alignment;    ///< Alignment of symbols in a line of text
-  SymbolFontP           font;        ///< The font, if it is loaded
+  Scriptable<String>    name;          ///< Font package name, can be changed with script
+  Scriptable<double>    size;          ///< Size of the font
+  double                scale_down_to; ///< Mimumum size of the font
+  Scriptable<Alignment> alignment;     ///< Alignment of symbols in a line of text
+  SymbolFontP           font;          ///< The font, if it is loaded
   
 private:
   DECLARE_REFLECTION();

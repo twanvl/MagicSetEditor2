@@ -146,14 +146,14 @@ public:
   }
   
 protected:
-  virtual size_t itemCount() const;
-  virtual void drawItem(DC& dc, int x, int y, size_t item);
+  size_t itemCount() const override;
+  void drawItem(DC& dc, int x, int y, size_t item) override;
   
-  virtual double subcolumnActivity(size_t col) const {
+  double subcolumnActivity(size_t col) const override {
     return col-1 >= prefered_dimension_count ? 0.2 : 0.7;
   }
   
-  virtual void onSelect(size_t item, size_t old_col, bool& changes) {
+  void onSelect(size_t item, size_t old_col, bool& changes) override {
     // swap selection with another subcolumn?
     for (size_t j = 1 ; j < subcolumns.size() ; ++j) {
       if (j != active_subcolumn && subcolumns[j].selection == item &&
@@ -527,7 +527,7 @@ public:
   StatsFilter(GraphData& data, const vector<int> match) {
     data.indices(match, indices);
   }
-  virtual void getItems(const vector<CardP>& cards, vector<VoidP>& out) const {
+  void getItems(const vector<CardP>& cards, vector<VoidP>& out) const override {
     FOR_EACH_CONST(idx, indices) {
       out.push_back(cards.at(idx));
     }

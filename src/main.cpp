@@ -38,23 +38,23 @@ ScriptValueP export_set(SetP const& set, vector<CardP> const& cards, ExportTempl
 class MSE : public wxApp {
 public:
   /// Do nothing. The command line parsing, etc. is done in OnRun
-  bool OnInit() { return true; }
+  bool OnInit() override { return true; }
   /// Main startup function of the program
   /** Use OnRun instead of OnInit, so we can determine whether or not we need a main loop
    *  Also, OnExit is always run.
    */
-  int OnRun();
+  int OnRun() override;
   /// Actually start the GUI mainloop
   int runGUI();
   /// On exit: write the settings to the config file
-  int OnExit();
+  int OnExit() override;
   /// On exception: display error message
-  void HandleEvent(wxEvtHandler *handler, wxEventFunction func, wxEvent& event) const;
+  void HandleEvent(wxEvtHandler *handler, wxEventFunction func, wxEvent& event) const override;
   /// Hack around some wxWidget idiocies
-  int FilterEvent(wxEvent& ev);
+  int FilterEvent(wxEvent& ev) override;
   /// Fancier assert
   #if defined(_MSC_VER) && defined(_DEBUG) && defined(_CRT_WIDE)
-    void OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg);
+    void OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg) override;
   #endif
 };
 

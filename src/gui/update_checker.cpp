@@ -91,7 +91,7 @@ bool update_available()  {
 // If not, displays a message
 class CheckUpdateThread : public wxThread {
 public:
-  virtual void* Entry() {
+  void* Entry() override {
     Work();
     return 0;
   }
@@ -170,7 +170,7 @@ struct HtmlWindowToBrowser : public wxHtmlWindow {
     : wxHtmlWindow(parent, id, pos, size, flags)
   {}
     
-  virtual void OnLinkClicked(const wxHtmlLinkInfo& info) {
+  void OnLinkClicked(const wxHtmlLinkInfo& info) override {
     wxLaunchDefaultBrowser( info.GetHref() );
   }
 };

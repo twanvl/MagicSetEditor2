@@ -69,20 +69,20 @@ public:
     
   // --------------------------------------------------- : Clipboard
   
-  bool canCut()    const;
-  bool canCopy()   const;
-  bool canPaste()  const;
-  bool canDelete() const;
+  bool canCut()    const override;
+  bool canCopy()   const override;
+  bool canPaste()  const override;
+  bool canDelete() const override;
   // Try to perform a clipboard operation, return success
-  bool doCopy();
-  bool doPaste();
-  bool doDelete();
+  bool doCopy() override;
+  bool doPaste() override;
+  bool doDelete() override;
   
   // --------------------------------------------------- : Set actions
   
-  virtual void onBeforeChangeSet();
-  virtual void onChangeSet();
-  virtual void onAction(const Action&, bool undone);
+  void onBeforeChangeSet() override;
+  void onChangeSet() override;
+  void onAction(const Action&, bool undone) override;
   
   // --------------------------------------------------- : The cards
 public:
@@ -92,7 +92,7 @@ public:
   void getSelection(vector<CardP>& out) const;
 protected:
   /// Get a list of all cards
-  virtual void getItems(vector<VoidP>& out) const;
+  void getItems(vector<VoidP>& out) const override;
   
   /// Rebuild the card list (clear all vectors and fill them again)
   void rebuild();
@@ -101,24 +101,24 @@ protected:
   /// Can the card list be modified?
   virtual bool allowModify() const { return false; }
   /// Sort all card lists
-  virtual void sortBy(long column, bool ascending);
+  void sortBy(long column, bool ascending) override;
   
   /// Send an 'item selected' event for the currently selected item (selected_item)
-  virtual void sendEvent() { sendEvent(EVENT_CARD_SELECT); }
+  void sendEvent() override { sendEvent(EVENT_CARD_SELECT); }
   void sendEvent(int type = EVENT_CARD_SELECT);
   /// Compare cards
-  virtual bool compareItems(void* a, void* b) const;
+  bool compareItems(void* a, void* b) const override;
   
   // --------------------------------------------------- : Item 'events'
   
   /// Get the text of an item in a specific column
   /** Overrides a function from wxListCtrl */
-  virtual String OnGetItemText (long pos, long col) const;
+  String OnGetItemText (long pos, long col) const override;
   /// Get the image of an item, by default no image is used
   /** Overrides a function from wxListCtrl */
-  virtual int    OnGetItemImage(long pos) const;
+  int OnGetItemImage(long pos) const override;
   /// Get the color for an item
-  virtual wxListItemAttr* OnGetItemAttr(long pos) const;
+  wxListItemAttr* OnGetItemAttr(long pos) const override;
   
   // --------------------------------------------------- : Data
 private:

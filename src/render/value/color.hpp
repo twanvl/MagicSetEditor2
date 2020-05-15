@@ -21,7 +21,7 @@ class ColorValueViewer : public ValueViewer {
 public:
   DECLARE_VALUE_VIEWER(Color) : ValueViewer(parent,style) {}
   
-  virtual void draw(RotatedDC& dc);
-  virtual bool containsPoint(const RealPoint& p) const;
+  void draw(RotatedDC& dc) override;
+  bool containsPoint(const RealPoint& p) const override;
 };
 

@@ -70,11 +70,11 @@ public:
   void initCardListColorScript();
   
   static String typeNameStatic();
-  virtual String typeName() const;
-  Version fileVersion() const;
+  String typeName() const override;
+  Version fileVersion() const override;
   
 protected:
-  virtual void validate(Version);
+  void validate(Version) override;
   
   DECLARE_REFLECTION_OVERRIDE();
 };

@@ -19,13 +19,13 @@ DECLARE_POINTER_TYPE(SymbolPartShearAction);
 // ----------------------------------------------------------------------------- : SymbolSelectEditor
 
 /// Editor that allows the user to select symbol parts
-class SymbolSelectEditor : public SymbolEditorBase {
+class SymbolSelectEditor final : public SymbolEditorBase {
 public:
   SymbolSelectEditor(SymbolControl* control, bool rotate);
   
   // --------------------------------------------------- : Drawing
   
-  virtual void draw(DC& dc);
+  void draw(DC& dc) override;
   
 private:
   /// Draw handles on all sides
@@ -39,26 +39,26 @@ private:
 public:
   // --------------------------------------------------- : UI
   
-  virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
-  virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-  virtual void onUpdateUI(wxUpdateUIEvent&);
-  virtual void onCommand(int id);
-  virtual int modeToolId();
+  void initUI   (wxToolBar* tb, wxMenuBar* mb) override;
+  void destroyUI(wxToolBar* tb, wxMenuBar* mb) override;
+  void onUpdateUI(wxUpdateUIEvent&) override;
+  void onCommand(int id) override;
+  int modeToolId() override;
   
   // --------------------------------------------------- : Mouse events
   
-  virtual void onLeftDown   (const Vector2D& pos, wxMouseEvent& ev);
-  virtual void onLeftDClick (const Vector2D& pos, wxMouseEvent& ev);
-  virtual void onLeftUp     (const Vector2D& pos, wxMouseEvent& ev);
-  virtual void onMouseMove  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev);
-  virtual void onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev);
+  void onLeftDown   (const Vector2D& pos, wxMouseEvent& ev) override;
+  void onLeftDClick (const Vector2D& pos, wxMouseEvent& ev) override;
+  void onLeftUp     (const Vector2D& pos, wxMouseEvent& ev) override;
+  void onMouseMove  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) override;
+  void onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) override;
   
   // --------------------------------------------------- : Other events
   
-  virtual void onKeyChange  (wxKeyEvent& ev);
-  virtual void onChar       (wxKeyEvent& ev);
+  void onKeyChange  (wxKeyEvent& ev) override;
+  void onChar       (wxKeyEvent& ev) override;
   
-  virtual bool isEditing();
+  bool isEditing() override;
   
 private:
   // The part under the mouse cursor

@@ -62,10 +62,10 @@ public:
   String stylesheetName() const;
   
   static String typeNameStatic();
-  virtual String typeName() const;
-  Version fileVersion() const;
+  String typeName() const override;
+  Version fileVersion() const override;
   /// Validate the stylesheet
-  virtual void validate(Version = app_version);
+  void validate(Version = app_version) override;
   
 protected:
   

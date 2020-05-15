@@ -54,7 +54,7 @@
   
   /// Implementation of a dynamic argument
   #define IMPLEMENT_DYNAMIC_ARG(Type, name, initial) \
-    THREAD_LOCAL Type name##_private = initial;
+    THREAD_LOCAL Type name##_private = initial
 
   /// Locally change the value of a dynamic argument
   /** Usage:
@@ -107,10 +107,10 @@
   };
   
   #define DECLARE_DYNAMIC_ARG(Type, name) \
-    extern ThreadLocalObject<Type> name;
+    extern ThreadLocalObject<Type> name
 
   #define IMPLEMENT_DYNAMIC_ARG(Type, name, initial) \
-    ThreadLocalObject<Type> name (initial);
+    ThreadLocalObject<Type> name (initial)
 
   #define WITH_DYNAMIC_ARG(name, value) \
     name.store(value);

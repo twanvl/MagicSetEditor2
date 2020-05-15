@@ -122,8 +122,8 @@ struct CompareTabOrder {
     assert(a && b);
     Style& as = *a->getStyle(), &bs = *b->getStyle();
     // if tab_index differs, use that
-    if (as.tab_index < as.tab_index) return true;
-    if (as.tab_index > as.tab_index) return false;
+    if (as.tab_index < bs.tab_index) return true;
+    if (as.tab_index > bs.tab_index) return false;
     // otherwise look at the positions
     // To get a total order, we look at the viewer center.
     // Not completely (y,x), because for viewers that are almost at the same y we prefer to sort by x

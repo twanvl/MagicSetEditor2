@@ -40,8 +40,8 @@ public:
   AddKeywordAction(Set& set);
   AddKeywordAction(AddingOrRemoving, Set& set, const KeywordP& keyword);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   const GenericAddAction<KeywordP> action;
 };
@@ -75,9 +75,9 @@ public:
   Keyword& keyword; ///< The keyword we are the reminder text of
   
   /// Try to compile the script
-  virtual void store();
+  void store() override;
   /// Add some tags, so the script looks nice
-  virtual void retrieve();
+  void retrieve() override;
   
   /// Syntax highlight, and store in value
   void highlight(const String& code, const vector<ScriptParseError>& errors);
@@ -91,8 +91,8 @@ class ChangeKeywordModeAction : public Action {
 public:
   ChangeKeywordModeAction(Keyword& keyword, const String& new_mode);
   
-  virtual String getName(bool to_undo) const;
-  virtual void   perform(bool to_undo);
+  String getName(bool to_undo) const override;
+  void perform(bool to_undo) override;
   
   //private:
   Keyword& keyword;

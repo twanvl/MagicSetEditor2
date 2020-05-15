@@ -16,33 +16,33 @@ class wxSpinCtrl;
 // ----------------------------------------------------------------------------- : SymbolBasicShapeEditor
 
 /// Editor for drawing basic shapes such as rectangles and polygons
-class SymbolBasicShapeEditor : public SymbolEditorBase {
+class SymbolBasicShapeEditor final : public SymbolEditorBase {
 public:
   SymbolBasicShapeEditor(SymbolControl* control);
   
   // --------------------------------------------------- : Drawing
   
-  virtual void draw(DC& dc);
+  void draw(DC& dc) override;
   
   // --------------------------------------------------- : UI
   
-  virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
-  virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-  virtual void onUpdateUI(wxUpdateUIEvent&);
-  virtual void onCommand(int id);
-  virtual int modeToolId();
+  void initUI   (wxToolBar* tb, wxMenuBar* mb) override;
+  void destroyUI(wxToolBar* tb, wxMenuBar* mb) override;
+  void onUpdateUI(wxUpdateUIEvent&) override;
+  void onCommand(int id) override;
+  int modeToolId() override;
   
   // --------------------------------------------------- : Mouse events
   
-  virtual void onLeftDown   (const Vector2D& pos, wxMouseEvent& ev);
-  virtual void onLeftUp     (const Vector2D& pos, wxMouseEvent& ev);
-  virtual void onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev);
+  void onLeftDown   (const Vector2D& pos, wxMouseEvent& ev) override;
+  void onLeftUp     (const Vector2D& pos, wxMouseEvent& ev) override;
+  void onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) override;
   
   // --------------------------------------------------- : Other events
   
-  virtual void onKeyChange(wxKeyEvent& ev);
+  void onKeyChange(wxKeyEvent& ev) override;
   
-  virtual bool isEditing();
+  bool isEditing() override;
   
   // --------------------------------------------------- : Data
 private:

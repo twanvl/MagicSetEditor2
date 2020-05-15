@@ -30,12 +30,12 @@ public:
     
 protected:
   // overridden methods from TreeList
-  virtual void initItems();
-  virtual void drawItem(DC& dc, size_t index, size_t column, int x, int y, bool selected) const;
+  void initItems() override;
+  void drawItem(DC& dc, size_t index, size_t column, int x, int y, bool selected) const override;
   
-  virtual size_t columnCount() const { return 3; }
-  virtual String columnText(size_t column) const;
-  virtual int    columnWidth(size_t column) const;
+  size_t columnCount() const override { return 3; }
+  String columnText(size_t column) const override;
+  int    columnWidth(size_t column) const override;
   
 private:
   /// The list of packages we are displaying
