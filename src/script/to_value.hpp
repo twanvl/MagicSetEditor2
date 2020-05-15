@@ -354,7 +354,7 @@ public:
   /// The wrapped function
   ScriptValueP                          fun;
   /// The default argument bindings
-  vector<pair<Variable,ScriptValueP> >  bindings;
+  vector<pair<Variable,ScriptValueP>>  bindings;
 
 private:
   /// Apply the bindings in a context

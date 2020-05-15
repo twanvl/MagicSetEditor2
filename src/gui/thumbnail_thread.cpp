@@ -168,7 +168,7 @@ void ThumbnailThread::request(const ThumbnailRequestP& request) {
 bool ThumbnailThread::done(void* owner) {
   assert(wxThread::IsMain());
   // find finished requests
-  vector<pair<ThumbnailRequestP,Image> > finished;
+  vector<pair<ThumbnailRequestP,Image>> finished;
   {
     wxMutexLocker lock(mutex);
     for (size_t i = 0 ; i < closed_requests.size() ; ) {

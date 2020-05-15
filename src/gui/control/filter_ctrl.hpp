@@ -32,7 +32,7 @@ public:
     if (hasFilter()) {
       return make_intrusive<QuickFilter<T>>(getFilterString());
     } else {
-      return intrusive_ptr<Filter<T> >();
+      return intrusive_ptr<Filter<T>>();
     }
   }
   

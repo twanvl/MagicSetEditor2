@@ -18,7 +18,7 @@
 
 template <typename Key, typename Value>
 IndexMap<Key,Value>& DelayedIndexMaps<Key,Value>::get(const String& name, const vector<Key>& init_with) {
-  intrusive_ptr<DelayedIndexMapsData<Key,Value> >& item = data[name];
+  intrusive_ptr<DelayedIndexMapsData<Key,Value>>& item = data[name];
   if (!item) { // no item, make a new one
     item = make_intrusive<DelayedIndexMapsData<Key,Value>>();
     item->read_data.init(init_with);

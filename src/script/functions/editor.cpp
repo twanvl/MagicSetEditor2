@@ -63,7 +63,7 @@ SCRIPT_FUNCTION_WITH_DEP(combined_editor) {
     value = value.substr(0, pos);
   }
   // split the value
-  vector<pair<String,bool> > value_parts; // (value part, is empty)
+  vector<pair<String,bool>> value_parts; // (value part, is empty)
   pos = value.find(_("<sep"));
   while (pos != String::npos) {
     String part = value.substr(0, pos);

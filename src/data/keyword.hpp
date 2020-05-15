@@ -132,7 +132,7 @@ inline String type_name(const vector<KeywordP>&) {
 // ----------------------------------------------------------------------------- : Using keywords
 
 /// Store keyword usage statistics here, using value_being_updated as the key
-typedef vector<pair<Value*, const Keyword*> > KeywordUsageStatistics;
+typedef vector<pair<Value*, const Keyword*>> KeywordUsageStatistics;
 DECLARE_DYNAMIC_ARG(KeywordUsageStatistics*, keyword_usage_statistics);
 
 /// A database of keywords to allow for fast matching

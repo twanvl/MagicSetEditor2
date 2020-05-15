@@ -500,7 +500,7 @@ ScriptValueP sort_script(Context& ctx, const ScriptValueP& list, ScriptValue& or
     // are we sorting a set?
     ScriptObject<Set*>* set = dynamic_cast<ScriptObject<Set*>*>(list.get());
     // sort a collection
-    vector<pair<String,ScriptValueP> > values;
+    vector<pair<String,ScriptValueP>> values;
     ScriptValueP it = list->makeIterator();
     while (ScriptValueP v = it->next()) {
       ctx.setVariable(set ? _("card") : _("input"), v);

@@ -30,7 +30,7 @@ class SetScriptContext;
 class Context;
 class Dependency;
 template <typename> class OrderCache;
-typedef intrusive_ptr<OrderCache<CardP> > OrderCacheP;
+typedef intrusive_ptr<OrderCache<CardP>> OrderCacheP;
 
 // ----------------------------------------------------------------------------- : Set
 

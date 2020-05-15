@@ -15,7 +15,7 @@
 /// Object that cashes an ordered version of a list of items, for finding the position of objects
 /** Can be used as a map "void* -> int" for finding the position of an object */
 template <typename T>
-class OrderCache : public IntrusivePtrBase<OrderCache<T> > {
+class OrderCache : public IntrusivePtrBase<OrderCache<T>> {
 public:
   /// Initialize the order cache, ordering the keys by their string values from the other vector
   /** Optionally filter the list using a vector of booleans of items to keep (note: vector<bool> is evil)

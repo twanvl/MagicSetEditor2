@@ -162,7 +162,7 @@ public:
   
 private:
   void add(const SymbolPartP&, SymbolShapeCombine mode);
-  vector<pair<SymbolShapeP,SymbolShapeCombine> > parts;  ///< Affected parts with new combining modes
+  vector<pair<SymbolShapeP,SymbolShapeCombine>> parts;  ///< Affected parts with new combining modes
 };
 
 // ----------------------------------------------------------------------------- : Change name
@@ -243,7 +243,7 @@ public:
 private:
   Symbol& symbol;
   /// Duplicates of parts and their positions, sorted by ascending pos
-  vector<pair<SymbolPartP, size_t> > duplications;
+  vector<pair<SymbolPartP, size_t>> duplications;
 };
 
 

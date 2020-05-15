@@ -70,7 +70,7 @@ private:
   wxCondition completed; ///< Event signaled when a request is completed
   
   deque<ThumbnailRequestP>                open_requests;    ///< Requests on which work hasn't finished
-  vector<pair<ThumbnailRequestP,Image> >  closed_requests;  ///< Requests for which work is completed
+  vector<pair<ThumbnailRequestP,Image>>  closed_requests;  ///< Requests for which work is completed
   set<ThumbnailRequestP>                  request_names;    ///< Requests that haven't been stored yet, to prevent duplicates
   friend class ThumbnailThreadWorker;
   ThumbnailThreadWorker* worker;                ///< The worker thread. invariant: no requests ==> worker==nullptr

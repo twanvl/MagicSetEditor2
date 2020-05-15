@@ -263,7 +263,7 @@ private:
   mutable RealSize size, item_size;
   mutable double label_width;
   Alignment alignment;
-  vector<pair<String,String> > values;
+  vector<pair<String,String>> values;
 };
 
 //class GraphTable {

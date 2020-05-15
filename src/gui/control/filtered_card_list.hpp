@@ -12,7 +12,7 @@
 #include <gui/control/card_list.hpp>
 #include <data/filter.hpp>
 
-typedef intrusive_ptr<Filter<Card> > CardListFilterP;
+typedef intrusive_ptr<Filter<Card>> CardListFilterP;
 
 // ----------------------------------------------------------------------------- : FilteredCardList
 

@@ -14,7 +14,7 @@
 #include <data/filter.hpp>
 #include <data/set.hpp>
 
-typedef intrusive_ptr<Filter<Keyword> > KeywordListFilterP;
+typedef intrusive_ptr<Filter<Keyword>> KeywordListFilterP;
 
 // ----------------------------------------------------------------------------- : Events
 
