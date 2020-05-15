@@ -69,7 +69,7 @@ private:
 
   // --------------------------------------------------- : Data
   
-  public: 
+public:
   /// What parts are selected?
   SymbolPartsSelection selected_parts;
   SymbolPartP          highlight_part;    ///< part the mouse cursor is over

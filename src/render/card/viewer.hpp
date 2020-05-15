@@ -23,7 +23,7 @@ DECLARE_DYNAMIC_ARG(bool, drawing_card);
 
 /// A viewer can generate an image of some values, usually a card.
 class DataViewer : public SetView {
-  public:  
+public:
   DataViewer();
   ~DataViewer();
   
