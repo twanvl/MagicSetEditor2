@@ -35,7 +35,7 @@ private:
   wxCheckListBox* list;
   // other info
   GameP game;                  ///< The game we are changing
-  public: struct ColumnSettingsF {
+  struct ColumnSettingsF {
     ColumnSettingsF(const FieldP& field, const ColumnSettings& settings)
       : field(field)
       , settings(settings)
@@ -43,7 +43,7 @@ private:
     FieldP         field;
     ColumnSettings settings;
   };
-  private: vector<ColumnSettingsF> columns;  ///< Settings of the fields, in order
+  vector<ColumnSettingsF> columns;  ///< Settings of the fields, in order
   
   // initialize columns
   void initColumns();

@@ -44,14 +44,6 @@ CardListColumnSelectDialog::CardListColumnSelectDialog(Window* parent, const Gam
   UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
 
-struct SortByPosition {
-  SortByPosition(const Game& game) : game(game) {}
-  const Game& game;
-  bool operator() (const CardListColumnSelectDialog::ColumnSettingsF& a, const CardListColumnSelectDialog::ColumnSettingsF& b){
-    return a.settings.position < b.settings.position;
-  }
-};
-
 void CardListColumnSelectDialog::initColumns() {
   // order is a list of all columns that may be shown
   FOR_EACH(f, game->card_fields) {
@@ -60,7 +52,9 @@ void CardListColumnSelectDialog::initColumns() {
     }
   }
   // sorted by position
-  sort(columns.begin(), columns.end(), SortByPosition(*game));
+  sort(columns.begin(), columns.end(), [](const ColumnSettingsF& a, const ColumnSettingsF& b) {
+    return a.settings.position < b.settings.position;
+  });
   // force unique position
   int min = 0;
   FOR_EACH(c, columns) {
