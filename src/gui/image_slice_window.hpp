@@ -141,7 +141,6 @@ private:
   void onLoseCapture(wxMouseCaptureLostEvent&);
   
   void onPaint(wxPaintEvent&);
-  void onEraseBackground(wxEraseEvent&) {}
   void draw(DC& dc);
 };
 
@@ -176,7 +175,6 @@ private:
   void onLoseCapture(wxMouseCaptureLostEvent&);
   
   void onPaint(wxPaintEvent&);
-  void onEraseBackground(wxEraseEvent&) {}
   void onSize(wxSizeEvent&);
   
   // Is the mouse on a (scale) handle?

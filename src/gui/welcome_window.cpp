@@ -30,6 +30,8 @@ WelcomeWindow::WelcomeWindow()
 {
   SetIcon(load_resource_icon(_("app")));
 
+  SetBackgroundStyle(wxBG_STYLE_PAINT);
+
   // init controls
   #ifdef USE_HOVERBUTTON
     wxControl* new_set   = new HoverButtonExt(this, ID_FILE_NEW,           load_resource_image(_("welcome_new")),     _BUTTON_("new set"),       _HELP_("new set"));
@@ -145,7 +147,6 @@ BEGIN_EVENT_TABLE(WelcomeWindow, wxFrame)
   EVT_BUTTON         (ID_FILE_RECENT,        WelcomeWindow::onOpenLast)
   EVT_BUTTON         (ID_FILE_CHECK_UPDATES, WelcomeWindow::onCheckUpdates)
   EVT_PAINT          (                       WelcomeWindow::onPaint)
-  EVT_ERASE_BACKGROUND(WelcomeWindow::onEraseBackground)
 //  EVT_IDLE           (                       WelcomeWindow::onIdle)
 END_EVENT_TABLE  ()
 

@@ -42,12 +42,12 @@ public:
   {}
 };
 
-class MessageCtrl : public wxPanel {
+class MessageCtrl : public wxControl {
 public:
   MessageCtrl(wxWindow* parent, int id)
-    : wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME | wxVSCROLL)
+    : wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME | wxWANTS_CHARS | wxVSCROLL)
   {
-    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+    SetBackgroundStyle(wxBG_STYLE_PAINT);
     // icons
     static_assert(MESSAGE_TYPE_MAX == 7);
     icons[MESSAGE_NONE]    = wxBitmap();
@@ -102,6 +102,10 @@ public:
     return ok;
   }
   
+  bool AcceptsFocus() const override {
+    return true;
+  }
+
 private:
   DECLARE_EVENT_TABLE();
   
@@ -225,7 +229,6 @@ private:
 
   // --------------------------------------------------- : Drawing
 
-  void onEraseBackground(wxEraseEvent&) {}
   void onPaint(wxPaintEvent& ev) {
     wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
@@ -382,7 +385,6 @@ BEGIN_EVENT_TABLE(MessageCtrl,wxScrolledWindow)
   EVT_KILL_FOCUS(MessageCtrl::onFocus)
   EVT_SCROLLWIN(MessageCtrl::onScroll)
   EVT_MOUSEWHEEL(MessageCtrl::onMouseWheel)
-  EVT_ERASE_BACKGROUND(MessageCtrl::onEraseBackground)
   EVT_SIZE(MessageCtrl::onSize)
 END_EVENT_TABLE()
 

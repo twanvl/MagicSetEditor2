@@ -91,7 +91,6 @@ private:
   void onChar(wxKeyEvent& ev);
   void onFocus(wxFocusEvent&);
   void onPaint(wxPaintEvent&);
-  void onEraseBackground(wxEraseEvent&) {}
   void onSize(wxSizeEvent&);
   void onScroll(wxScrollWinEvent&);
   void OnDraw(DC& dc);

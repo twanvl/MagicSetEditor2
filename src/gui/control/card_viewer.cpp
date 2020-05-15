@@ -22,7 +22,9 @@ DEFINE_EVENT_TYPE(EVENT_SIZE_CHANGE);
 CardViewer::CardViewer(Window* parent, int id, long style)
   : wxControl(parent, id, wxDefaultPosition, wxDefaultSize, style)
   , up_to_date(false)
-{}
+{
+  SetBackgroundStyle(wxBG_STYLE_PAINT);
+}
 
 wxSize CardViewer::DoGetBestSize() const {
   wxSize ws = GetSize(), cs = GetClientSize();
@@ -154,6 +156,5 @@ Rotation CardViewer::getRotation() const {
 // ----------------------------------------------------------------------------- : Event table
 
 BEGIN_EVENT_TABLE(CardViewer, wxControl)
-  EVT_PAINT      (CardViewer::onPaint)
-  EVT_ERASE_BACKGROUND(CardViewer::onEraseBackground)
+  EVT_PAINT(CardViewer::onPaint)
 END_EVENT_TABLE  ()

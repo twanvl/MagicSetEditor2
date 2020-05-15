@@ -35,7 +35,6 @@ private:
   
   DECLARE_EVENT_TABLE();
   void onPaint(wxPaintEvent&);
-  void onEraseBackground(wxEraseEvent&) {}
   void onTimer(wxTimerEvent&);
   void onSize(wxSizeEvent&);
   void draw_profiler(wxDC& dc, int x, int y);
@@ -67,6 +66,7 @@ ProfilerPanel::ProfilerPanel(wxWindow* parent, bool fancy_effects)
   , fancy_effects(fancy_effects)
   , timer(this)
 {
+  SetBackgroundStyle(wxBG_STYLE_PAINT);
 //  profiler::set_function_leave_callback(refresh_profiler_panel);
 }
 
@@ -165,7 +165,6 @@ BEGIN_EVENT_TABLE(ProfilerPanel, wxPanel)
   EVT_PAINT(          ProfilerPanel::onPaint)
   EVT_SIZE(           ProfilerPanel::onSize)
   EVT_TIMER(wxID_ANY, ProfilerPanel::onTimer)
-  EVT_ERASE_BACKGROUND(ProfilerPanel::onEraseBackground)
 END_EVENT_TABLE()
 
 

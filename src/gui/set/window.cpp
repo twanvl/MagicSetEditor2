@@ -48,7 +48,10 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
   , number_of_recent_sets(0)
 {
   SetIcon(load_resource_icon(_("app")));
-  
+
+  // avoid flicker
+  SetBackgroundStyle(wxBG_STYLE_PAINT);
+
   // initialize menu bar
   auto menuBar = new wxMenuBar();
   auto menuFile = new wxMenu();
@@ -899,5 +902,4 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
   EVT_CARD_SELECT    (wxID_ANY,        SetWindow::onCardSelect)
   EVT_CARD_ACTIVATE  (wxID_ANY,        SetWindow::onCardActivate)
   EVT_SIZE_CHANGE    (wxID_ANY,        SetWindow::onSizeChange)
-  EVT_ERASE_BACKGROUND(            SetWindow::onEraseBackground)
 END_EVENT_TABLE  ()

@@ -354,7 +354,9 @@ ImageSlicePreview::ImageSlicePreview(Window* parent, int id, ImageSlice& slice, 
   , slice(slice)
   , mask(mask)
   , mouse_down(false)
-{}
+{
+  SetBackgroundStyle(wxBG_STYLE_PAINT);
+}
 
 void ImageSlicePreview::update() {
   bitmap = wxNullBitmap;
@@ -430,7 +432,6 @@ BEGIN_EVENT_TABLE(ImageSlicePreview, wxControl)
   EVT_LEFT_UP      (ImageSlicePreview::onLeftUp)
   EVT_MOTION       (ImageSlicePreview::onMotion)
   EVT_MOUSE_CAPTURE_LOST(ImageSlicePreview::onLoseCapture)
-  EVT_ERASE_BACKGROUND(ImageSlicePreview::onEraseBackground)
 END_EVENT_TABLE  ()
 
 
@@ -443,7 +444,9 @@ ImageSliceSelector::ImageSliceSelector(Window* parent, int id, ImageSlice& slice
   : wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME)
   , slice(slice)
   , mouse_down(false)
-{}
+{
+  SetBackgroundStyle(wxBG_STYLE_PAINT);
+}
 
 void ImageSliceSelector::update() {
   Refresh(false);
@@ -696,5 +699,4 @@ BEGIN_EVENT_TABLE(ImageSliceSelector, wxControl)
   EVT_MOTION       (ImageSliceSelector::onMotion)
   EVT_SIZE         (ImageSliceSelector::onSize)
   EVT_MOUSE_CAPTURE_LOST(ImageSliceSelector::onLoseCapture)
-  EVT_ERASE_BACKGROUND(ImageSliceSelector::onEraseBackground)
 END_EVENT_TABLE  ()

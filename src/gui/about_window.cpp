@@ -70,7 +70,9 @@ HoverButtonBase::HoverButtonBase(Window* parent, int id, bool accepts_focus)
   : wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxNO_BORDER )
   , accepts_focus(accepts_focus)
   , hover(false), focus(false), mouse_down(false), key_down(false)
-{}
+{
+  SetBackgroundStyle(wxBG_STYLE_PAINT);
+}
 
 void HoverButtonBase::onMouseEnter(wxMouseEvent&) {
   hover = true;
@@ -156,7 +158,6 @@ BEGIN_EVENT_TABLE(HoverButtonBase, wxControl)
   EVT_KEY_DOWN       (HoverButtonBase::onKeyDown)
   EVT_KEY_UP         (HoverButtonBase::onKeyUp)
   EVT_MOUSE_CAPTURE_LOST(HoverButtonBase::onLoseCapture)
-  EVT_ERASE_BACKGROUND(HoverButtonBase::onEraseBackground)
 END_EVENT_TABLE  ()
 
 // ----------------------------------------------------------------------------- : Button with image and hover effect

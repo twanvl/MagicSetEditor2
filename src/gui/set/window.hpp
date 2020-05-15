@@ -172,6 +172,5 @@ private:
   void onIdle                (wxIdleEvent&);
   
   void onSizeChange          (wxCommandEvent&);
-  void onEraseBackground     (wxEraseEvent&) {} // reduce flicker
 };
 

@@ -54,7 +54,6 @@ protected:
 private:
   DECLARE_EVENT_TABLE();
   
-  void onEraseBackground(wxEraseEvent&) {}
   void onPaint(wxPaintEvent&);
   
   Bitmap buffer;     ///< Off-screen buffer we draw to

@@ -1019,7 +1019,9 @@ void GraphContainer::add(const GraphP& graph) {
 GraphControl::GraphControl(Window* parent, int id)
   : wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS | wxBORDER_THEME)
   , layout(GRAPH_TYPE_BAR)
-{}
+{
+  SetBackgroundStyle(wxBG_STYLE_PAINT);
+}
 
 void GraphControl::setLayout(GraphType type, bool force) {
   if (!force && graph && type == layout) return;
@@ -1208,10 +1210,9 @@ void GraphControl::onMotion(wxMouseEvent& ev) {
 }
 
 BEGIN_EVENT_TABLE(GraphControl, wxControl)
-  EVT_PAINT    (GraphControl::onPaint)
-  EVT_SIZE    (GraphControl::onSize)
-  EVT_LEFT_DOWN  (GraphControl::onMouseDown)
-  EVT_MOTION    (GraphControl::onMotion)
-  EVT_CHAR    (GraphControl::onChar)
-  EVT_ERASE_BACKGROUND(GraphControl::onEraseBackground)
+  EVT_PAINT(GraphControl::onPaint)
+  EVT_SIZE(GraphControl::onSize)
+  EVT_LEFT_DOWN(GraphControl::onMouseDown)
+  EVT_MOTION(GraphControl::onMotion)
+  EVT_CHAR(GraphControl::onChar)
 END_EVENT_TABLE  ()
