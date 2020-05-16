@@ -25,10 +25,10 @@ vector<QuickFilterPart> parse_quicksearch_query(String const& query) {
     } else if (c == _('"')) {
       // begin/end quoted string, match exactly
       quoted = !quoted;
-    } else if (c == _(':') && part.type.empty()) {
+    } else if (c == _(':') && part.type.empty() && !quoted) {
       part.type = part.query;
       part.query.clear();
-    } else if (c == _('!') && part.query.empty() && part.type.empty()) {
+    } else if (c == _('!') && part.query.empty() && part.type.empty() && !quoted) {
       // negate
       part.need_match = false;
     } else {
