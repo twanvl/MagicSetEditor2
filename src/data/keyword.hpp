@@ -133,7 +133,6 @@ inline String type_name(const vector<KeywordP>&) {
 
 /// Store keyword usage statistics here, using value_being_updated as the key
 typedef vector<pair<Value*, const Keyword*>> KeywordUsageStatistics;
-DECLARE_DYNAMIC_ARG(KeywordUsageStatistics*, keyword_usage_statistics);
 
 /// A database of keywords to allow for fast matching
 /** NOTE: keywords may not be altered after they are added to the database,
@@ -162,8 +161,9 @@ public:
    *  @param combine_script script function to combine keyword and reminder text in some way
    *  @param case_sensitive case sensitive matching of keywords?
    *  @param ctx            context for evaluation of scripts
+   *  @param stats          where to put keyword statistics
    */
-  String expand(const String& text, const ScriptValueP& match_condition, const ScriptValueP& expand_default, const ScriptValueP& combine_script, Context& ctx) const;
+  String expand(const String& text, const ScriptValueP& match_condition, const ScriptValueP& expand_default, const ScriptValueP& combine_script, Context& ctx, KeywordUsageStatistics* stats = nullptr) const;
   
 private:
   unique_ptr<KeywordTrie> root; ///< Data structure for finding keywords

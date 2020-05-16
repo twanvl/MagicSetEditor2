@@ -672,9 +672,9 @@ SCRIPT_FUNCTION_WITH_DEP(expand_keywords) {
     db.add(set->game->keywords);
   }
   SCRIPT_OPTIONAL_PARAM_C_(CardP, card);
-  WITH_DYNAMIC_ARG(keyword_usage_statistics, card ? &card->keyword_usage : nullptr);
   try {
-    SCRIPT_RETURN(db.expand(input, match_condition, default_expand, combine, ctx));
+    KeywordUsageStatistics* stat = card ? &card->keyword_usage : nullptr;
+    SCRIPT_RETURN(db.expand(input, match_condition, default_expand, combine, ctx, stat));
   } catch (const Error& e) {
     throw ScriptError(_ERROR_2_("in function", e.what(), _("expand_keywords")));
   }

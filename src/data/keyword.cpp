@@ -9,6 +9,7 @@
 #include <util/prec.hpp>
 #include <data/keyword.hpp>
 #include <util/tagged_string.hpp>
+#include <unordered_map>
 
 class KeywordTrie;
 DECLARE_POINTER_TYPE(KeywordParamValue);
@@ -243,13 +244,21 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 
 // ----------------------------------------------------------------------------- : KeywordTrie
 
+namespace std {
+  template <> struct hash<wxUniChar> {
+    inline size_t operator () (wxUniChar x) const {
+      return std::hash<wxUniChar::value_type>()(x.GetValue());
+    }
+  };
+}
+
 /// A node in a trie to match keywords
 class KeywordTrie {
 public:
   KeywordTrie();
   ~KeywordTrie();
   
-  map<wxUniChar, unique_ptr<KeywordTrie>> children; ///< children after a given character
+  unordered_map<wxUniChar, unique_ptr<KeywordTrie>> children; ///< children after a given character
   KeywordTrie* on_any_star; ///< children on /.*/ (owned or this)
   vector<const Keyword*> finished; ///< keywords that end in this node
   
@@ -395,12 +404,12 @@ String KeywordDatabase::expand(const String& text,
                                const ScriptValueP& match_condition,
                                const ScriptValueP& expand_default,
                                const ScriptValueP& combine_script,
-                               Context& ctx) const {
+                               Context& ctx,
+                               KeywordUsageStatistics* stat) const {
   assert(combine_script);
   assert_tagged(text);
   
   // Clean up usage statistics
-  KeywordUsageStatistics* stat = keyword_usage_statistics();
   Value* stat_key = value_being_updated();
   if (stat && stat_key) {
     for (size_t i = stat->size() - 1 ; i + 1 > 0 ; --i) { // loop backwards
