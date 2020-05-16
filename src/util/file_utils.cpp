@@ -47,22 +47,25 @@ String add_extension(const String& filename, String const& extension) {
 bool is_filename_char(Char c) {
   return isAlnum(c) || c == _(' ') || c == _('_') || c == _('-') || c == _('.');
 }
+bool is_filename_char_trim(Char c) {
+  return c == _(' ') || c == _('.');
+}
 
 String clean_filename(const String& name) {
   String clean;
   // allow only valid characters, and remove leading whitespace
   bool start = true;
   FOR_EACH_CONST(c, name) {
-    if (is_filename_char(c) && !(start && c == _(' '))) {
+    if (is_filename_char(c) && !(start && is_filename_char_trim(c))) {
       start = false;
       clean += c;
     }
   }
-  // remove trailing whitespace
-  while (!clean.empty() && clean[clean.size()-1] == _(' ')) {
+  // remove trailing whitespace and dots
+  while (!clean.empty() && is_filename_char_trim(clean[clean.size()-1])) {
     clean.resize(clean.size()-1);
   }
-  if (clean.empty() || starts_with(clean, _("."))) {
+  if (clean.empty()) {
     clean = _("no-name") + clean;
   }
   return clean;
@@ -114,10 +117,10 @@ time_t file_modified_time(const String& path) {
 // ----------------------------------------------------------------------------- : Directories
 
 bool create_directory(const String& path) {
-  #if defined(__WX_MSW__)
+  #if defined(__WXMSW__)
     return _wmkdir(path.fn_str()) == 0;
   #else
-    return mkdir(path.fn_str()) == 0;
+    return mkdir(path.fn_str(), 0777) == 0;
   #endif
 }
 
