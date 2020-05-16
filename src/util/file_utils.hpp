@@ -45,6 +45,8 @@ time_t file_modified_time(const String& name);
 
 // ----------------------------------------------------------------------------- : Removing and renaming
 
+bool create_directory(const String& path);
+
 /// Ensure that the parent directories of the given filename exist
 bool create_parent_dirs(const String& file);
 

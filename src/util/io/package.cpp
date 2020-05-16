@@ -401,7 +401,7 @@ void Package::openZipfile() {
 
 void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_copy) {
   // create directory?
-  wxMkdir(saveAs);
+  create_directory(saveAs);
   // write to a directory
   VCSP vcs = getVCS();
   FOR_EACH(f, files) {

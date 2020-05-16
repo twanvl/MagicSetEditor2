@@ -113,6 +113,14 @@ time_t file_modified_time(const String& path) {
 
 // ----------------------------------------------------------------------------- : Directories
 
+bool create_directory(const String& path) {
+  #if defined(__WX_MSW__)
+    return _wmkdir(path.fn_str()) == 0;
+  #else
+    return mkdir(path.fn_str()) == 0;
+  #endif
+}
+
 bool create_parent_dirs(const String& file) {
   for (size_t pos = file.find_first_of(_("\\/"), 1) ;
        pos != String::npos ;
