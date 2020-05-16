@@ -132,7 +132,7 @@ void KeywordsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
   // Filter/search textbox
   tb->AddSeparator();
   assert(!filter);
-  filter = new FilterCtrl(tb, ID_KEYWORD_FILTER, _LABEL_("search keywords"));
+  filter = new FilterCtrl(tb, ID_KEYWORD_FILTER, _LABEL_("search keywords"), _HELP_("search_keywords_control"));
   filter->setFilter(filter_value);
   tb->AddControl(filter);
   tb->Realize();

@@ -18,7 +18,7 @@ class HoverButton;
 /// A search/filter textbox
 class FilterCtrl : public wxTextCtrl {
 public:
-  FilterCtrl(wxWindow* parent, int id, String const& placeholder);
+  FilterCtrl(wxWindow* parent, int id, String const& placeholder, String const& help_text);
   
   /// Set the filter text
   void setFilter(const String& filter, bool send_event = false);
@@ -41,10 +41,12 @@ private:
   bool changing;
   String value;
   String placeholder;
+  String help_text;
   HoverButton* clear_button;
   
   void update();
   bool hasFocus();
+  void showHelp(bool show = true);
   // wxWidgets appears to have developed an overload allergy
   void onChangeEvent(wxCommandEvent&);
   void onClear(wxCommandEvent&);
@@ -53,6 +55,7 @@ private:
   void onSize();
   void onSetFocus(wxFocusEvent&);
   void onKillFocus(wxFocusEvent&);
-  void onPaint(wxPaintEvent&);
+  void onMouseEnter(wxMouseEvent&);
+  void onMouseLeave(wxMouseEvent&);
 };
 

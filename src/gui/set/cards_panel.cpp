@@ -200,7 +200,7 @@ void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
   // Filter/search textbox
   tb->AddSeparator();
   assert(!filter);
-  filter = new FilterCtrl(tb, ID_CARD_FILTER, _LABEL_("search cards"));
+  filter = new FilterCtrl(tb, ID_CARD_FILTER, _LABEL_("search cards"), _HELP_("search_cards_control"));
   filter->setFilter(filter_value);
   tb->AddControl(filter);
   tb->Realize();

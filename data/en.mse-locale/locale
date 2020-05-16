@@ -215,6 +215,9 @@ help:
 	# Cards panel
 	collapse notes:		Hide the card notes box
 	expand notes:		Show the card notes box
+	search cards control:	Filter the card list. Use - to exclude cards. Use field: to search in a specific field. Use quotes for literal search. Separate multiple queries with a space.
+	# Keywords panel
+	search keywords control: Filter the keyword list. Use - to exclude keywords. Use field: to search in a specific field. Use quotes for literal search. Separate multiple queries with a space.
 	# Random pack panel
 	random seed:		Different packs will be generated each time.
 	fixed seed:			Using the same seed number gives the same 'random' packs.

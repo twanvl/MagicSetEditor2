@@ -32,14 +32,13 @@ protected:
 
 // ----------------------------------------------------------------------------- : FilterControl
 
-FilterCtrl::FilterCtrl(wxWindow* parent, int id, String const& placeholder)
+FilterCtrl::FilterCtrl(wxWindow* parent, int id, String const& placeholder, String const& help_text)
   : wxTextCtrl(parent, id, _(""), wxDefaultPosition, wxSize(160, -1), wxBORDER_THEME)
   , changing(false)
   , placeholder(placeholder)
+  , help_text(help_text)
 {
   wxColour bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-  SetBackgroundColour(bg);
-  SetCursor(wxCURSOR_IBEAM);
   clear_button = new HoverButton(this, wxID_ANY, _("btn_clear_filter"), bg, false);
   clear_button->SetCursor(*wxSTANDARD_CURSOR);
   onSize();
@@ -63,6 +62,7 @@ void FilterCtrl::focusAndSelect() {
   if (!value.empty()) {
     SetSelection(-1,-1);
   }
+  showHelp();
 }
 
 void FilterCtrl::update() {
@@ -125,9 +125,23 @@ void FilterCtrl::onKillFocus(wxFocusEvent& ev) {
   ev.Skip();
 }
 
+void FilterCtrl::onMouseEnter(wxMouseEvent& ev) {
+  showHelp();
+}
+void FilterCtrl::onMouseLeave(wxMouseEvent& ev) {
+  showHelp(false);
+}
+
 bool FilterCtrl::hasFocus() {
   wxWindow* focus = wxWindow::FindFocus();
   return focus == this || focus == clear_button;
+}
+
+void FilterCtrl::showHelp(bool show) {
+  wxFrame* frame = dynamic_cast<wxFrame*>(wxGetTopLevelParent(this));
+  if (frame) {
+    frame->DoGiveHelp(help_text, show);
+  }
 }
 
 BEGIN_EVENT_TABLE(FilterCtrl, wxControl)
@@ -136,5 +150,7 @@ BEGIN_EVENT_TABLE(FilterCtrl, wxControl)
   EVT_SIZE      (FilterCtrl::onSizeEvent)
   EVT_SET_FOCUS (FilterCtrl::onSetFocus)
   EVT_KILL_FOCUS(FilterCtrl::onKillFocus)
+  EVT_ENTER_WINDOW(FilterCtrl::onMouseEnter)
+  EVT_LEAVE_WINDOW(FilterCtrl::onMouseLeave)
   EVT_CHAR      (FilterCtrl::onChar)
 END_EVENT_TABLE()
