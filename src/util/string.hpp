@@ -222,7 +222,8 @@ String make_non_capturing(const String& re);
 
 // ----------------------------------------------------------------------------- : Iterator utilities
 
-struct end_sentinel_t {} end_sentinel;
+struct end_sentinel_t {};
+const end_sentinel_t end_sentinel;
 
 // Iterate over a string, removing all matching substrings.
 // match.operator(it,end) should return false or return true and advance it past the substring

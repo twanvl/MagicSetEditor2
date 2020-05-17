@@ -220,9 +220,9 @@ String tagged_substr_replace(const String& input, size_t start, size_t end, cons
  */
 bool check_tagged(const String& str, bool check_balance = true);
 #ifdef _DEBUG
-  #define assert_tagged(x) assert(check_tagged(x))
+  #define assert_tagged(...) assert(check_tagged(__VA_ARGS__))
 #else
-  #define assert_tagged(x) do{}while(0)
+  #define assert_tagged(...) do{}while(0)
 #endif
 
 /// Simplify a tagged string
