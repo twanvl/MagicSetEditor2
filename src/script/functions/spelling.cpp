@@ -85,12 +85,12 @@ SCRIPT_FUNCTION(check_spelling) {
   while (pos < input.size()) {
     Char c = input.GetChar(pos);
     if (c == _('<')) {
-      if      (is_substr(input, pos,  _("<nospellcheck"))) unchecked_tag++;
-      else if (is_substr(input, pos, _("</nospellcheck"))) unchecked_tag--;
-      else if (is_substr(input, pos,  _("<sym")))  unchecked_tag++;
-      else if (is_substr(input, pos, _("</sym")))  unchecked_tag--;
-      else if (is_substr(input, pos,  _("<atom"))) unchecked_tag++;
-      else if (is_substr(input, pos, _("</atom"))) unchecked_tag--;
+      if      (is_tag(input, pos,  _("<nospellcheck"))) unchecked_tag++;
+      else if (is_tag(input, pos, _("</nospellcheck"))) unchecked_tag--;
+      else if (is_tag(input, pos,  _("<sym")))  unchecked_tag++;
+      else if (is_tag(input, pos, _("</sym")))  unchecked_tag--;
+      else if (is_tag(input, pos,  _("<atom"))) unchecked_tag++;
+      else if (is_tag(input, pos, _("</atom"))) unchecked_tag--;
       // skip tag
       auto after = skip_tag(input,pos);
       if (word_start == pos) {

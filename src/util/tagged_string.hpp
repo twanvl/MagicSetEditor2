@@ -72,6 +72,10 @@ String fix_old_tags(const String&);
 /** If not found returns String::npos */
 [[nodiscard]] size_t last_start_tag_before(const String& str, const String& tag, size_t start);
 
+/// Does a string contain a tag at the given location?
+/** Only matches if the tag ends one of ">-: " */
+[[nodiscard]] bool is_tag(const String& str, size_t pos, const String& tag);
+
 /// Is the given range entirely contained in a given tagged block?
 /** If so: return the start position of that tag, otherwise returns String::npos
  *  A tagged block is everything between <tag>...</tag>

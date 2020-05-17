@@ -37,7 +37,7 @@ struct TextElementsFromString {
   int bold = 0, italic = 0, symbol = 0;
   int soft = 0, kwpph = 0, param = 0, line = 0, soft_line = 0;
   int code = 0, code_kw = 0, code_string = 0, param_ref = 0;
-  int param_id = 0;
+  int param_id = 0, li = 0;
   vector<Color> colors;
   vector<double> sizes;
   vector<String> fonts;
@@ -75,29 +75,31 @@ private:
         // a (formatting) tag
         size_t tag_start = pos;
         pos = skip_tag(text, tag_start);
-        if      (is_substr(text, tag_start, _( "<b")))          bold        += 1;
-        else if (is_substr(text, tag_start, _("</b")))          bold        -= 1;
-        else if (is_substr(text, tag_start, _( "<i")))          italic      += 1;
-        else if (is_substr(text, tag_start, _("</i")))          italic      -= 1;
-        else if (is_substr(text, tag_start, _( "<sym")))        symbol      += 1;
-        else if (is_substr(text, tag_start, _("</sym")))        symbol      -= 1;
-        else if (is_substr(text, tag_start, _( "<line")))       line        += 1;
-        else if (is_substr(text, tag_start, _("</line")))       line        -= 1;
-        else if (is_substr(text, tag_start, _( "<soft-line")))  soft_line   += 1;
-        else if (is_substr(text, tag_start, _("</soft-line")))  soft_line   -= 1;
-        else if (is_substr(text, tag_start, _( "<sep-soft")))   soft        += 1;
-        else if (is_substr(text, tag_start, _("</sep-soft")))   soft        -= 1;
-        else if (is_substr(text, tag_start, _( "<soft")))       soft        += 1; // must be after <soft-line
-        else if (is_substr(text, tag_start, _("</soft")))       soft        -= 1;
-        else if (is_substr(text, tag_start, _( "<atom-kwpph"))) kwpph       += 1;
-        else if (is_substr(text, tag_start, _("</atom-kwpph"))) kwpph       -= 1;
-        else if (is_substr(text, tag_start, _( "<code-kw")))    code_kw     += 1;
-        else if (is_substr(text, tag_start, _("</code-kw")))    code_kw     -= 1;
-        else if (is_substr(text, tag_start, _( "<code-str")))   code_string += 1;
-        else if (is_substr(text, tag_start, _("</code-str")))   code_string -= 1;
-        else if (is_substr(text, tag_start, _( "<code")))       code        += 1;
-        else if (is_substr(text, tag_start, _("</code")))       code        -= 1;
-        else if (is_substr(text, tag_start, _( "<color"))) {
+        if      (is_tag(text, tag_start, _( "<b")))          bold        += 1;
+        else if (is_tag(text, tag_start, _("</b")))          bold        -= 1;
+        else if (is_tag(text, tag_start, _( "<i")))          italic      += 1;
+        else if (is_tag(text, tag_start, _("</i")))          italic      -= 1;
+        else if (is_tag(text, tag_start, _( "<sym")))        symbol      += 1;
+        else if (is_tag(text, tag_start, _("</sym")))        symbol      -= 1;
+        else if (is_tag(text, tag_start, _( "<line")))       line        += 1;
+        else if (is_tag(text, tag_start, _("</line")))       line        -= 1;
+        else if (is_tag(text, tag_start, _( "<soft-line")))  soft_line   += 1;
+        else if (is_tag(text, tag_start, _("</soft-line")))  soft_line   -= 1;
+        else if (is_tag(text, tag_start, _( "<sep-soft")))   soft        += 1;
+        else if (is_tag(text, tag_start, _("</sep-soft")))   soft        -= 1;
+        else if (is_tag(text, tag_start, _( "<soft")))       soft        += 1; // must be after <soft-line
+        else if (is_tag(text, tag_start, _("</soft")))       soft        -= 1;
+        else if (is_tag(text, tag_start, _( "<li")))         li          += 1;
+        else if (is_tag(text, tag_start, _("</li")))         li          -= 1;
+        else if (is_tag(text, tag_start, _( "<atom-kwpph"))) kwpph       += 1;
+        else if (is_tag(text, tag_start, _("</atom-kwpph"))) kwpph       -= 1;
+        else if (is_tag(text, tag_start, _( "<code-kw")))    code_kw     += 1;
+        else if (is_tag(text, tag_start, _("</code-kw")))    code_kw     -= 1;
+        else if (is_tag(text, tag_start, _( "<code-str")))   code_string += 1;
+        else if (is_tag(text, tag_start, _("</code-str")))   code_string -= 1;
+        else if (is_tag(text, tag_start, _( "<code")))       code        += 1;
+        else if (is_tag(text, tag_start, _("</code")))       code        -= 1;
+        else if (is_tag(text, tag_start, _( "<color"))) {
           size_t colon = text.find_first_of(_(">:"), tag_start);
           if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
             auto c = parse_color(text.substr(colon+1, pos-colon-2));
@@ -108,18 +110,18 @@ private:
               colors.push_back(style.font.color);
             }
           }
-        } else if (is_substr(text, tag_start, _("</color"))) {
+        } else if (is_tag(text, tag_start, _("</color"))) {
           if (!colors.empty()) colors.pop_back();
         }
-        else if (is_substr(text, tag_start, _( "<font"))) {
+        else if (is_tag(text, tag_start, _( "<font"))) {
           size_t colon = text.find_first_of(_(">:"), tag_start);
           if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
             fonts.push_back(text.substr(colon+1, pos-colon-2));
           }
-        } else if (is_substr(text, tag_start, _("</font"))) {
+        } else if (is_tag(text, tag_start, _("</font"))) {
           if (!fonts.empty()) fonts.pop_back();
         }
-        else if (is_substr(text, tag_start, _( "<size"))) {
+        else if (is_tag(text, tag_start, _( "<size"))) {
           size_t colon = text.find_first_of(_(">:"), tag_start);
           if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
             double size = style.font.size;
@@ -127,10 +129,10 @@ private:
             v.ToDouble(&size);
             sizes.push_back(size);
           }
-        } else if (is_substr(text, tag_start, _("</size"))) {
+        } else if (is_tag(text, tag_start, _("</size"))) {
           if (!sizes.empty()) sizes.pop_back();
         }
-        else if (is_substr(text, tag_start, _( "<ref-param"))) {
+        else if (is_tag(text, tag_start, _( "<ref-param"))) {
           // determine the param being referenced
           // from a tag <ref-param123>
           if (pos != String::npos) {
@@ -142,10 +144,10 @@ private:
           }
           param_ref += 1;
         }
-        else if (is_substr(text, tag_start, _("</ref-param")))  param_ref   -= 1;
-        else if (is_substr(text, tag_start, _( "<atom-param"))) param       += 1;
-        else if (is_substr(text, tag_start, _("</atom-param"))) param       -= 1;
-        else if (is_substr(text, tag_start, _("<atom"))) {
+        else if (is_tag(text, tag_start, _("</ref-param")))  param_ref   -= 1;
+        else if (is_tag(text, tag_start, _( "<atom-param"))) param       += 1;
+        else if (is_tag(text, tag_start, _("</atom-param"))) param       -= 1;
+        else if (is_tag(text, tag_start, _("<atom"))) {
           // 'atomic' indicator
           #if 0
             // it would be nice if we could have semi-transparent brushes
@@ -159,17 +161,20 @@ private:
           fromString(e->children, text, pos, end_tag);
           elements.push_back(e);
           pos = skip_tag(text, end_tag);
-        } else if (is_substr(text, tag_start, _( "<error"))) {
+        } else if (is_tag(text, tag_start, _( "<error"))) {
           // error indicator
           size_t end_tag = min(end, match_close_tag(text, tag_start));
           intrusive_ptr<ErrorTextElement> e = make_intrusive<ErrorTextElement>(pos, end_tag);
           fromString(e->children, text, pos, end_tag);
           elements.push_back(e);
           pos = skip_tag(text, end_tag);
-        } else if (is_substr(text, tag_start, _("</li"))) {
+        } else if (is_tag(text, tag_start, _("</bullet"))) {
           // end of bullet point, set margin here
+          if (li <= 0) {
+            queue_message(MESSAGE_WARNING, _("<bullet> outside <li> tag"));
+          }
           paragraphs.back().margin_end_char = pos;
-        } else if (is_substr(text, tag_start, _("<margin"))) {
+        } else if (is_tag(text, tag_start, _("<margin"))) {
           size_t colon = text.find_first_of(_(">:"), tag_start);
           if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
             size_t colon2 = text.find_first_of(_(">:"), colon + 1);
@@ -188,16 +193,16 @@ private:
             paragraphs.back().margin_right = m.right;
             paragraphs.back().margin_top = m.top;
           }
-        } else if (is_substr(text, tag_start, _("</margin"))) {
+        } else if (is_tag(text, tag_start, _("</margin"))) {
           if (!margins.empty()) margins.pop_back();
-        } else if (is_substr(text, tag_start, _("<align"))) {
+        } else if (is_tag(text, tag_start, _("<align"))) {
           size_t colon = text.find_first_of(_(">:"), tag_start);
           if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
             Alignment align = alignment_from_string(text.substr(colon+1, pos-colon-2));
             aligns.push_back(align);
             paragraphs.back().alignment = align;
           }
-        } else if (is_substr(text, tag_start, _("</align"))) {
+        } else if (is_tag(text, tag_start, _("</align"))) {
           if (!aligns.empty()) aligns.pop_back();
         } else {
           // ignore other tags
