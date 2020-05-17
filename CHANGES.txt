@@ -23,7 +23,7 @@ Template features:
  * Added <font:...> tag to change the font inside a text field.
  * Added <margin:...> tag to change the margins of a block of text.
  * Added <align:...> tag to change the horizontal alignment of a block of text.
- * Added <li> tag for list bullet points.
+ * Added <li> tag for list bullet points. (Experimental!)
  * Colors can now be written using hex notation, #rrggbb / #rrggbbaa, and short hex notation (#rgb / #rgba)
 
 Scripting:

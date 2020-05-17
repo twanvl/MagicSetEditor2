@@ -149,7 +149,7 @@ class TextParagraph {
 public:
   optional<Alignment> alignment;
   double margin_left = 0., margin_right = 0.;
-  //double margin_top = 0., margin_bottom = 0.; // TODO: more margin options?
+  double margin_top = 0.; //, margin_bottom = 0.; // TODO: more margin options?
   size_t start = String::npos, end = String::npos;
   size_t margin_end_char = 0; // end position of characters that are added to the margin (i.e. bullet points)
 };

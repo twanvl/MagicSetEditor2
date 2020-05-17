@@ -691,6 +691,7 @@ bool TextViewer::prepareLinesAtScale(RotatedDC& dc, const vector<CharInfo>& char
         assert(elements.paragraphs[i_para].start == i + 1);
         line.margin_left = elements.paragraphs[i_para].margin_left;
         line.margin_right = elements.paragraphs[i_para].margin_right;
+        line.top += elements.paragraphs[i_para].margin_top;
         line.alignment = elements.paragraphs[i_para].alignment;
       }
       line.break_after = LineBreak::NO;

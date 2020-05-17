@@ -19,7 +19,7 @@ This is written as the character with code 1 in files.
 | @<size:???>@		The text inside the tag is rendered with the given font size in points, for example @"<size:12>text</size>"@ makes the text 12 points. The text is scaled down proportionally when it does not fit in a text box and the @scale down to@ attribute allows it.
 | @<font:???>@		The text inside the tag is rendered with the given font family.
 | @<align:???>@			The block inside the tag is aligned with the given horizontal [[type:alignment]]
-| @<margin:??:??>@			The block inside the tag has additional left and right (optional) margins of the specified size in pixels.
+| @<margin:??:??>@			The block inside the tag has additional left, right (optional), and top (optional) margins of the specified size in pixels.
 | @<li>@			The text inside the tag is treated as a list marker, meaning that if the line wraps it will be indented to match the content of the @<li>@ tag.
 | @<line>@		Line breaks inside this tag use the [[prop:style:line height line]], and they show a horizontal line.
 | @<soft-line>@		Line breaks inside this tag use the [[prop:style:soft line height]].

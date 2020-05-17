@@ -27,6 +27,10 @@ Color param_colors[] =
   };
 const size_t param_colors_count = sizeof(param_colors) / sizeof(param_colors[0]);
 
+struct Margins {
+  double left, right, top;
+};
+
 // Helper class for TextElements::fromString, to allow persistent formating state accross recusive calls
 struct TextElementsFromString {
   // What formatting is enabled?
@@ -37,7 +41,7 @@ struct TextElementsFromString {
   vector<Color> colors;
   vector<double> sizes;
   vector<String> fonts;
-  vector<pair<double,double>> margins;
+  vector<Margins> margins;
   vector<Alignment> aligns;
 
   const TextStyle& style;
@@ -168,17 +172,21 @@ private:
         } else if (is_substr(text, tag_start, _("<margin"))) {
           size_t colon = text.find_first_of(_(">:"), tag_start);
           if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
-            size_t colon2 = text.find_first_of(_(">:"), colon+1);
-            double margin_left = 0., margin_right = 0.;
-            text.substr(colon + 1, colon2 - colon - 2).ToDouble(&margin_left);
-            text.substr(colon2 + 1, pos - colon2 - 2).ToDouble(&margin_right);
+            size_t colon2 = text.find_first_of(_(">:"), colon + 1);
+            size_t colon3 = colon2 < pos-1 ? text.find_first_of(_(">:"), colon2 + 1) : colon2;
+            Margins m = {0.,0.,0.};
+            text.substr(colon + 1, colon2 - colon - 2).ToDouble(&m.left);
+            text.substr(colon2 + 1, colon3 - colon2 - 2).ToDouble(&m.right);
+            text.substr(colon3 + 1, pos - colon3 - 2).ToDouble(&m.top);
             if (!margins.empty()) {
-              margin_left += margins.back().first;
-              margin_right += margins.back().second;
+              m.left  += margins.back().left;
+              m.right += margins.back().right;
+              m.top   += margins.back().top;
             }
-            margins.emplace_back(margin_left, margin_right);
-            paragraphs.back().margin_left = margin_left;
-            paragraphs.back().margin_right = margin_right;
+            margins.emplace_back(m);
+            paragraphs.back().margin_left = m.left;
+            paragraphs.back().margin_right = m.right;
+            paragraphs.back().margin_top = m.top;
           }
         } else if (is_substr(text, tag_start, _("</margin"))) {
           if (!margins.empty()) margins.pop_back();
@@ -267,8 +275,9 @@ private:
         paragraphs.back().start = i + 1;
         paragraphs.back().margin_end_char = i + 1;
         if (!margins.empty()) {
-          paragraphs.back().margin_left  = margins.back().first;
-          paragraphs.back().margin_right = margins.back().second;
+          paragraphs.back().margin_left  = margins.back().left;
+          paragraphs.back().margin_right = margins.back().right;
+          paragraphs.back().margin_top   = margins.back().top;
         }
         if (!aligns.empty()) {
           paragraphs.back().alignment = aligns.back();
