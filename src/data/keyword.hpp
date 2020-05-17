@@ -132,7 +132,16 @@ inline String type_name(const vector<KeywordP>&) {
 // ----------------------------------------------------------------------------- : Using keywords
 
 /// Store keyword usage statistics here, using value_being_updated as the key
-typedef vector<pair<Value*, const Keyword*>> KeywordUsageStatistics;
+typedef vector<pair<const Value*, const Keyword*>> KeywordUsageStatistics;
+
+struct KeywordExpandOptions {
+  ScriptValueP match_condition;
+  ScriptValueP expand_default;
+  ScriptValueP combine_script;
+  Context& ctx;
+  KeywordUsageStatistics* stat;
+  const Value* stat_key;
+};
 
 /// A database of keywords to allow for fast matching
 /** NOTE: keywords may not be altered after they are added to the database,
@@ -157,13 +166,13 @@ public:
   inline bool empty() const { return !root; }
   
   /// Expand/update all keywords in the given string.
-  /** @param expand_default script function indicating whether reminder text should be shown by default
-   *  @param combine_script script function to combine keyword and reminder text in some way
-   *  @param case_sensitive case sensitive matching of keywords?
-   *  @param ctx            context for evaluation of scripts
-   *  @param stats          where to put keyword statistics
+  /** @param options.expand_default script function indicating whether reminder text should be shown by default
+   *  @param options.combine_script script function to combine keyword and reminder text in some way
+   *  @param options.case_sensitive case sensitive matching of keywords?
+   *  @param options.ctx            context for evaluation of scripts
+   *  @param options.stats          where to put keyword statistics
    */
-  String expand(const String& text, const ScriptValueP& match_condition, const ScriptValueP& expand_default, const ScriptValueP& combine_script, Context& ctx, KeywordUsageStatistics* stats = nullptr) const;
+  String expand(const String& text, const KeywordExpandOptions&) const;
   
 private:
   unique_ptr<KeywordTrie> root; ///< Data structure for finding keywords

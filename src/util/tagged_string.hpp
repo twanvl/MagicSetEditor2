@@ -53,24 +53,24 @@ String fix_old_tags(const String&);
  *   < t a g >
  *  n y y y y n
  */
-size_t tag_start(const String& str, size_t pos);
+[[nodiscard]] size_t tag_start(const String& str, size_t pos);
 
 /// Returns the position just beyond the tag starting at start
-size_t skip_tag(const String& str, size_t start);
+[[nodiscard]] size_t skip_tag(const String& str, size_t start);
 
 /// Find the position of the closing tag matching the tag at start
 /** If not found returns String::npos */
-size_t match_close_tag(const String& str, size_t start);
+[[nodiscard]] size_t match_close_tag(const String& str, size_t start);
 
 /// Find the position of the closing tag matching the tag at start
 /** Returns the position just after that tag.
  *    match_close_tag_end(s,i) == skip_tag(s, match_close_tag(s,i) )
  *  If not found returns String::npos */
-size_t match_close_tag_end(const String& str, size_t start);
+[[nodiscard]] size_t match_close_tag_end(const String& str, size_t start);
 
 /// Find the last start tag before position start
 /** If not found returns String::npos */
-size_t last_start_tag_before(const String& str, const String& tag, size_t start);
+[[nodiscard]] size_t last_start_tag_before(const String& str, const String& tag, size_t start);
 
 /// Is the given range entirely contained in a given tagged block?
 /** If so: return the start position of that tag, otherwise returns String::npos
@@ -79,7 +79,7 @@ size_t last_start_tag_before(const String& str, const String& tag, size_t start)
  *          <tag><tag></tag>x</tag>
  *        the x is in_tag
  */
-size_t in_tag(const String& str, const String& tag, size_t start, size_t end);
+[[nodiscard]] size_t in_tag(const String& str, const String& tag, size_t start, size_t end);
 /// Boolean returning version of the above
 bool is_in_tag(const String& str, const String& tag, size_t start, size_t end);
 
@@ -95,6 +95,29 @@ String close_tag(const String& tag);
 
 /// The matching close tag for an open tag and vice versa
 String anti_tag(const String& tag);
+
+// ----------------------------------------------------------------------------- : Iterators in tagged strings
+
+// Skip to the end of a tag, it must point to the start of a tag
+[[nodiscard]] String::const_iterator skip_tag(String::const_iterator it, String::const_iterator end);
+
+// Skip past all tags
+[[nodiscard]] String::const_iterator skip_all_tags(String::const_iterator it, String::const_iterator end);
+
+// Skip past all open/close tags
+[[nodiscard]] String::const_iterator skip_all_tags(String::const_iterator it, String::const_iterator end, bool skip_open, bool skip_close);
+
+// Advance an iterator by n positions, not counting tags
+// For example: advance_untagged("<b>abc</b>",_,2) = "c</b>"
+[[nodiscard]] String::const_iterator advance_untagged(String::const_iterator it, String::const_iterator end, size_t n, bool after_open=false, bool after_close=false);
+
+// Find the position of the closing tag matching the tag at it
+// If not found, returns end
+[[nodiscard]] String::const_iterator find_close_tag(String::const_iterator it, String::const_iterator end);
+
+// Length of a string when not counting tags
+// For example: untagged_length("<b>abc</b>",_) = 3
+[[nodiscard]] size_t untagged_length(String::const_iterator it, String::const_iterator end);
 
 // ----------------------------------------------------------------------------- : Cursor position
 
@@ -188,13 +211,14 @@ String tagged_substr_replace(const String& input, size_t start, size_t end, cons
  *   - There are no tags containing '<' or whitespace
  *   - For each open tag there is a matching close tag.
  *
- *  In case of an error, throws an exception.
+ *  In case of an error, shows a warning
+ *  Return true if the string is a valid tagged string
  */
-void check_tagged(const String& str, bool check_balance = true);
+bool check_tagged(const String& str, bool check_balance = true);
 #ifdef _DEBUG
-  #define assert_tagged check_tagged
+  #define assert_tagged(x) assert(check_tagged(x))
 #else
-  inline void assert_tagged(const String& str, bool check_balance = true){}
+  #define assert_tagged(x) do{}while(0)
 #endif
 
 /// Simplify a tagged string

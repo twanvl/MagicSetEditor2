@@ -14,6 +14,7 @@ Features:
  * Added a keyboard shortcut for the search box (Ctrl+K)
 
 Bug fixes:
+ * Keywords that appear multiple times don't mess up reminder text (#20)
  * card variable in console panel now refers to the selected card
  * length function now gives correct results for maps
  * substr("foo",begin:3) now returns "" instead of true

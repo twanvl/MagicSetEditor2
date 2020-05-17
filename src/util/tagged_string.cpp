@@ -106,9 +106,105 @@ String fix_old_tags(const String& str) {
   return ret;
 }
 
+// ----------------------------------------------------------------------------- : Iterator algorithms
+
+[[nodiscard]] String::const_iterator skip_tag(String::const_iterator it, String::const_iterator end) {
+  assert(it != end && *it == '<');
+  ++it;
+  while (it != end && *it != '>') ++it;
+  if (it != end) ++it;
+  return it;
+}
+
+[[nodiscard]] String::const_iterator skip_all_tags(String::const_iterator it, String::const_iterator end) {
+  while (it != end && *it == '<') {
+    it = skip_tag(it, end);
+  }
+  return it;
+}
+
+[[nodiscard]] String::const_iterator skip_all_tags(String::const_iterator it, String::const_iterator end, bool skip_open, bool skip_close) {
+  // move after first possible position corresponding
+  while (it != end && *it == '<') {
+    if (it + 1 != end && *(it + 1) == '/') {
+      if (skip_close) {
+        it = skip_tag(it, end);
+      } else {
+        return it;
+      }
+    } else {
+      if (skip_open) {
+        it = skip_tag(it, end);
+      } else {
+        return it;
+      }
+    }
+  }
+  return it;
+}
+
+[[nodiscard]] String::const_iterator advance_untagged(String::const_iterator it, String::const_iterator end, size_t n, bool after_open, bool after_close) {
+  while (n > 0) {
+    it = skip_all_tags(it, end);
+    if (it != end) {
+      ++it;
+      --n;
+    } else {
+      return it;
+    }
+  }
+  return skip_all_tags(it, end, after_open, after_close);
+}
+
+/*
+// Does the string [it..end) contain the matching close tag for [tag..tag_end)?
+bool is_close_tag(String::const_iterator it, String::const_iterator end, String::const_iterator tag, String::const_iterator tag_end) {
+  if (it == end) return false;
+  if (*it != '<') return false;
+  ++it;
+  if (it == end) return false;
+  if (*it != '/') return false;
+  assert(tag != tag_end && *tag == '<');
+  ++tag;
+  return is_substr(it,end, tag,end);
+}
+
+String::const_iterator find_close_tag(String::const_iterator tag, String::const_iterator end) {
+  assert(tag != end && *tag == '<');
+  auto tag_end = skip_tag(tag,end);
+  int nesting = 1;
+  String::const_iterator it = tag_end;
+  while (it != end) {
+    if (*it == '<') {
+      if (is_substr(it,end, tag,tag_end)) {
+        ++nesting;
+      } else if (is_close_tag(it,end, tag,tag_end)) {
+        --nesting;
+        if (nesting == 0) return it;
+      }
+      it = skip_tag(it,end);
+    } else {
+      ++it;
+    }
+  }
+  return end;
+}*/
+
+[[nodiscard]] size_t untagged_length(String::const_iterator it, String::const_iterator end) {
+  size_t n = 0;
+  while (it != end) {
+    it = skip_all_tags(it, end);
+    if (it != end) {
+      ++n;
+      ++it;
+    }
+  }
+  return n;
+}
+
 // ----------------------------------------------------------------------------- : Finding tags
 
-size_t tag_start(const String& str, size_t pos) {
+[[nodiscard]] size_t tag_start(const String& str, size_t pos) {
   size_t start = str.find_last_of(_('<'), pos);
   if (start == String::npos) return String::npos;
   size_t end   = skip_tag(str, start);
@@ -116,13 +212,13 @@ size_t tag_start(const String& str, size_t pos) {
   return start;
 }
 
-size_t skip_tag(const String& str, size_t start) {
+[[nodiscard]] size_t skip_tag(const String& str, size_t start) {
   if (start >= str.size()) return String::npos;
   size_t end = str.find_first_of(_('>'), start);
   return end == String::npos ? String::npos : end + 1;
 }
 
-size_t match_close_tag(const String& str, size_t start) {
+[[nodiscard]] size_t match_close_tag(const String& str, size_t start) {
   String tag  = tag_type_at(str, start);
   String ctag = _("/") + tag;
   size_t size = str.size();
@@ -143,11 +239,11 @@ size_t match_close_tag(const String& str, size_t start) {
   return String::npos;
 }
 
-size_t match_close_tag_end(const String& str, size_t start) {
+[[nodiscard]] size_t match_close_tag_end(const String& str, size_t start) {
   return skip_tag(str, match_close_tag(str, start));
 }
 
-size_t last_start_tag_before(const String& str, const String& tag, size_t start) {
+[[nodiscard]] size_t last_start_tag_before(const String& str, const String& tag, size_t start) {
   start = min(str.size(), start);
   for (size_t pos = start ; pos > 0 ; --pos) {
     if (is_substr(str, pos - 1, tag)) {
@@ -157,7 +253,7 @@ size_t last_start_tag_before(const String& str, const String& tag, size_t start)
   return String::npos;
 }
 
-size_t in_tag(const String& str, const String& tag, size_t start, size_t end) {
+[[nodiscard]] size_t in_tag(const String& str, const String& tag, size_t start, size_t end) {
   size_t last_start = String::npos;
   size_t size = str.size();
   int taglevel = 0;
@@ -604,17 +700,19 @@ String simplify_tagged_overlap(const String& str) {
 
 // ----------------------------------------------------------------------------- : Verification
 
-void check_tagged(const String& str, bool check_balance) {
+bool check_tagged(const String& str, bool check_balance) {
   for (size_t i = 0 ; i < str.size() ; ) {
     if (str.GetChar(i) == _('<')) {
       size_t end = skip_tag(str,i);
       if (end == String::npos) {
         queue_message(MESSAGE_WARNING, _("Invalid tagged string: missing '>'"));
+        return false;
       }
       for (size_t j = i + 1 ; j + 1 < end ; ++j) {
         Char c = str.GetChar(j);
         if (c == ESCAPED_LANGLE || c == _('<')) {
           queue_message(MESSAGE_WARNING, _("Invalid character in tag"));
+          return false;
         }
       }
       if (check_balance) {
@@ -626,6 +724,7 @@ void check_tagged(const String& str, bool check_balance) {
           size_t close = match_close_tag(str,i);
           if (close == String::npos) {
             queue_message(MESSAGE_WARNING, _("Invalid tagged string: missing close tag for <") + tag_at(str,i) + _(">"));
+            return false;
           }
         }
       }
@@ -634,6 +733,7 @@ void check_tagged(const String& str, bool check_balance) {
       ++i;
     }
   }
+  return true;
 }
 
 // ----------------------------------------------------------------------------- : Other utilities

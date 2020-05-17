@@ -10,6 +10,7 @@
 #include <data/keyword.hpp>
 #include <util/tagged_string.hpp>
 #include <unordered_map>
+#include <unordered_set>
 
 class KeywordTrie;
 DECLARE_POINTER_TYPE(KeywordParamValue);
@@ -253,6 +254,8 @@ namespace std {
 }
 
 /// A node in a trie to match keywords
+/* The trie is used to speed up matching, by quickly finding candidate keywords.
+*/
 class KeywordTrie {
 public:
   KeywordTrie();
@@ -376,6 +379,19 @@ void KeywordDatabase::prepare_parameters(const vector<KeywordParamP>& ps, const 
   }
 }
 
+#ifdef _DEBUG
+void dump(int i, const KeywordTrie* t) {
+  FOR_EACH(c, t->children) {
+    wxLogDebug(String(i, _(' ')) + c.first + _("     ") + String::Format(_("%p"), c.second.get()));
+    dump(i + 2, c.second.get());
+  }
+  if (t->on_any_star) {
+    wxLogDebug(String(i, _(' ')) + _(".*") + _("     ") + String::Format(_("%p"), t->on_any_star));
+    if (t->on_any_star != t) dump(i + 2, t->on_any_star);
+  }
+}
+#endif
+
 // ----------------------------------------------------------------------------- : KeywordDatabase : matching
 
 // transitive closure of a state, follow all on_any_star links
@@ -387,209 +403,222 @@ void closure(vector<const KeywordTrie*>& state) {
   }
 }
 
-#ifdef _DEBUG
-void dump(int i, const KeywordTrie* t) {
-  FOR_EACH(c, t->children) {
-    wxLogDebug(String(i,_(' ')) + c.first + _("     ") + String::Format(_("%p"),c.second.get()));
-    dump(i+2, c.second.get());
-  }
-  if (t->on_any_star) {
-    wxLogDebug(String(i,_(' ')) + _(".*") + _("     ") + String::Format(_("%p"),t->on_any_star));
-    if (t->on_any_star != t) dump(i+2, t->on_any_star);
-  }
-}
-#endif
-
-String KeywordDatabase::expand(const String& text,
-                               const ScriptValueP& match_condition,
-                               const ScriptValueP& expand_default,
-                               const ScriptValueP& combine_script,
-                               Context& ctx,
-                               KeywordUsageStatistics* stat) const {
-  assert(combine_script);
-  assert_tagged(text);
-  
-  // Clean up usage statistics
-  Value* stat_key = value_being_updated();
-  if (stat && stat_key) {
-    for (size_t i = stat->size() - 1 ; i + 1 > 0 ; --i) { // loop backwards
-      if ((*stat)[i].first == stat_key) {
-        stat->erase(stat->begin() + i);
-      }
+void step_state(vector<const KeywordTrie*>& state, wxUniChar c) {
+  vector<const KeywordTrie*> next;
+  for(auto kt : state) {
+    auto it = kt->children.find(c);
+    if (it != kt->children.end()) {
+      next.push_back(it->second.get());
+    }
+    // TODO: on any star first or last?
+    if (kt->on_any_star) {
+      next.push_back(kt->on_any_star);
     }
   }
-  
-  // Remove all old reminder texts
-  String tagged = remove_tag_contents(text, _("<atom-reminder"));
-  tagged = remove_tag_contents(tagged, _("<atom-keyword")); // OLD, TODO: REMOVEME
-  tagged = remove_tag_contents(tagged, _("<atom-kwpph>"));
-  tagged = remove_tag(tagged, _("<keyword-param"));
-  tagged = remove_tag(tagged, _("<param-"));
-  String untagged = untag_no_escape(tagged);
-  
-  if (!root) return tagged;
-  
-  String result;
-  
-  // Find keywords
-  while (!tagged.empty()) {
-    vector<const KeywordTrie*> current; // current location(s) in the trie
-    vector<const KeywordTrie*> next;    // location(s) after this step
-    set<const Keyword*> used; // keywords already investigated
-    current.push_back(root.get());
-    closure(current);
-    // is the keyword expanded? From <kw-?> tag
-    // Possible values are:
-    //  - '0' = reminder text explicitly hidden
-    //  - '1' = reminder text explicitly shown
-    //  - 'a' = reminder text in default state, hidden
-    //  - 'A' = reminder text in default state, shown
-    const char default_expand_type = 'a';
-    char expand_type = default_expand_type;
-    
-    for (size_t i = 0 ; i < tagged.size() ;) {
-      wxUniChar c = tagged.GetChar(i);
-      // tag?
-      if (c == _('<')) {
-        if (is_substr(tagged, i, _("<kw-")) && i + 4 < tagged.size()) {
-          expand_type = tagged.GetChar(i + 4); // <kw-?>
-          tagged = tagged.erase(i, skip_tag(tagged,i)-i); // remove the tag from the string
-        } else if (is_substr(tagged, i, _("</kw-"))) {
-          expand_type = default_expand_type;
-          tagged = tagged.erase(i, skip_tag(tagged,i)-i); // remove the tag from the string
-        } else if (is_substr(tagged, i, _("<atom"))) {
-          i = match_close_tag_end(tagged, i); // skip <atom>s
-        } else {
-          i = skip_tag(tagged, i);
-        }
-        continue;
-      } else {
-        #if USE_CASE_INSENSITIVE_KEYWORDS
-          c = toLower(c); // case insensitive matching
-        #endif
-        ++i;
-      }
-      // find 'next' trie node set matching c
-      FOR_EACH(kt, current) {
-        auto it = kt->children.find(c);
-        if (it != kt->children.end()) {
-          next.push_back(it->second.get());
-        }
-        // TODO: on any star first or last?
-        if (kt->on_any_star) {
-          next.push_back(kt->on_any_star);
-        }
-      }
-      // next becomes current
-      swap(current, next);
-      // in the MSVC stl clear frees memory, that is a waste, because we need it again in the next iteration
-      //next.clear();
-      next.resize(0);
-      closure(current);
-      // are we done?
-      for (int set_or_game = 0 ; set_or_game <= 1 ; ++set_or_game) {
-        FOR_EACH(n, current) {
-          FOR_EACH(kw, n->finished) {
-            if (kw->fixed != (bool)set_or_game) {
-              continue; // first try set keywords, try game keywords in the second round
-            }
-            if (!used.insert(kw).second) {
-              continue; // already seen this keyword
-            }
-            // we have found a possible match, for a keyword which we have not seen before
-            if (tryExpand(*kw, i, tagged, untagged, result, expand_type,
-                          match_condition, expand_default, combine_script, ctx,
-                          stat, stat_key))
-            {
-              // it matches
-              goto matched_keyword;
-            }
-          }
-        }
-      }
-    }
-    // Remainder of the string
-    result += tagged;
-    tagged.clear();
-    
-    matched_keyword:;
-  }
-  
-  assert_tagged(result);
-  return result;
+  swap(state,next);
 }
 
-bool KeywordDatabase::tryExpand(const Keyword& kw,
-                                size_t expand_type_known_upto,
-                                String& tagged,
-                                String& untagged,
-                                String& result,
-                                char expand_type,
-                                const ScriptValueP& match_condition,
-                                const ScriptValueP& expand_default,
-                                const ScriptValueP& combine_script,
-                                Context& ctx,
-                                KeywordUsageStatistics* stat,
-                                Value* stat_key) const
-{
-  // try to match regex against the *untagged* string
-  assert(!kw.match_re.empty());
-  Regex::Results match;
-  if (!kw.match_re.matches(match, untagged)) return false;
-  
-  // Find match position
-  size_t start_u = match.position();
-  size_t len_u   = match.length();
-  size_t start = untagged_to_index(tagged, start_u, true),
-         end   = untagged_to_index(tagged, start_u + len_u, false);
-  if (start == end) return false; // don't match empty keywords
-  
-  // a part of tagged has not been searched for <kw- tags
-  // this can happen when the trie incorrectly matches too early
-  for (size_t j = expand_type_known_upto+1 ; j < start ;) {
-    Char c = tagged.GetChar(j);
-    if (c == _('<')) {
-      if (is_substr(tagged, j, _("<kw-")) && j + 4 < tagged.size()) {
-        expand_type = tagged.GetChar(j + 4); // <kw-?>
-      } else if (is_substr(tagged, j, _("</kw-"))) {
-        expand_type = 'a';
-      }
-      j = skip_tag(tagged, j);
+// Collect possible matching keywords
+/* First step in matching is to run over the string, and use the trie to find keywords that *potentially* appear in it.
+ */
+unordered_set<Keyword const*> possible_matches(String const& tagged_str, KeywordTrie const* trie_root) {
+  unordered_set<const Keyword*> possible_matches;
+  if (!trie_root) return possible_matches;
+
+  vector<const KeywordTrie*> state;
+  state.push_back(trie_root);
+
+  for (String::const_iterator it = tagged_str.begin(); it != tagged_str.end();) {
+    wxUniChar c = *it;
+    // tag?
+    if (c == '<') {
+      it = skip_tag(it, tagged_str.end());
     } else {
-      ++j;
+      ++it;
+      c = toLower(c); // case insensitive matching
+      // find 'next' trie node set matching c
+      step_state(state, c);
+      closure(state);
+      // matches
+      for (auto kt : state) {
+        for (auto kw : kt->finished) {
+          possible_matches.insert(kw);
+        }
+      }
     }
   }
-  
-  // To determine if the case matches exactly we compare plain text parts with the original match string
-  size_t pos_in_match_string = 0;
-  bool correct_case = true;
-  // also check if there are missing parameters
+  return possible_matches;
+}
+
+struct KeywordMatch {
+  Keyword const* keyword;
+  // match in the untagged string
+  Regex::Results match;
+  KeywordMatch(Keyword const& keyword, Regex::Results match) : keyword(&keyword), match(match) {}
+};
+
+// Collect exact matching keywords
+/* Second step in matching is to match regexes
+ */
+void keyword_matches(const String& untagged_str, const Keyword& keyword, vector<KeywordMatch>& out) {
+  Regex::Results match;
+  size_t i = 0;
+  String::const_iterator it = untagged_str.begin();
+  while (keyword.match_re.matches(match, it, untagged_str.end())) {
+    out.emplace_back(keyword, match);
+    it = max(it+1, match[0].end());
+  }
+}
+void keyword_matches(const String& untagged_str, unordered_set<Keyword const*> keywords, vector<KeywordMatch>& out) {
+  for (auto keyword : keywords) {
+    keyword_matches(untagged_str, *keyword, out);
+  }
+}
+void sort_keyword_matches(vector<KeywordMatch>& matches) {
+  // sort matches by their start position
+  sort(matches.begin(), matches.end(), [](KeywordMatch const& a, KeywordMatch const& b) {
+    if (a.match[0].begin() < b.match[0].begin()) return true;
+    if (a.match[0].begin() > b.match[0].begin()) return false;
+    // otherwise sort by matching set keywords (non-fixed) first
+    if (a.keyword->fixed < b.keyword->fixed) return true;
+    if (a.keyword->fixed > b.keyword->fixed) return false;
+    // otherwise sort by name
+    return a.keyword->keyword < b.keyword->keyword;
+  });
+}
+vector<KeywordMatch> keyword_matches(const String& untagged_str, unordered_set<Keyword const*> keywords) {
+  vector<KeywordMatch> out;
+  keyword_matches(untagged_str, keywords, out);
+  sort_keyword_matches(out);
+  return out;
+}
+
+
+
+tuple<bool,String::const_iterator> expand_keyword(String::const_iterator it, String::const_iterator end, KeywordMatch const& match, char expand_type, String& out, KeywordExpandOptions const& options);
+
+/* Last step in matching is to go over the string, and expand each of the matches, as long as they don't overlap
+ * Note that matches are already sorted, so we can try them in order.
+ * But as a complication, positions and lengths in matches refer to the untagged string.
+ */
+String expand_keywords(const String& tagged_str, vector<KeywordMatch> const& matches, KeywordExpandOptions const& options) {
+  vector<KeywordMatch>::const_iterator match_it = matches.begin();
+  size_t untagged_pos = 0;
+
+  // tags to skip
+  int atom = 0;
+  // Possible values are:
+  //  - '0' = reminder text explicitly hidden
+  //  - '1' = reminder text explicitly shown
+  //  - 'a' = reminder text in default state, hidden
+  //  - 'A' = reminder text in default state, shown
+  const char default_expand_type = 'a';
+  char expand_type = default_expand_type;
+
+  String out;
+  String::const_iterator it = tagged_str.begin();
+  const String::const_iterator end = tagged_str.end();
+
+  // in the loop below, skip past tags
+  auto skip_tags_for_keyword = [&](bool open, bool close) {
+    while (it != end && *it == '<') {
+      if (is_substr(it, end, "<kw-")) {
+        if (it + 4 != end) expand_type = *(it + 4); // <kw-?>
+        it = skip_tag(it, end);
+      } else if (is_substr(it, end, "</kw-")) {
+        expand_type = default_expand_type;
+        it = skip_tag(it, end);
+      } else {
+        bool is_close = (it+1) != end && *(it+1) == '/';
+        if (is_close && !close || !is_close && !open) return;
+        if (is_substr(it, end, "<atom")) {
+          atom++;
+        } else if (is_substr(it, end, "</atom")) {
+          atom++;
+        }
+        // keep tag in output
+        auto after = skip_tag(it, end);
+        out.append(it, after);
+        it = after;
+      }
+    }
+  };
+
+  while (true) {
+    // prefer to match 'outside' tags, so before open tags and after close tags
+    // that way we avoid breaking up atoms
+    // so here match only close tags
+    skip_tags_for_keyword(false, true);
+    if (it == end) break;
+    // is there a match here?
+    while (match_it != matches.end() && (size_t)match_it->match.position() <= untagged_pos) {
+      if ((size_t)match_it->match.position() > untagged_pos) {
+        ++match_it;
+        continue;
+      }
+      // try to expand
+      auto [match,new_it] = expand_keyword(it, end, *match_it, expand_type, out, options);
+      if (match) {
+        untagged_pos += untagged_length(it,new_it);
+        it = new_it;
+        ++match_it;
+        goto after_match;
+      } else {
+        ++match_it;
+      }
+    }
+    // No match, so there is at least one character not part of a keyword
+    // and possibly some tags before it that we missed
+    skip_tags_for_keyword(true, true);
+    out += *it;
+    ++it;
+    ++untagged_pos;
+    // after matching or skipping, go past close tags, to remain as much oustide tags as possible
+    after_match:
+    skip_tags_for_keyword(true, false);
+  }
+  return out;
+}
+
+// Get detailed information on a keyword match:
+//  * The value of each of the parameters
+//  * Whether the case matches
+// Add these things to the context
+// Return iterator after the whole match
+String::const_iterator keyword_match_detail(String::const_iterator it, String::const_iterator end, KeywordMatch const& kw_match, Context& ctx) {
+  Keyword const& keyword = *kw_match.keyword;
+  Regex::Results const& match = kw_match.match;
+
+  // used placeholders?
   bool used_placeholders = false;
-  
-  
+  // case errors? For finding these we will loop over the keyword.match string
+  bool correct_case = true;
+  String::const_iterator match_str_it = keyword.match.begin();
+
+  // Combined tagged match string
+  String total;
+
   // Split the keyword, set parameters in context
   // The even captures are parameter values, the odd ones are the plain text in between
-  String total; // the total keyword
-  assert(match.size() - 1 == 1 + 2 * kw.parameters.size());
-  size_t part_start = start;
-  for (size_t submatch = 1 ; submatch < match.size() ; ++submatch) {
-    // the matched part
-    size_t part_start_u = match.position(submatch);
-    size_t part_len_u   = match.length((int)submatch);
-    size_t part_end_u   = part_start_u + part_len_u;
-    // note: start_u can be (uint)-1 when part_len_u == 0
-    size_t part_end = part_len_u > 0 ? untagged_to_index(tagged, part_end_u, false) : part_start;
-    String part(tagged, part_start, part_end - part_start);
+  // submatch 0 is the whole match
+  assert(match.size() - 1 == 1 + 2 * keyword.parameters.size());
+  for (int sub = 1; sub < match.size(); ++sub) {
+    // The matched part, indices in untagged string. We only need the length
+    size_t part_len_untagged = match.length(sub);
+    // Translate back to tagged position
+    // Note: when part_len_untagged==0, the positions are invalid
+    String::const_iterator part_end = advance_untagged(it, end, part_len_untagged, false,true);
+    String part(it,part_end);
     // strip left over </kw tags
-    part = remove_tag(part,_("</kw-"));
-    
+    part = remove_tag(part, _("</kw-"));
+
     // we start counting at 1, so
-    // submatch = 1 mod 2 -> text
-    // submatch = 0 mod 2 -> parameter
-    if ((submatch % 2) == 0) {
+    // sub = 1 mod 2 -> text
+    // sub = 0 mod 2 -> parameter
+    if ((sub % 2) == 0) {
       // parameter
-      KeywordParam& kwp = *kw.parameters[(submatch - 2) / 2];
-      String param = match.str((int)submatch); // untagged version
+      KeywordParam& kwp = *keyword.parameters[(sub - 2) / 2];
+      String param = match.str(sub); // untagged version
       // strip separator_before
       String separator_before, separator_after;
       Regex::Results sep_match;
@@ -623,96 +652,157 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
         }
       }
       // to script
-      KeywordParamValueP script_param(new KeywordParamValue(kwp.name, separator_before, separator_after, param));
-      KeywordParamValueP script_part (new KeywordParamValue(kwp.name, separator_before, separator_after, part));
+      KeywordParamValueP script_param = make_intrusive<KeywordParamValue>(kwp.name, separator_before, separator_after, param);
+      KeywordParamValueP script_part  = make_intrusive<KeywordParamValue>(kwp.name, separator_before, separator_after, part);
       // process param
       if (param.empty()) {
         // placeholder
         used_placeholders = true;
         script_param->value = _("<atom-kwpph>") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("</atom-kwpph>");
-        script_part->value  = part + script_param->value; // keep tags
+        script_part->value = part + script_param->value; // keep tags
       } else {
         // apply parameter script
         if (kwp.script) {
           ctx.setVariable(_("input"), script_part);
-          script_part->value  = kwp.script.invoke(ctx)->toString();
+          script_part->value = kwp.script.invoke(ctx)->toString();
         }
         if (kwp.reminder_script) {
           ctx.setVariable(_("input"), script_param);
           script_param->value = kwp.reminder_script.invoke(ctx)->toString();
         }
       }
-      part  = separator_before + script_part->toString() + separator_after;
-      ctx.setVariable(String(_("param")) << (int)(submatch/2), script_param);
-      
-    } else if (correct_case) {
+      part = separator_before + script_part->toString() + separator_after;
+      ctx.setVariable(String(_("param")) << (int)(sub / 2), script_param);
+
+    } else {
       // Plain text, check if the case matches
-      for (size_t i = part_start_u ; i < part_start_u + part_len_u ; ++i, ++pos_in_match_string) {
-        if (pos_in_match_string > kw.match.size()) {
-          // outside match string, shouldn't happen, strings should be the same length
-          correct_case = false;
-          break;
+      if (correct_case) {
+        while (it != part_end) {
+          it = skip_all_tags(it, part_end);
+          if (it == part_end) break;
+          while (match_str_it != keyword.match.end() && is_substr(match_str_it, keyword.match.end(), "<param")) {
+            match_str_it = skip_tag(match_str_it, keyword.match.end());
+            while (match_str_it != keyword.match.end() && !is_substr(match_str_it, keyword.match.end(), "</param")) ++match_str_it;
+            match_str_it = skip_tag(match_str_it, keyword.match.end());
+          }
+          if (match_str_it == keyword.match.end()) break;
+          // does the text match the keyword match string exactly?
+          if (*it != *match_str_it) {
+            correct_case = false;
+            break;
+          }
+          ++it;
+          ++match_str_it;
         }
-        Char actual_char = untagged.GetChar(i);
-        Char match_char  = kw.match.GetChar(pos_in_match_string);
-        if (actual_char != match_char) {
-          correct_case = false;
-          break;
-        }
-      }
-      // we should have arrived at a param tag, skip it
-      if (pos_in_match_string < kw.match.size() && is_substr(kw.match, pos_in_match_string, _("<atom-param"))) {
-        pos_in_match_string = match_close_tag_end(kw.match, pos_in_match_string);
       }
     }
-    
+    // build total match
     total += part;
-    part_start = part_end;
+    // next part starts after this
+    it = part_end;
   }
-  ctx.setVariable(_("mode"), to_script(kw.mode));
+  assert_tagged(total);
+  ctx.setVariable(_("keyword"), to_script(total));
+  ctx.setVariable(_("mode"), to_script(keyword.mode));
   ctx.setVariable(_("correct_case"), to_script(correct_case));
   ctx.setVariable(_("used_placeholders"), to_script(used_placeholders));
-  
+  return it;
+};
+
+// expand a keyword that matches at it
+tuple<bool, String::const_iterator> expand_keyword(String::const_iterator it, String::const_iterator end, KeywordMatch const& kw_match, char expand_type, String& out, KeywordExpandOptions const& options) {
+  Keyword const& keyword = *kw_match.keyword;
+
+  // Perform script stuff in a local scope to not leave a mess
+  Context& ctx = options.ctx;
+  LocalScope scope(ctx);
+
+  // Get details of the match
+  String::const_iterator after = keyword_match_detail(it, end, kw_match, ctx);
+
   // Final check whether the keyword matches
-  if (match_condition && match_condition->eval(ctx)->toBool() == false) {
-    return false;
+  if (options.match_condition && options.match_condition->eval(ctx)->toBool() == false) {
+    return {false,it};
   }
-  
+
   // Show reminder text?
   bool expand = expand_type == _('1');
   if (!expand && expand_type != _('0')) {
     // default expand, determined by script
-    expand = expand_default ? expand_default->eval(ctx)->toBool() : true;
+    expand = options.expand_default ? options.expand_default->eval(ctx)->toBool() : true;
     expand_type = expand ? _('A') : _('a');
   }
-  
-  // Copy text before keyword
-  result += remove_tag(tagged.substr(0, start), _("<kw-"));
-  
-  // Combine keyword & reminder with result
+  ctx.setVariable(_("expand"), to_script(expand));
+
+  // Reminder text
   String reminder;
   try {
-    reminder = kw.reminder.invoke(ctx)->toString();
+    reminder = keyword.reminder.invoke(ctx)->toString();
   } catch (const Error& e) {
-    handle_error(_ERROR_2_("in keyword reminder", e.what(), kw.keyword));
+    handle_error(_ERROR_2_("in keyword reminder", e.what(), keyword.keyword));
   }
-  ctx.setVariable(_("keyword"),  to_script(total));
   ctx.setVariable(_("reminder"), to_script(reminder));
-  ctx.setVariable(_("expand"),   to_script(expand));
-  result +=  _("<kw-"); result += expand_type; result += _(">");
-  result += combine_script->eval(ctx)->toString();
-  result += _("</kw-"); result += expand_type; result += _(">");
-  
+
+  // Combine, add to output
+  out += _("<kw-");
+  out += expand_type;
+  out += _(">");
+  out += options.combine_script->eval(ctx)->toString();
+  out += _("</kw-");
+  out += expand_type;
+  out += _(">");
+
   // Add to usage statistics
-  if (stat && stat_key) {
-    stat->push_back(make_pair(stat_key, &kw));
+  if (options.stat && options.stat_key) {
+    options.stat->emplace_back(options.stat_key, &keyword);
   }
+
+  return {true,after};
+}
+
+String remove_keyword_tags(String const& tagged_str) {
+  // Remove all old reminder texts
+  String s = remove_tag_contents(tagged_str, _("<atom-reminder"));
+  s = remove_tag_contents(s, _("<atom-keyword")); // OLD, TODO: REMOVEME
+  s = remove_tag_contents(s, _("<atom-kwpph>"));
+  s = remove_tag(s, _("<keyword-param"));
+  s = remove_tag(s, _("<param-"));
+  return s;
+}
+
+void remove_from_stats(KeywordUsageStatistics* stat, const Value* stat_key) {
+  if (stat && stat_key) {
+    auto condition = [stat_key](KeywordUsageStatistics::value_type const& it) {
+      return it.first == stat_key;
+    };
+    stat->erase(std::remove_if(stat->begin(), stat->end(), condition), stat->end());
+  }
+}
+
+String KeywordDatabase::expand(const String& text, KeywordExpandOptions const& options) const {
+  assert(options.combine_script);
+  assert_tagged(text);
+
+  // Clean up usage statistics
+  remove_from_stats(options.stat, options.stat_key);
   
-  // After keyword
-  tagged   = tagged.substr(end);
-  untagged = untagged.substr(start_u + len_u);
+  // Remove all old reminder texts
+  String tagged = remove_keyword_tags(text);
+
+  // any keywords in database?
+  if (!root) return tagged;
+
+  // Find potential matches
+  auto possible_matches = ::possible_matches(tagged, root.get());
+
+  // Refine
+  String untagged = untag_no_escape(tagged);
+  auto matches = keyword_matches(untagged, possible_matches);
   
-  return true;
+  // Expand
+  String result = expand_keywords(tagged, matches, options);
+  assert_tagged(result);
+  return result;
 }
 
 // ----------------------------------------------------------------------------- : KeywordParamValue

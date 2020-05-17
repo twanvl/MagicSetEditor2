@@ -220,3 +220,39 @@ String regex_escape(const String& s);
 /** Basicly replaces "(" with "(?:" */
 String make_non_capturing(const String& re);
 
+// ----------------------------------------------------------------------------- : Iterator utilities
+
+struct end_sentinel_t {} end_sentinel;
+
+// Iterate over a string, removing all matching substrings.
+// match.operator(it,end) should return false or return true and advance it past the substring
+template <typename It, typename End, typename Match>
+struct SkipSubstringIterator {
+public:
+  SkipSubstringIterator(It it, End end, Match const& match) : it(it), end(end), match(match) {
+    while (match(it, end));
+  }
+  bool operator == (end_sentinel_t) const {
+    return it == end;
+  }
+  bool operator != (end_sentinel_t) const {
+    return it != end;
+  }
+  auto operator * () const {
+    return *it;
+  }
+  auto& operator ++ () {
+    ++it;
+    while (match(it, end));
+    return *this;
+  }
+private:
+  It it;
+  End end;
+  Match match;
+};
+
+template <typename It, typename End, typename Match>
+inline SkipSubstringIterator<It,End,Match> skip_substring_iterator(It it, End end, Match const& match) {
+  return SkipSubstringIterator<It,End,Match>(it, end, match);
+}

@@ -403,7 +403,7 @@ SCRIPT_FUNCTION(sort_text) {
 
 /// Replace the contents of a specific tag with the value of a script function
 String replace_tag_contents(String input, const String& tag, const ScriptValueP& contents, Context& ctx) {
-  assert_tagged(input, false);
+  assert_tagged(input);
   String ret;
   size_t start = 0, pos = input.find(tag);
   while (pos != String::npos) {
@@ -674,7 +674,8 @@ SCRIPT_FUNCTION_WITH_DEP(expand_keywords) {
   SCRIPT_OPTIONAL_PARAM_C_(CardP, card);
   try {
     KeywordUsageStatistics* stat = card ? &card->keyword_usage : nullptr;
-    SCRIPT_RETURN(db.expand(input, match_condition, default_expand, combine, ctx, stat));
+    Value* stat_key = value_being_updated();
+    SCRIPT_RETURN(db.expand(input, KeywordExpandOptions{match_condition, default_expand, combine, ctx, stat, stat_key}));
   } catch (const Error& e) {
     throw ScriptError(_ERROR_2_("in function", e.what(), _("expand_keywords")));
   }
