@@ -531,9 +531,9 @@ String expand_keywords(const String& tagged_str, vector<KeywordMatch> const& mat
       } else {
         bool is_close = (it+1) != end && *(it+1) == '/';
         if (is_close && !close || !is_close && !open) return;
-        if (is_substr(it, end, "<atom")) {
+        if (is_tag(it, end, "<atom")) {
           atom++;
-        } else if (is_substr(it, end, "</atom")) {
+        } else if (is_tag(it, end, "</atom")) {
           atom++;
         }
         // keep tag in output
@@ -602,7 +602,7 @@ String::const_iterator keyword_match_detail(String::const_iterator it, String::c
   // The even captures are parameter values, the odd ones are the plain text in between
   // submatch 0 is the whole match
   assert(match.size() - 1 == 1 + 2 * keyword.parameters.size());
-  for (int sub = 1; sub < match.size(); ++sub) {
+  for (int sub = 1; sub < (int)match.size(); ++sub) {
     // The matched part, indices in untagged string. We only need the length
     size_t part_len_untagged = match.length(sub);
     // Translate back to tagged position

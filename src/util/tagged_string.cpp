@@ -23,6 +23,12 @@ wxUniChar tag_char(wxUniChar c) {
   else             return c;
 }
 
+// Is a character the "end" of the tag name?
+// don't mistake <tag> as <t>, only <t>, <t-stuff> and <t:stuff> are considered <t>
+bool is_tag_end_char(Char c) {
+  return c == '>' || c == '-' || c == ':' || c == ' ';
+}
+
 
 String untag(const String& str) {
   bool in_tag = false;
@@ -156,6 +162,14 @@ String fix_old_tags(const String& str) {
   return skip_all_tags(it, end, after_open, after_close);
 }
 
+[[nodiscard]] bool is_tag(String::const_iterator it, String::const_iterator end, const char* tag) {
+  for (; *tag; ++it, ++tag) {
+    if (it == end || *it != *tag) return false;
+  }
+  if (it == end || !is_tag_end_char(*it)) return false;
+  return true;
+}
+
 /*
 // Does the string [it..end) contain the matching close tag for [tag..tag_end)?
 bool is_close_tag(String::const_iterator it, String::const_iterator end, String::const_iterator tag, String::const_iterator tag_end) {
@@ -251,11 +265,6 @@ String::const_iterator find_close_tag(String::const_iterator tag, String::const_
     }
   }
   return String::npos;
-}
-
-// don't mistake <tag> as <t>, only <t>, <t-stuff> and <t:stuff> are considered <t>
-bool is_tag_end_char(Char c) {
-  return c == '>' || c == '-' || c == ':' || c == ' ';
 }
 
 bool is_tag(const String& str, size_t pos, const String& tag) {

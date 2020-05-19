@@ -553,7 +553,7 @@ void TextValueEditor::onLoseFocus() {
 
 bool TextValueEditor::onContextMenu(wxMenu& m, wxContextMenuEvent& ev) {
   // in a keword? => "reminder text" option
-  size_t kwpos = in_tag(value().value(), _("<kw-"), selection_start_i, selection_start_i);
+  size_t kwpos = in_tag(value().value(), _("<kw"), selection_start_i, selection_start_i);
   if (kwpos != String::npos) {
     m.InsertSeparator(0);
     m.Insert(0, make_menu_item_tr(&m, ID_FORMAT_REMINDER, "reminder", "reminder_text", wxITEM_CHECK));

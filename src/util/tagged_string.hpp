@@ -119,6 +119,12 @@ String anti_tag(const String& tag);
 // If not found, returns end
 [[nodiscard]] String::const_iterator find_close_tag(String::const_iterator it, String::const_iterator end);
 
+/// Does a string contain a tag at the given location?
+/** Only matches if the tag in the text ends one of ">-: "
+ *  tag should be "<tag" or "</tag"
+ */
+[[nodiscard]] bool is_tag(String::const_iterator it, String::const_iterator end, const char* tag);
+
 // Length of a string when not counting tags
 // For example: untagged_length("<b>abc</b>",_) = 3
 [[nodiscard]] size_t untagged_length(String::const_iterator it, String::const_iterator end);

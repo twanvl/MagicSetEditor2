@@ -203,7 +203,7 @@ unique_ptr<TextValueAction> typing_action(const TextValueP& value, size_t start_
 TextToggleReminderAction::TextToggleReminderAction(const TextValueP& value, size_t pos_in)
   : ValueAction(value)
 {
-  pos = in_tag(value->value(), _("<kw-"), pos_in, pos_in);
+  pos = in_tag(value->value(), _("<kw"), pos_in, pos_in);
   if (pos == String::npos) {
     throw InternalError(_("TextToggleReminderAction: not in <kw- tag"));
   }
