@@ -68,8 +68,14 @@ void mark_dependency_member(const Card& card, const String& name, const Dependen
   mark_dependency_member(card.data, name, dep);
 }
 
+void reflect_version_check(Reader& handler, const Char* key, intrusive_ptr<Packaged> const& package);
+void reflect_version_check(Writer& handler, const Char* key, intrusive_ptr<Packaged> const& package);
+void reflect_version_check(GetMember& handler, const Char* key, intrusive_ptr<Packaged> const& package);
+void reflect_version_check(GetDefaultMember& handler, const Char* key, intrusive_ptr<Packaged> const& package);
+
 IMPLEMENT_REFLECTION(Card) {
   REFLECT(stylesheet);
+  reflect_version_check(handler, _("stylesheet_version"), stylesheet);
   REFLECT(has_styling);
   if (has_styling) {
     if (stylesheet) {

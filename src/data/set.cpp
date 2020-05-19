@@ -166,15 +166,31 @@ void Set::validate(Version file_app_version) {
   script_manager->updateAll();
 }
 
+void reflect_version_check(Reader& handler, const Char* key, intrusive_ptr<Packaged> const& package) {
+  if (!package) return;
+  Version v = package->version;
+  handler.handle(key, v);
+  if (package->version < v) {
+    queue_message(MESSAGE_WARNING, "This set file is made with a newer version of the '" + package->name() + "' template. Please update the template files.");
+  }
+}
+void reflect_version_check(Writer& handler, const Char* key, intrusive_ptr<Packaged> const& package) {
+  handler.handle(key, package->version);
+}
+void reflect_version_check(GetMember& handler, const Char* key, intrusive_ptr<Packaged> const& package) {}
+void reflect_version_check(GetDefaultMember& handler, const Char* key, intrusive_ptr<Packaged> const& package) {}
+
 IMPLEMENT_REFLECTION(Set) {
   REFLECT(game);
   if (game) {
     REFLECT_IF_READING {
       data.init(game->set_fields);
     }
+    reflect_version_check(handler, _("game_version"), game);
     WITH_DYNAMIC_ARG(game_for_reading, game.get());
     REFLECT(stylesheet);
     REFLECT_COMPAT(<300, "style", stylesheet);
+    reflect_version_check(handler, _("stylesheet_version"), stylesheet);
     WITH_DYNAMIC_ARG(stylesheet_for_reading, stylesheet.get());
     REFLECT_N("set_info", data);
     if (stylesheet) {

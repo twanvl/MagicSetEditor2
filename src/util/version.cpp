@@ -70,7 +70,8 @@ const Char* version_suffix = _(" (ascii build)");
  *     0.3.0 : port of code to C++
  *     0.3.1 : new keyword system, some new style options
  *     0.3.2 : package dependencies
- *     0.3.3 : keyword separator before/after
+ *     0.3.3 : keywor
+ d separator before/after
  *     0.3.4 : html export; choice rendering based on scripted 'image'
  *     0.3.5 : word lists, symbol font 'as text'
  *     0.3.6 : free rotation, rotation behaviour changed.
@@ -82,14 +83,15 @@ const Char* version_suffix = _(" (ascii build)");
  *             - store time created,modified for cards -> changes set and clipboard format
  *     0.3.9 : bugfix release mostly, a few new script functions
  *     2.0.0 : bugfix release mostly, added error console
+ *     2.0.2 : store game and stylesheet version numbers
  */
 const Version file_version_locale          = 20002; // 2.0.2
-const Version file_version_set             =   308; // 0.3.8
+const Version file_version_set             = 20002; // 2.0.2
 const Version file_version_game            =   308; // 0.3.8
 const Version file_version_stylesheet      =   308; // 0.3.8
 const Version file_version_symbol_font     =   306; // 0.3.6
 const Version file_version_export_template =   307; // 0.3.7
 const Version file_version_installer       =   307; // 0.3.7
 const Version file_version_symbol          =   305; // 0.3.5
-const Version file_version_clipboard       =   308; // 0.3.8
+const Version file_version_clipboard       = 20002; // 2.0.2
 const Version file_version_script          =   307; // 0.3.7
