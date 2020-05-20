@@ -175,6 +175,7 @@ void reflect_version_check(Reader& handler, const Char* key, intrusive_ptr<Packa
   }
 }
 void reflect_version_check(Writer& handler, const Char* key, intrusive_ptr<Packaged> const& package) {
+  if (!package) return;
   handler.handle(key, package->version);
 }
 void reflect_version_check(GetMember& handler, const Char* key, intrusive_ptr<Packaged> const& package) {}
