@@ -217,9 +217,10 @@ template <typename T>
 void Reader::handle(const Char* name, vector<T>& vector) {
   String vectorKey = singular_form(name);
   while (enterBlock(vectorKey.c_str())) {
-    vector.resize(vector.size() + 1);
-    handle_greedy(vector.back());
-    update_index(vector.back(), vector.size() - 1); // update index for IndexMap
+    T item;
+    handle_greedy(item);
+    update_index(item, vector.size()); // update index for IndexMap
+    vector.emplace_back(std::move(item));
     exitBlock();
   }
 }
