@@ -131,7 +131,7 @@ private:
     OUTSIDE,    ///< We have not entered the block of the current key
     ENTERED,    ///< We just entered the block of the current key
     HANDLED,    ///< We have handled a value, and moved to the next line, previous_value is the value we just handled
-    UNHANDLED,    ///< Something has been 'unhandled()'
+    UNHANDLED,  ///< Something has been 'unhandle()-ed'
   } state;
   /// Should all invalid keys be ignored?
   bool ignore_invalid;

@@ -122,7 +122,7 @@ bool isOper  (wxUniChar c) { return wxStrchr(_("+-*/!.@%^&:=<>;,"),c) != nullptr
 bool isLparen(wxUniChar c) { return c==_('(') || c==_('[') || c==_('{'); }
 bool isRparen(wxUniChar c) { return c==_(')') || c==_(']') || c==_('}'); }
 bool isDigitOrDot(wxUniChar c) { return isDigit(c) || c==_('.'); }
-bool isLongOper(const String& s) { return s==_(":=") || s==_("==") || s==_("!=") || s==_("<=") || s==_(">="); }
+bool isLongOper(StringView s) { return s==_(":=") || s==_("==") || s==_("!=") || s==_("<=") || s==_(">="); }
 
 // moveme
 // ----------------------------------------------------------------------------- : Tokenizing
@@ -185,7 +185,7 @@ void TokenIterator::readToken() {
     pos += 13; // "include file:"
     const char* newlines = "\r\n";
     auto eol = find_first_of(pos,end, newlines,newlines+2);
-    String include_file = trim(String(pos, eol));
+    String include_file = trim(StringView(pos, eol));
     // include_file("filename")
     addToken(TOK_NAME, "include_file", pos - 13);
     addToken(TOK_LPAREN, "(", pos);
@@ -208,7 +208,7 @@ void TokenIterator::readToken() {
     addToken(type, String(start,pos), start);
   } else if (isOper(c)) {
     // operator
-    if (pos+1 != end && isLongOper(String(pos, pos+2))) {
+    if (pos+1 != end && isLongOper(StringView(pos, pos+2))) {
       // long operator
       addToken(TOK_OPER, String(pos, pos+2), pos);
       pos += 2;

@@ -65,7 +65,7 @@ void read_compat(Reader& handler, Keyword* k) {
   size_t start = separator.find_first_of('[');
   size_t end   = separator.find_first_of(']');
   if (start != String::npos && end != String::npos) {
-    k->match += separator.substr(start + 1, end - start - 1);
+    k->match += substr(separator, start + 1, end - start - 1);
   }
   if (parameter == _("no parameter")) {
     parameter.clear(); // was used for magic to indicate absence of parameter

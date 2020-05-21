@@ -48,25 +48,19 @@ Char toUpper(Char c) {
 
 // ----------------------------------------------------------------------------- : String utilities
 
-String trim(const String& s){
-  size_t start = s.find_first_not_of(_(" \t"));
-  size_t end   = s.find_last_not_of( _(" \t"));
-  if (start == String::npos) {
-    return String();
-  } else if (start == 0 && end == s.size() - 1) {
-    return s;
-  } else {
-    return s.substr(start, end - start + 1);
-  }
+StringView trim(StringView s) {
+  String::const_iterator begin = s.begin();
+  String::const_iterator end = s.end();
+  while (begin != end && isSpace(*begin)) ++begin;
+  while (begin != end && isSpace(*(end - 1))) --end;
+  return StringView(begin, end);
 }
 
-String trim_left(const String& s) {
-  size_t start = s.find_first_not_of(_(" \t"));
-  if (start == String::npos) {
-    return String();
-  } else {
-    return s.substr(start);
-  }
+StringView trim_left(StringView s) {
+  String::const_iterator begin = s.begin();
+  String::const_iterator end = s.end();
+  while (begin != end && isSpace(*begin)) ++begin;
+  return StringView(begin, end);
 }
 
 String substr_replace(const String& input, size_t start, size_t end, const String& replacement) {
@@ -98,60 +92,42 @@ bool is_substr(const String& s, String::const_iterator it, const Char* cmp) {
   return *cmp == 0;
 }
 
-String capitalize(const String& s) {
-  String result = s;
+void capitalize_in_place(String& s) {
   bool after_space = true;
-  FOR_EACH_IT(it, result) {
+  for (String::iterator it = s.begin(); it != s.end(); ++it) {
     if (*it == _(' ') || *it == _('/')) {
       after_space = true;
     } else if (after_space) {
       after_space = false;
-      if (it != result.begin() &&
-          (is_substr(result,it,_("is ")) || is_substr(result,it,_("the ")) ||
-           is_substr(result,it,_("in ")) || is_substr(result,it,_("of "))  ||
-           is_substr(result,it,_("to ")) || is_substr(result,it,_("at "))  ||
-           is_substr(result,it,_("a " )))) {
+      if (it != s.begin() &&
+          (is_substr(it, s.end(), _("is ")) || is_substr(it, s.end(), _("the ")) ||
+           is_substr(it, s.end(), _("in ")) || is_substr(it, s.end(), _("of "))  ||
+           is_substr(it, s.end(), _("to ")) || is_substr(it, s.end(), _("at "))  ||
+           is_substr(it, s.end(), _("a " )))) {
         // Short words are not capitalized, keep lower case
       } else {
         *it = toUpper(*it);
       }
     }
   }
-  return result;
 }
 
-String capitalize_sentence(const String& s) {
-  String ret = s;//.Lower();
-  if (!ret.empty()) {
-    ret[0] = toUpper(ret[0]);
+void capitalize_sentence_in_place(String& s) {
+  if (!s.empty()) {
+    s[0] = toUpper(s[0]);
   }
-  return ret;
 }
 
-wxUniChar canonical_name_form(wxUniChar c) {
-  if (c == _(' ')) return _('_');
-  return c;
-}
-String canonical_name_form(const String& str) {
-  String ret;
-  ret.reserve(str.size());
-  FOR_EACH_CONST(c, str) {
-    ret += canonical_name_form(c);
+void canonical_name_form_in_place(String& str) {
+  for (String::iterator it = str.begin(); it != str.end(); ++it) {
+    if (*it == ' ') *it = '_';
   }
-  return ret;
 }
 
-wxUniChar uncanonical_name_form(wxUniChar c) {
-  if (c == _('_')) return _(' ');
-  return c;
-}
-String uncanonical_name_form(const String& str) {
-  String ret;
-  ret.reserve(str.size());
-  FOR_EACH_CONST(c, str) {
-    ret += uncanonical_name_form(c);
+void uncanonical_name_form_in_place(String& str) {
+  for (String::iterator it = str.begin(); it != str.end(); ++it) {
+    if (*it == '_') *it = ' ';
   }
-  return ret;
 }
 
 String name_to_caption(const String& str) {
@@ -181,12 +157,6 @@ String singular_form(const String& str) {
     return str.substr(0, str.size() - 3) + _("y");
   }
   return str.substr(0, str.size() - 1);
-}
-
-String remove_shortcut(const String& str) {
-  size_t tab = str.find_last_of(_('\t'));
-  if (tab == String::npos) return str;
-  else                     return str.substr(0, tab);
 }
 
 // ----------------------------------------------------------------------------- : Comparing / finding
@@ -355,16 +325,6 @@ bool starts_with(const String& str, const String& start) {
   return equal(start.begin(), start.end(), str.begin());
 }
 
-bool is_substr(const String& str, size_t pos, const Char* cmp) {
-  for (String::const_iterator it = str.begin() + pos ; *cmp && it < str.end() ; ++cmp, ++it) {
-    if (*cmp != *it) return false;
-  }
-  return *cmp == _('\0');
-}
-bool is_substr(const String& str, size_t pos, const String& cmp) {
-  return str.size() >= cmp.size() + pos && str.compare(pos, cmp.size(), cmp) == 0;
-}
-
 
 bool is_substr_i(const String& str, size_t pos, const Char* cmp) {
   for (String::const_iterator it = str.begin() + pos ; *cmp && it < str.end() ; ++cmp, ++it) {
@@ -376,7 +336,7 @@ bool is_substr_i(const String& str, size_t pos, const String& cmp) {
   return is_substr_i(str, pos, static_cast<const Char*>(cmp.c_str()));
 }
 
-bool canonical_name_compare(const String& as, const Char* b) {
+bool canonical_name_compare(StringView as, const Char* b) {
   assert(canonical_name_form(b) == b);
   for (String::const_iterator a_it = as.begin(); a_it != as.end(); ++a_it, ++b) {
     if (*a_it != *b && !(*a_it == '_' && *b == ' ')) {

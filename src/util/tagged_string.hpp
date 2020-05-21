@@ -23,8 +23,8 @@ const Char ESCAPED_LANGLE = _('\1');
 wxUniChar untag_char(wxUniChar c);
 wxUniChar tag_char(wxUniChar c);
 
-/// Remove all tags from a string and convert escaped '<' back to normal '<'
-/** e.g. "<sym>R</> something <i>(note)</>"
+/// Remove all tags from a string and convert ESCAPED_LANGLE back to normal '<'
+/** e.g. "<sym>R</sym> something <i>(note)</i>"
  *  becomes "R something (note)"
  */
 String untag(const String&);

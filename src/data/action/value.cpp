@@ -153,18 +153,18 @@ unique_ptr<TextValueAction> toggle_format_action(const TextValueP& value, const 
   // Are we inside the tag we are toggling?
   if (!is_in_tag(str, _("<") + tag, start_i, end_i)) {
     // we are not inside this tag, add it
-    new_value =  str.substr(0, start_i);
+    new_value =  substr(str, 0, start_i);
     new_value += _("<") + tag + _(">");
-    new_value += str.substr(start_i, end_i - start_i);
+    new_value += substr(str, start_i, end_i - start_i);
     new_value += _("</") + tag + _(">");
-    new_value += str.substr(end_i);
+    new_value += substr(str, end_i);
   } else {
     // we are inside this tag, 'remove' it
-    new_value =  str.substr(0, start_i);
+    new_value = substr(str, 0, start_i);
     new_value += _("</") + tag + _(">");
-    new_value += str.substr(start_i, end_i - start_i);
+    new_value += substr(str, start_i, end_i - start_i);
     new_value += _("<") + tag + _(">");
-    new_value += str.substr(end_i);
+    new_value += substr(str, end_i);
   }
   // Build action
   if (start != end) {

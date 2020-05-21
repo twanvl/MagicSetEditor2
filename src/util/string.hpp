@@ -115,13 +115,77 @@ inline bool isPunct(Char c) { return IF_UNICODE( iswpunct(c) , ispunct((unsigned
   inline bool isSpace(Char c) { return IF_UNICODE( iswspace(c) , isspace((unsigned char)c) ) || c == CONNECTION_SPACE; }
 #endif
 
+// ----------------------------------------------------------------------------- : String view
+
+// A view of (part of a string)
+class StringView {
+public:
+  StringView(String const& str)
+    : begin_(str.begin()), end_(str.end())
+  {}
+  StringView(String const& str, size_t pos)
+    : begin_(str.begin() + pos), end_(str.end())
+  {}
+  StringView(String const& str, size_t pos, size_t count)
+    : begin_(str.begin() + pos), end_(str.begin() + pos + min(count, str.size()-pos))
+  {}
+  StringView(String::const_iterator begin, String::const_iterator end)
+    : begin_(begin), end_(end)
+  {
+    assert(begin <= end);
+  }
+  inline operator String () const {
+    return String(begin_, end_);
+  }
+  using iterator = String::const_iterator;
+  using const_iterator = String::const_iterator;
+  inline String::const_iterator begin() const {
+    return begin_;
+  }
+  inline String::const_iterator end() const {
+    return end_;
+  }
+  inline size_t size() const {
+    return end_ - begin_;
+  }
+  inline bool empty() const {
+    return begin() == end();
+  }
+  inline bool operator == (StringView const& str) {
+    return str.size() == size() && std::equal(begin(), end(), str.begin());
+  }
+  template <typename AnyChar>
+  inline bool operator == (const AnyChar* str) {
+    String::const_iterator it = begin_;
+    while (true) {
+      if (it == end_) return *str == '\0';
+      if (*str == '\0') return false;
+      if (*str != *it) return false;
+      ++it; ++str;
+    }
+  }
+private:
+  String::const_iterator begin_, end_;
+};
+
+inline String& operator += (String& a, StringView b) {
+  return a.append(b.begin(), b.end());
+}
+
+inline StringView substr(String const& str, size_t pos, size_t len) {
+  return StringView(str, pos, len);
+}
+inline StringView substr(String const& str, size_t pos) {
+  return StringView(str, pos);
+}
+
 // ----------------------------------------------------------------------------- : String utilities
 
 /// Remove whitespace from both ends of a string
-String trim(const String&);
+StringView trim(StringView);
 
 /// Remove whitespace from the start of a string
-String trim_left(const String&);
+StringView trim_left(StringView);
 
 /// Replace the substring [start...end) of 'input' with 'replacement'
 String substr_replace(const String& input, size_t start, size_t end, const String& replacement);
@@ -136,18 +200,37 @@ String reverse_string(String const& input);
 
 /// Make each word in a string start with an upper case character.
 /** for use in menus */
-String capitalize(const String&);
+void capitalize_in_place(String&);
+inline String capitalize(String const& s) {
+  String result = s;
+  capitalize_in_place(result);
+  return result;
+}
 
 /// Make the first word in a string start with an upper case character.
 /** for use in dialogs */
-String capitalize_sentence(const String&);
+void capitalize_sentence_in_place(String&);
+inline String capitalize_sentence(String const& s) {
+  String result = s;
+  capitalize_sentence_in_place(result);
+  return result;
+}
 
 /// Convert a field name to canonical form
 /** - converts ' ' to '_'
  */
-String canonical_name_form(const String&);
+void canonical_name_form_in_place(String&);
+inline String canonical_name_form(String s) {
+  canonical_name_form_in_place(s);
+  return s;
+}
+
 /// Undo canonical_name_form: replace '_' by ' '
-String uncanonical_name_form(const String&);
+void uncanonical_name_form_in_place(String&);
+inline String uncanonical_name_form(String s) {
+  uncanonical_name_form_in_place(s);
+  return s;
+}
 
 /// Convert a field name to a string that can be shown to the user
 String name_to_caption(const String&);
@@ -157,11 +240,6 @@ String name_to_caption(const String&);
  *  singular_form("apples"), which is "apple"
  */
 String singular_form(const String&);
-
-/// Remove a shortcut from a menu string
-/** e.g. "Cut\tCtrl+X" --> "Cut"
- */
-String remove_shortcut(const String&);
 
 // ----------------------------------------------------------------------------- : Comparing / finding
 
@@ -180,19 +258,30 @@ bool smart_equal(const String&, const String&);
 
 /// Return whether str starts with start
 /** starts_with(a,b) == is_substr(a,0,b) */
-bool starts_with(const String& str, const String& start);
+//bool starts_with(const String& str, const String& start);
+inline bool starts_with(StringView str, StringView const& start) {
+  return str.size() >= start.size() && std::equal(start.begin(), start.end(), str.begin());
+}
+template <typename AnyChar>
+inline bool starts_with(StringView str, const AnyChar* start) {
+  String::const_iterator it = str.begin();
+  while (true) {
+    if (*start == '\0') return true;
+    if (it == str.end()) return false;
+    if (*start != *it) return false;
+    ++it; ++start;
+  }
+}
 
 /// Return whether str contains the string cmp at position pos
-bool is_substr(const String& str, size_t pos, const Char* cmp);
-/// Return whether str contains the string cmp at position pos
-bool is_substr(const String& str, size_t pos, const String& cmp);
+template <typename Cmp>
+inline bool is_substr(const String& str, size_t pos, const Cmp& cmp) {
+  return starts_with(StringView(str, pos), cmp);
+}
 /// Return whether begin..end contains the string cmp at position begin
-template <typename It>
-bool is_substr(It begin, It end, const char* cmp) {
-  for (; begin != end && *cmp; ++begin, ++cmp) {
-    if (*begin != *cmp) return false;
-  }
-  return true;
+template <typename It, typename Cmp>
+inline bool is_substr(It begin, It end, const Cmp& cmp) {
+  return starts_with(StringView(begin, end),cmp);
 }
 
 /// Return whether str contains the string cmp at position pos, case insensitive compare
@@ -207,7 +296,7 @@ size_t find_i(const String& heystack, const String& needle);
 /** canoncial_name_compare(a,b) == (cannocial_name_form(a) == b)
  *  b should already be in cannonical name form
  */
-bool canonical_name_compare(const String& a, const Char* b);
+bool canonical_name_compare(StringView a, const Char* b);
 
 // ----------------------------------------------------------------------------- : Regular expressions
 

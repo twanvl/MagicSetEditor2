@@ -77,8 +77,6 @@ String tr(const Package&, const String& subcat, const String& key, DefaultLocale
 
 /// A localized string for menus, with 1 argument (printf style)
 #define _MENU_1_(s,a)    format_string(_MENU_(s),    a)
-/// A localized string for context menus, contains no "\tshortcut"
-#define _CONTEXT_MENU_(s)   remove_shortcut(_MENU_(s))
 
 /// A localized string for tooltip text, with 1 argument (printf style)
 #define _HELP_1_(s,a)    format_string(_HELP_(s),    a)

@@ -225,7 +225,7 @@ void Reader::readLine(bool in_string) {
     }
   }
   key   = canonical_name_form(trim(key));
-  value = pos == String::npos ? _("") : trim_left(line.substr(pos+1));
+  value = pos == String::npos ? String() : trim_left(substr(line, pos+1));
   if (key.empty() && pos!=String::npos) key = _(" "); // we don't want an empty key if there was a colon
 }
 
