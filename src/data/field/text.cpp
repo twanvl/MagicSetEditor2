@@ -99,7 +99,7 @@ void TextStyle::checkContentDependencies(Context& ctx, const Dependency& dep) co
 
 template <typename T> void reflect_layout(T& handler,         const TextStyle& ts) {}
 template <>           void reflect_layout(GetMember& handler, const TextStyle& ts) {
-  REFLECT(ts.layout);
+  REFLECT_N("layout", ts.layout);
   if (ts.layout) {
     REFLECT_N("content_width",  ts.layout->width);
     REFLECT_N("content_height", ts.layout->height);
