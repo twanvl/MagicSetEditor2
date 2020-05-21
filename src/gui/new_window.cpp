@@ -96,7 +96,7 @@ void NewSetWindow::done() {
     set->validate();
     EndModal(wxID_OK);
   } catch (const Error& e) {
-    handle_error(e);
+    handle_error_now(e);
   }
 }
 
