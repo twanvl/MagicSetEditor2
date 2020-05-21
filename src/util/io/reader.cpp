@@ -15,10 +15,6 @@
 #undef small
 using boost::tribool;
 
-typedef void (*ReaderPragmaHandler)(String&);
-DECLARE_DYNAMIC_ARG  (ReaderPragmaHandler,reader_pragma_handler);
-IMPLEMENT_DYNAMIC_ARG(ReaderPragmaHandler,reader_pragma_handler,nullptr);
-
 // ----------------------------------------------------------------------------- : Reader
 
 Reader::Reader(wxInputStream& input, Packaged* package, const String& filename, bool ignore_invalid)
@@ -201,8 +197,6 @@ void Reader::readLine(bool in_string) {
   } catch (const ParseError& e) {
     throw ParseError(e.what() + String(_(" on line ")) << line_number);
   }
-  // pragma handler
-  if (reader_pragma_handler()) reader_pragma_handler()(line);
   // read indentation
   indent = 0;
   while ((UInt)indent < line.size() && line.GetChar(indent) == _('\t')) {
