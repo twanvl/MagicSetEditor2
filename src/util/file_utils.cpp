@@ -158,7 +158,7 @@ public:
     }
   }
   
-  wxDirTraverseResult OnFile(const String& filename) {
+  wxDirTraverseResult OnFile(const String& filename) override {
     if (!remove_file(filename)) {
       ok = false;
       handle_error(_("Cannot delete ") + filename + _("\n")
@@ -167,7 +167,7 @@ public:
     }
     return wxDIR_CONTINUE;
   }
-  wxDirTraverseResult OnDir(const String& dirname) {
+  wxDirTraverseResult OnDir(const String& dirname) override {
     to_delete.push_back(dirname);
     return wxDIR_CONTINUE;
   }
@@ -210,11 +210,11 @@ public:
   IgnoredMover(const String& from, const String& to)
     : from(from), to(to)
   {}
-  wxDirTraverseResult OnFile(const String& filename) {
+  wxDirTraverseResult OnFile(const String& filename) override {
     tryMove(filename);
     return wxDIR_CONTINUE;
   }
-  wxDirTraverseResult OnDir(const String& dirname) {
+  wxDirTraverseResult OnDir(const String& dirname) override {
     return tryMove(dirname) ? wxDIR_IGNORE : wxDIR_CONTINUE;
   }
 private:

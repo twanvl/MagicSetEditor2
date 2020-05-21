@@ -61,7 +61,7 @@ String Error::what() const {
       const wxString& GetStackTrace() const { return m_stackTrace; }
 
     protected:
-      virtual void OnStackFrame(const wxStackFrame& frame) {
+      void OnStackFrame(const wxStackFrame& frame) override {
         m_stackTrace << wxString::Format(_("[%02d] "), frame.GetLevel());
 
         wxString name = frame.GetName();
