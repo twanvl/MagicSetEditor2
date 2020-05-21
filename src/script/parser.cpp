@@ -63,7 +63,7 @@ enum OpenBrace
 /** Also stores errors found when tokenizing or parsing */
 class TokenIterator {
 public:
-  TokenIterator(const String& str, Packaged* package, bool string_mode, vector<ScriptParseError>& errors);
+  TokenIterator(const String& str, Packaged* package, bool string_mode, String const& filename, vector<ScriptParseError>& errors);
   
   /// Peek at the next token, doesn't move to the one after that
   /** Can peek further forward by using higher values of offset.
@@ -83,7 +83,7 @@ public:
 private:
   String::const_iterator pos;
   const String::const_iterator begin, end;
-  String filename; ///< Filename of include files, "" for the main input
+  String const&    filename; ///< Filename of include files, "" for the main input
   vector<Token>    buffer; ///< buffer of unread tokens, front() = current
   stack<OpenBrace> open_braces; ///< braces/quotes we entered from script mode
   bool             newline; ///< Did we just pass a newline?
@@ -127,10 +127,11 @@ bool isLongOper(StringView s) { return s==_(":=") || s==_("==") || s==_("!=") ||
 // moveme
 // ----------------------------------------------------------------------------- : Tokenizing
 
-TokenIterator::TokenIterator(const String& str, Packaged* package, bool string_mode, vector<ScriptParseError>& errors)
+TokenIterator::TokenIterator(const String& str, Packaged* package, bool string_mode, String const& filename, vector<ScriptParseError>& errors)
   : pos(str.begin())
   , begin(str.begin())
   , end(str.end())
+  , filename(filename)
   , package(package)
   , newline(false)
   , errors(errors)
@@ -407,7 +408,8 @@ ExprType parseTopLevel(TokenIterator& input, Script& script) {
 ScriptP parse(const String& s, Packaged* package, bool string_mode, vector<ScriptParseError>& errors_out) {
   errors_out.clear();
   // parse
-  TokenIterator input(s, package, string_mode, errors_out);
+  const String filename;
+  TokenIterator input(s, package, string_mode, filename, errors_out);
   ScriptP script(new Script);
   ExprType type = parseTopLevel(input, *script);
   // were there fatal errors?
@@ -684,7 +686,7 @@ ExprType parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
       auto stream = package_manager.openFileFromPackage(input.package, filename);
       eat_utf8_bom(*stream);
       String included_input = read_utf8_line(*stream, true);
-      TokenIterator included_tokens(included_input, input.package, false, input.errors);
+      TokenIterator included_tokens(included_input, input.package, false, filename, input.errors);
       return parseTopLevel(included_tokens, script);
     } else {
       // variable
