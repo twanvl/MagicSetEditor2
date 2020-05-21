@@ -488,6 +488,7 @@ void Package::saveToZipfile(const String& saveAs, bool remove_unused, bool is_co
   }
   wxRenameFile(tempFile, saveAs);
   // re-open zip file
+  filename = saveAs;
   openZipfile();
 }
 
