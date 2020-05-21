@@ -246,9 +246,13 @@ String KeywordsPanel::runRefScript(int find_i) {
     } else {
       FOR_EACH(r, p->refer_scripts) {
         if (i++ == find_i) {
-          Context& ctx = set->getContext();
-          ctx.setVariable(SCRIPT_VAR_input, to_script(param_s));
-          return r->script.invoke(ctx)->toString();
+          try {
+            Context& ctx = set->getContext();
+            ctx.setVariable(SCRIPT_VAR_input, to_script(param_s));
+            return r->script.invoke(ctx)->toString();
+          } catch (ScriptError const& e) {
+            handle_error(ScriptError(e.what() + _("\n  in keyword refer script '") + r->name + _("'")));
+          }
         }
       }
     }

@@ -44,8 +44,16 @@ Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
     ctx.setVariable(SCRIPT_VAR_styling,    to_script(&set.stylingDataFor(*stylesheet)));
     try {
       // perform init scripts, don't use a scope, variables stay bound in the context
-      set.game  ->init_script.invoke(ctx, false);
-      stylesheet->init_script.invoke(ctx, false);
+      try {
+        set.game  ->init_script.invoke(ctx, false);
+      } catch (const ScriptError& e) {
+        handle_error(ScriptError(e.what() + _("\n  in init script for game ") + set.game->name()));
+      }
+      try {
+        stylesheet->init_script.invoke(ctx, false);
+      } catch (const ScriptError& e) {
+        handle_error(ScriptError(e.what() + _("\n  in init script for stylesheet ") + stylesheet->name()));
+      }
     } catch (const Error& e) {
       handle_error(e);
     }

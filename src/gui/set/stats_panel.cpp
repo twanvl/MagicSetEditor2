@@ -480,12 +480,16 @@ void StatsPanel::showCategory(const GraphType* prefer_layout) {
     GraphElementP e(new GraphElement(i));
     bool show = true;
     FOR_EACH(dim, dims) {
-      String value = untag(dim->script.invoke(ctx)->toString());
-      e->values.push_back(value);
-      if (value.empty() && !dim->show_empty) {
-        // don't show this element
-        show = false;
-        break;
+      try {
+        String value = untag(dim->script.invoke(ctx)->toString());
+        e->values.push_back(value);
+        if (value.empty() && !dim->show_empty) {
+          // don't show this element
+          show = false;
+          break;
+        }
+      } catch (ScriptError const& e) {
+        handle_error(ScriptError(e.what() + _("\n  in script for statistics dimension '") + dim->name + _("'")));
       }
     }
     if (show) {

@@ -107,7 +107,11 @@ size_t DropDownColorList::selection() const {
     return 0;
   } else if (hasDefault()) {
     // evaluate script to find default color
-    default_color = field().default_script.invoke(cve.viewer.getContext())->toColor();
+    try {
+      default_color = field().default_script.invoke(cve.viewer.getContext())->toColor();
+    } catch (ScriptError const& e) {
+      handle_error(ScriptError(e.what() + _("\n  in default script for '") + field().name + _("'")));
+    }
   }
   return selection;
 }
