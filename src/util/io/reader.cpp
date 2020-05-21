@@ -226,11 +226,16 @@ void Reader::readLine(bool in_string) {
   }
   key = canonical_name_form(trim(key));
   if (pos == String::npos) {
+    if (!ignore_invalid && !in_string) {
+      warning(_("Missing ':' "), 0, false);
+    }
     value.clear();
   } else {
     value = trim_left(substr(line, pos+1));
   }
-  if (key.empty() && pos!=String::npos) key = _(" "); // we don't want an empty key if there was a colon
+  if (key.empty() && pos!=String::npos) {
+    key = _(" "); // we don't want an empty key if there was a colon
+  }
 }
 
 void Reader::unknownKey() {
