@@ -224,8 +224,12 @@ void Reader::readLine(bool in_string) {
       indent += 1;
     }
   }
-  key   = canonical_name_form(trim(key));
-  value = pos == String::npos ? String() : trim_left(substr(line, pos+1));
+  key = canonical_name_form(trim(key));
+  if (pos == String::npos) {
+    value.clear();
+  } else {
+    value = trim_left(substr(line, pos+1));
+  }
   if (key.empty() && pos!=String::npos) key = _(" "); // we don't want an empty key if there was a colon
 }
 
