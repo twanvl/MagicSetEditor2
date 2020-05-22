@@ -165,7 +165,7 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 PrintJobP make_print_job(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices) {
   // Let the user choose cards
   // controls
-  ExportWindowBase wnd(parent, _TITLE_("select cards"), set, choices);
+  ExportWindowBase wnd(parent, _TITLE_("select cards print"), set, choices);
   wxCheckBox* space = new wxCheckBox(&wnd, wxID_ANY, L"Put space between cards");
   space->SetValue(settings.print_layout);
   // layout

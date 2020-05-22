@@ -182,7 +182,7 @@ sub validate_locale {
     foreach my $key (sort keys %{$locale_keys{$type}}) {
       if (!defined($locale{$type}{$key})) {
         if (!$locale_keys{$type}{$key}{'opt'}) {
-          print "Missing key in locale: $type: $key\n";
+          print "Missing key in locale: $type: '$key'\n";
           $ok = 0;
         }
         next;
@@ -205,7 +205,7 @@ sub validate_locale {
     }
     foreach my $key (sort keys %{$locale{$type}}) {
       if (!defined($locale_keys{$type}{$key})) {
-        print "Unknown key in locale: $type: $key\n";
+        print "Unknown key in locale: $type: '$key'\n";
         $ok = 0;
       }
     }

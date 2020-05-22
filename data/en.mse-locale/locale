@@ -33,7 +33,7 @@ menu:
 	cut keyword:	Cu&t	Ctrl+X
 	copy:				&Copy	Ctrl+C
 	copy card:			&Copy	Ctrl+C
-	copy keyword :	&Copy	Ctrl+C
+	copy keyword:		&Copy	Ctrl+C
 	paste:				&Paste	Ctrl+V
 	paste card:		&Paste	Ctrl+V
 	paste keyword:	&Paste	Ctrl+V
@@ -452,9 +452,6 @@ label:
 	seed:				Seed
 	total cards:		Total
 	
-	# Open dialogs
-	all files:			All files
-	
 	# Other set window dialogs
 	save changes:
 		The set '%s' has changed.
@@ -493,7 +490,6 @@ label:
 	# Card select / images export
 	select cards:			Cards to export
 	selected card count:	%s cards will be exported.
-	select cards print:	Select the cards you want to print
 	filename format:	&Format: 
 	filename conflicts:	&Handle duplicating filenames:
 	export filenames:	Filenames
@@ -668,6 +664,7 @@ title:
 	select columns:		Select Columns
 	select cards:		Select Cards
 	select cards export:Select Cards to Export
+	select cards print:	Select the cards you want to print
 	# slice
 	slice image:		Slice Image
 	# pack
