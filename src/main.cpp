@@ -176,6 +176,8 @@ int MSE::OnRun() {
                              << NORMAL << _(" [") << BRIGHT << _("--local") << NORMAL << _("]");
           cli << _("\n         \tInstall the packages from the installer.");
           cli << _("\n         \tIf the ") << BRIGHT << _("--local") << NORMAL << _(" flag is passed, install packages for this user only.");
+          cli << _("\n\n  ") << PARAM << _("FILE") << FILE_EXT << _(".mse-script") << NORMAL;
+          cli << _("\n         \tRun a script file.");
           cli << _("\n\n  ") << BRIGHT << _("--symbol-editor") << NORMAL;
           cli << _("\n         \tShow the symbol editor instead of the welcome window.");
           cli << _("\n\n  ") << BRIGHT << _("--create-installer") << NORMAL << _(" [")
