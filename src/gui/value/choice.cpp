@@ -150,10 +150,10 @@ void DropDownChoiceListBase::generateThumbnailImages() {
     int n = field().choices->lastId();
     for (int i = 0 ; i < n; ++i) {
       try {
-        String name = canonical_name_form(field().choices->choiceName(i));
+        String name = field().choices->choiceName(i);
         ctx.setVariable(_("input"), to_script(name));
         GeneratedImageP img = style().image.getValidScriptP()->eval(ctx)->toImage();
-        style().choice_images.insert(make_pair(name, ScriptableImage(img)));
+        style().choice_images.try_emplace(canonical_name_form(name), ScriptableImage(img));
       } catch (const Error& e) {
         handle_error(Error(e.what() + _("\n  while generating choice images for drop down list")));
       }
