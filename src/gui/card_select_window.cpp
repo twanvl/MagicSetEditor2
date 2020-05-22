@@ -106,7 +106,7 @@ void ExportWindowBase::update() {
   if (select_cards) {
     select_cards->Enable(choice.type == EXPORT_SEL_CUSTOM);
   }
-  card_count->SetLabel(_LABEL_1_("selected card count", String::Format(_("%d"),cards->size())));
+  card_count->SetLabel(_LABEL_1_("selected card count", std::to_string(cards->size())));
   wxWindow* ok_btn = FindWindow(wxID_OK);
   if (ok_btn) ok_btn->Enable(!cards->empty());
 }
