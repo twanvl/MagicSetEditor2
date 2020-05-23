@@ -224,7 +224,7 @@ void Style::checkContentDependencies(Context& ctx, const Dependency& dep) const 
 
 void Style::markDependencyMember(const String& name, const Dependency& dep) const {
   // mark dependencies on content
-  if (dep.type == DEP_DUMMY && dep.index == false && starts_with(name, _("content "))) {
+  if (dep.type == DEP_DUMMY && dep.index == false && (starts_with(name, _("content")) || name == "layout") ) {
     // anything that starts with "content_" is a content property
     const_cast<Dependency&>(dep).index = true;
   }
