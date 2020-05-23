@@ -77,7 +77,7 @@ DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
   dc.SetFont(*wxNORMAL_FONT);
   int h;
   dc.GetTextExtent(_("X"), 0, &h);
-  item_size.height = h + 2;
+  item_size.height = h + 2.0;
 }
 
 DropDownList::~DropDownList() {
@@ -135,6 +135,9 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
   SetVirtualSize(virtual_size);
   item_size.width = virtual_size.width - marginW * 2;
   // is there enough room for all items, or do we need a scrollbar?
+#if !defined(__WXGTK__)
+  // Note: wxGTK doesn't support scrollbars on popup windows
+  // For now we disable them to not make MSE crash
   int room_below = wxGetDisplaySize().y - border_size.height - pos.y - parent_height - 50;
   int max_height = max(300, room_below);
   if (size.height > max_height) {
@@ -144,6 +147,7 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
   } else {
     SetScrollbar(wxVERTICAL,0,0,0,false);
   }
+#endif
   // move & resize
   SetSize(add_diagonal(size, border_size));
   Position(pos, wxSize(0, parent_height));
