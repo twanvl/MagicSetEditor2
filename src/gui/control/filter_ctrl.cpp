@@ -39,8 +39,11 @@ FilterCtrl::FilterCtrl(wxWindow* parent, int id, String const& placeholder, Stri
   , help_text(help_text)
 {
   wxColour bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-  clear_button = new HoverButton(this, wxID_ANY, _("btn_clear_filter"), bg, false);
-  clear_button->SetCursor(*wxSTANDARD_CURSOR);
+  #if !defined(__WXGTK__)
+    // Note: in wxGTK, it is not possible to add child windows to standard controls
+    clear_button = new HoverButton(this, wxID_ANY, _("btn_clear_filter"), bg, false);
+    clear_button->SetCursor(*wxSTANDARD_CURSOR);
+  #endif
   onSize();
   update();
 }
@@ -84,7 +87,9 @@ void FilterCtrl::update() {
     font.SetStyle(wxFONTSTYLE_ITALIC);
     SetFont(font);
   }
-  clear_button->Show(!value.empty());
+  #if !defined(__WXGTK__)
+    clear_button->Show(!value.empty());
+  #endif
   changing = false;
 }
 
@@ -110,10 +115,12 @@ void FilterCtrl::onSizeEvent(wxSizeEvent&) {
   onSize();
 }
 void FilterCtrl::onSize() {
-  wxSize s = GetClientSize();
-  wxSize cs = clear_button->GetBestSize();
-  int margin = 2;
-  clear_button->SetSize(s.x - cs.x - margin, (s.y-cs.y)/2, cs.x, cs.y);
+  #if !defined(__WXGTK__)
+    wxSize s = GetClientSize();
+    wxSize cs = clear_button->GetBestSize();
+    int margin = 2;
+    clear_button->SetSize(s.x - cs.x - margin, (s.y-cs.y)/2, cs.x, cs.y);
+  #endif
 }
 
 void FilterCtrl::onSetFocus(wxFocusEvent& ev) {
@@ -134,7 +141,11 @@ void FilterCtrl::onMouseLeave(wxMouseEvent& ev) {
 
 bool FilterCtrl::hasFocus() {
   wxWindow* focus = wxWindow::FindFocus();
-  return focus == this || focus == clear_button;
+  #if !defined(__WXGTK__)
+    return focus == this || focus == clear_button;
+  #else
+    return focus == this;
+  #endif
 }
 
 void FilterCtrl::showHelp(bool show) {
