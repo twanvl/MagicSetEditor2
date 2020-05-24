@@ -92,41 +92,6 @@ IMPLEMENT_REFLECTION(Keyword) {
   REFLECT(mode);
 }
 
-/*//%%
-String KeywordParam::make_separator_before() const {
-  // decode regex; find a string that matches it
-  String ret;
-  int disabled = 0;
-  for (size_t i = 0 ; i < separator_before_is.size() ; ++i) {
-    Char c = separator_before_is.GetChar(i);
-    if (c == _('(')) {
-      if (disabled) ++disabled;
-    } else if (c == _(')')) {
-      if (disabled) --disabled;
-    } else if (!disabled) {
-      if (c == _('|')) {
-        disabled = 1; // disable after |
-      } else if (c == _('+') || c == _('*') || c == _('?') || c == _('^') || c == _('$')) {
-        // ignore
-      } else if (c == _('\\') && i + 1 < separator_before_is.size()) {
-        // escape
-        ret += separator_before_is.GetChar(++i);
-      } else if (c == _('[') && i + 1 < separator_before_is.size()) {
-        // character class
-        c = separator_before_is.GetChar(++i);
-        if (c != _('^')) ret += c;
-        // ignore the rest of the class
-        for ( ++i ; i < separator_before_is.size() ; ++i) {
-          c = separator_before_is.GetChar(i);
-          if (c == _(']')) break;
-        }
-      } else {
-        ret += c;
-      }
-    }
-  }
-  return ret;
-}*/
 void KeywordParam::compile() {
   // compile separator_before
   if (!separator_before_is.empty() && separator_before_re.empty()) {
