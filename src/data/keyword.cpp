@@ -495,7 +495,7 @@ String expand_keywords(const String& tagged_str, vector<KeywordMatch> const& mat
         it = skip_tag(it, end);
       } else {
         bool is_close = (it+1) != end && *(it+1) == '/';
-        if (is_close && !close || !is_close && !open) return;
+        if ((is_close && !close) || (!is_close && !open)) return;
         if (is_tag(it, end, "<atom")) {
           atom++;
         } else if (is_tag(it, end, "</atom")) {
