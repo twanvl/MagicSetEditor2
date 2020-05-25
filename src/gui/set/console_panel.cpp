@@ -146,6 +146,9 @@ private:
       case WXK_END:
         if (!messages.empty()) select(messages.size() - 1);
         break;
+      case WXK_TAB:
+        Navigate(ev.ShiftDown() ? wxNavigationKeyEvent::IsBackward : wxNavigationKeyEvent::IsForward);
+        break;
       default:
         ev.Skip();
     }
