@@ -25,6 +25,7 @@ Template features:
  * Added <align:...> tag to change the horizontal alignment of a block of text.
  * Added <li> tag for list bullet points. (Experimental!)
  * Colors can now be written using hex notation, #rrggbb / #rrggbbaa, and short hex notation (#rgb / #rgba)
+ * Added card_style.field.layout, with information on the position of each line and paragraph in a text box.
 
 Scripting:
  * Added type_name function
