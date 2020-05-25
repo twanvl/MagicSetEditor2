@@ -92,8 +92,6 @@ public:
   Direction direction;                        ///< In what direction is text layed out?
   // information from text rendering
   TextLayoutP layout;
-  double content_width, content_height;       ///< Size of the rendered text
-  int    content_lines;                       ///< Number of rendered lines
   
   int  update(Context&) override;
   void initDependencies(Context&, const Dependency&) const override;

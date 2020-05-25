@@ -37,6 +37,20 @@ IMPLEMENT_REFLECTION(TextField) {
 
 // ----------------------------------------------------------------------------- : TextStyle
 
+TextLayoutP dummy_layout() {
+  auto layout = make_intrusive<TextLayout>();
+  auto line = make_intrusive<LineLayout>(0, 0, 0, LineLayout::Type::LINE);
+  auto paragraph = make_intrusive<LineLayout>(0, 0, 0, LineLayout::Type::PARAGRAPH);
+  auto block = make_intrusive<LineLayout>(0, 0, 0, LineLayout::Type::BLOCK);
+  paragraph->lines.push_back(line);
+  block->lines.push_back(line);
+  layout->lines.push_back(line);
+  block->paragraphs.push_back(paragraph);
+  layout->paragraphs.push_back(paragraph);
+  layout->blocks.push_back(block);
+  return layout;
+}
+
 TextStyle::TextStyle(const TextFieldP& field)
   : Style(field)
   , always_symbol(false), allow_formating(true)
@@ -53,12 +67,12 @@ TextStyle::TextStyle(const TextFieldP& field)
   , line_height_line_max(0.0)
   , paragraph_height(-1)
   , direction(LEFT_TO_RIGHT)
-  , content_width(0), content_height(0), content_lines(0)
+  , layout(dummy_layout())
 {}
 
 double TextStyle::getStretch() const {
-  if (content_width > 0 && (alignment() & ALIGN_STRETCH)) {
-    double factor = (width - padding_left - padding_right) / content_width;
+  if (layout->width > 0 && (alignment() & ALIGN_STRETCH)) {
+    double factor = (width - padding_left - padding_right) / layout->width;
     if (!(alignment() & ALIGN_IF_OVERFLOW) || factor < 1.0) {
       return factor;
     }
@@ -97,18 +111,13 @@ void TextStyle::checkContentDependencies(Context& ctx, const Dependency& dep) co
   alignment.initDependencies(ctx, dep);
 }
 
-template <typename T> void reflect_layout(T& handler,         const TextStyle& ts) {}
-template <>           void reflect_layout(GetMember& handler, const TextStyle& ts) {
-  REFLECT_N("layout", ts.layout);
-  if (ts.layout) {
-    REFLECT_N("content_width",  ts.layout->width);
-    REFLECT_N("content_height", ts.layout->height);
-    REFLECT_N("content_lines",  ts.layout->lines.size());
-  } else {
-    REFLECT_N("content_width", 0.);
-    REFLECT_N("content_height", 0.);
-    REFLECT_N("content_lines", 0);
-  }
+template <typename T> void reflect_layout(T& handler,         const TextLayoutP& layout) {}
+template <>           void reflect_layout(GetMember& handler, const TextLayoutP& layout) {
+  assert(layout);
+  REFLECT_N("layout", layout);
+  REFLECT_N("content_width",  layout->width);
+  REFLECT_N("content_height", layout->height);
+  REFLECT_N("content_lines",  layout->lines.size());
 }
 
 template <> void GetMember::handle(LineLayout const& obj) { obj.reflect(*this); }
@@ -154,7 +163,7 @@ IMPLEMENT_REFLECTION(TextStyle) {
   REFLECT(line_height_line_max);
   REFLECT(paragraph_height);
   REFLECT(direction);
-  reflect_layout(handler, *this);
+  reflect_layout(handler, layout);
 }
 
 // ----------------------------------------------------------------------------- : TextValue
