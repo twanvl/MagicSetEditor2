@@ -384,7 +384,7 @@ TextLayoutP TextViewer::extractLayoutInfo() const {
     }
   }
   for (size_t i=0; i+1 < layout->blocks.size() ; ++i) {
-    layout->separators.push_back((layout->blocks[i]->bottom() + layout->blocks[i]->top)/2);
+    layout->separators.push_back((layout->blocks[i]->bottom() + layout->blocks[i+1]->top)/2);
   }
   return layout;
 }
