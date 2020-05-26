@@ -50,6 +50,10 @@ void check_word(const String& tag, const String& input, size_t start, size_t end
   if (!good) { out += _("</"); out += tag; }
 }
 
+bool isWordChar(wxUniChar c) {
+  return isAlpha(c) || c == '\'' || c == RIGHT_SINGLE_QUOTE;
+}
+
 SCRIPT_FUNCTION(check_spelling) {
   SCRIPT_PARAM_C(StyleSheetP,stylesheet);
   SCRIPT_PARAM_C(String,language);
@@ -82,6 +86,7 @@ SCRIPT_FUNCTION(check_spelling) {
   size_t word_start = String::npos; // start of the word to be checked, or npos if not inside a word
   size_t pos = 0;
   int unchecked_tag = 0;
+  bool check_this_word = true;
   while (pos < input.size()) {
     Char c = input.GetChar(pos);
     if (c == _('<')) {
@@ -103,21 +108,23 @@ SCRIPT_FUNCTION(check_spelling) {
         }
         pos = after;
       }
-    } else if (isAlpha(c)) {
+    } else if (isWordChar(c)) {
       // a word character
       if (word_start == String::npos) word_start = pos;
+      if (unchecked_tag > 0) check_this_word = false;
       ++pos;
     } else {
       // a non-word character, punctuation or space
       // check word, add to result
-      check_word(tag, input, word_start, pos, result, unchecked_tag <= 0, checkers, extra_match, ctx);
+      check_word(tag, input, word_start, pos, result, check_this_word, checkers, extra_match, ctx);
       word_start = String::npos;
+      check_this_word = unchecked_tag <= 0;
       result += c;
       ++pos;
     }
   }
   // last word
-  check_word(tag, input, word_start, input.size(), result, unchecked_tag <= 0, checkers, extra_match, ctx);
+  check_word(tag, input, word_start, input.size(), result, check_this_word, checkers, extra_match, ctx);
   // done
   assert_tagged(result);
   SCRIPT_RETURN(result);
