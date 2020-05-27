@@ -417,9 +417,11 @@ unordered_set<Keyword const*> possible_matches(String const& tagged_str, Keyword
 
 struct KeywordMatch {
   Keyword const* keyword;
-  // match in the untagged string
+  // match in (substring of) the untagged string
   Regex::Results match;
-  KeywordMatch(Keyword const& keyword, Regex::Results match) : keyword(&keyword), match(match) {}
+  // position of match in the untagged string
+  size_t pos;
+  KeywordMatch(Keyword const& keyword, Regex::Results match, size_t pos) : keyword(&keyword), match(match), pos(pos) {}
 };
 
 // Collect exact matching keywords
@@ -430,7 +432,8 @@ void keyword_matches(const String& untagged_str, const Keyword& keyword, vector<
   size_t i = 0;
   String::const_iterator it = untagged_str.begin();
   while (keyword.match_re.matches(match, it, untagged_str.end())) {
-    out.emplace_back(keyword, match);
+    size_t pos = match[0].first - untagged_str.begin();
+    out.emplace_back(keyword, match, pos);
     it = max(it+1, match[0].end());
   }
 }
@@ -442,8 +445,8 @@ void keyword_matches(const String& untagged_str, unordered_set<Keyword const*> k
 void sort_keyword_matches(vector<KeywordMatch>& matches) {
   // sort matches by their start position
   sort(matches.begin(), matches.end(), [](KeywordMatch const& a, KeywordMatch const& b) {
-    if (a.match[0].begin() < b.match[0].begin()) return true;
-    if (a.match[0].begin() > b.match[0].begin()) return false;
+    if (a.pos < b.pos) return true;
+    if (a.pos > b.pos) return false;
     // otherwise sort by matching set keywords (non-fixed) first
     if (a.keyword->fixed < b.keyword->fixed) return true;
     if (a.keyword->fixed > b.keyword->fixed) return false;
@@ -516,8 +519,8 @@ String expand_keywords(const String& tagged_str, vector<KeywordMatch> const& mat
     skip_tags_for_keyword(false, true);
     if (it == end) break;
     // is there a match here?
-    while (match_it != matches.end() && (size_t)match_it->match.position() <= untagged_pos) {
-      if ((size_t)match_it->match.position() > untagged_pos) {
+    while (match_it != matches.end() && match_it->pos <= untagged_pos) {
+      if (match_it->pos > untagged_pos) {
         ++match_it;
         continue;
       }
