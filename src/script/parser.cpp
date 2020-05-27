@@ -683,10 +683,10 @@ ExprType parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
       // include the file
       // read the entire file, and start at the beginning of it
       String const& filename = token.value;
-      auto stream = package_manager.openFileFromPackage(input.package, filename);
+      auto [stream,file_package] = package_manager.openFileFromPackage(input.package, filename);
       eat_utf8_bom(*stream);
       String included_input = read_utf8_line(*stream, true);
-      TokenIterator included_tokens(included_input, input.package, false, filename, input.errors);
+      TokenIterator included_tokens(included_input, file_package, false, filename, input.errors);
       return parseTopLevel(included_tokens, script);
     } else {
       // variable

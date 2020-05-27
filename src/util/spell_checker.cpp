@@ -36,8 +36,7 @@ SpellChecker* SpellChecker::get(const String& language) {
 SpellChecker* SpellChecker::get(const String& filename, const String& language) {
   SpellCheckerP& speller = spellers[filename + _(".") + language];
   if (!speller) {
-    Packaged* package = nullptr;
-    String prefix = package_manager.openFilenameFromPackage(package, filename) + _(".");
+    String prefix = package_manager.openFilenameFromPackage(nullptr, filename) + _(".");
     String local_dir  = package_manager.getDictionaryDir(true);
     String global_dir = package_manager.getDictionaryDir(false);
     String aff_path = language + _(".aff");

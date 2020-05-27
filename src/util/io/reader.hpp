@@ -16,6 +16,7 @@ template <typename T> class Scriptable;
 DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(StyleSheet);
 class Packaged;
+pair<unique_ptr<wxInputStream>, Packaged*> openFileFromPackage(Packaged* package, const String& name);
 
 // ----------------------------------------------------------------------------- : Reader
 
@@ -171,8 +172,8 @@ private:
   template <typename T>
   void unknownKey(T& v) {
     if (key == _("include_file")) {
-      auto stream = openIncludedFile();
-      Reader sub_reader(*stream, package, value, ignore_invalid);
+      auto [stream, include_package] = openFileFromPackage(package, value);
+      Reader sub_reader(*stream, include_package, value, ignore_invalid);
       if (sub_reader.file_app_version == 0) {
         // in an included file, use the app version of the parent if there is none
         sub_reader.file_app_version = file_app_version;
@@ -184,7 +185,6 @@ private:
     }
   }
   void unknownKey();
-  unique_ptr<wxInputStream> openIncludedFile();
 };
 
 // ----------------------------------------------------------------------------- : After reading hook

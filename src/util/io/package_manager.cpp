@@ -95,7 +95,7 @@ void PackageManager::findMatching(const String& pattern, vector<PackagedP>& out)
   }
 }
 
-unique_ptr<wxInputStream> PackageManager::openFileFromPackage(Packaged*& package, const String& name) {
+pair<unique_ptr<wxInputStream>,Packaged*> PackageManager::openFileFromPackage(Packaged* package, const String& name) {
   if (!name.empty() && name.GetChar(0) == _('/')) {
     // absolute name; break name
     size_t start = name.find_first_not_of(_("/\\"), 1); // allow "//package/name" from incorrect scripts
@@ -106,17 +106,19 @@ unique_ptr<wxInputStream> PackageManager::openFileFromPackage(Packaged*& package
       if (package && !is_substr(name,start,_(":NO-WARN-DEP:"))) {
         package->requireDependency(p.get());
       }
-      package = p.get();
-      return p->openIn(name.substr(pos + 1));
+      return {p->openIn(name.substr(pos + 1)), p.get()};
     }
   } else if (package) {
     // relative name
-    return package->openIn(name);
+    return {package->openIn(name), package};
   }
   throw FileNotFoundError(name, _("No package name specified, use '/package/filename'"));
 }
+pair<unique_ptr<wxInputStream>, Packaged*> openFileFromPackage(Packaged* package, const String& name) {
+  return package_manager.openFileFromPackage(package, name);
+}
 
-String PackageManager::openFilenameFromPackage(Packaged*& package, const String& name) {
+String PackageManager::openFilenameFromPackage(Packaged* package, const String& name) {
   if (!name.empty() && name.GetChar(0) == _('/')) {
     // absolute name; break name
     size_t start = name.find_first_not_of(_("/\\"), 1); // allow "//package/name" from incorrect scripts
@@ -127,7 +129,6 @@ String PackageManager::openFilenameFromPackage(Packaged*& package, const String&
       if (package && !is_substr(name,start,_(":NO-WARN-DEP:"))) {
         package->requireDependency(p.get());
       }
-      package = p.get();
       return p->absoluteFilename() + _("/") + name.substr(pos + 1);
     }
   } else if (package) {

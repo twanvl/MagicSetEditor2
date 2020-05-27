@@ -145,15 +145,15 @@ public:
    *    - tries to open a relative file from the package if the name is "file"
    *    - verifies a dependency from that package if an absolute filename is used
    *      this is to force people to fill in the dependencies
-   *  Afterwards, package will be set to the package the file is opened from
+   *  Returns the opened file and the package it is in
    */
-  unique_ptr<wxInputStream> openFileFromPackage(Packaged*& package, const String& name);
+  pair<unique_ptr<wxInputStream>,Packaged*> openFileFromPackage(Packaged* package, const String& name);
   
   /// Get a filename to open from a package
   /** WARNING: this is a bit of a hack, since not all package types support names in this way.
    *  It is needed for third party libraries (i.e. hunspell) that load stuff from files.
    */
-  String openFilenameFromPackage(Packaged*& package, const String& name);
+  String openFilenameFromPackage(Packaged* package, const String& name);
   
   // --------------------------------------------------- : Packages on disk
   

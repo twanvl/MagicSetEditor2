@@ -29,10 +29,6 @@ Reader::Reader(wxInputStream& input, Packaged* package, const String& filename, 
   handleAppVersion();
 }
 
-unique_ptr<wxInputStream> Reader::openIncludedFile() {
-  return package_manager.openFileFromPackage(package, value);
-}
-
 void Reader::handleIgnore(int end_version, const Char* a) {
   if (file_app_version < end_version) {
     if (enterBlock(a)) exitBlock();

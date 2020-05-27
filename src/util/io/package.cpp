@@ -190,7 +190,7 @@ unique_ptr<wxInputStream> Package::openIn(const String& file) {
   if (!file.empty() && file.GetChar(0) == _('/')) {
     // absolute path, open file from another package
     Packaged* p = dynamic_cast<Packaged*>(this);
-    return package_manager.openFileFromPackage(p, file);
+    return package_manager.openFileFromPackage(p, file).first;
   }
   FileInfos::iterator it = files.find(normalize_internal_filename(file));
   if (it == files.end()) {
