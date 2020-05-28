@@ -519,6 +519,7 @@ String expand_keywords(const String& tagged_str, vector<KeywordMatch> const& mat
     skip_tags_for_keyword(false, true);
     if (it == end) break;
     // is there a match here?
+    if (atom == 0) // don't expand keywords that are inside <atom> tags
     while (match_it != matches.end() && match_it->pos <= untagged_pos) {
       if (match_it->pos > untagged_pos) {
         ++match_it;
@@ -553,7 +554,7 @@ String expand_keywords(const String& tagged_str, vector<KeywordMatch> const& mat
 //  * Whether the case matches
 // Add these things to the context
 // Return iterator after the whole match
-String::const_iterator keyword_match_detail(String::const_iterator it, String::const_iterator end, KeywordMatch const& kw_match, Context& ctx) {
+tuple<bool,String::const_iterator> keyword_match_detail(String::const_iterator it, String::const_iterator end, KeywordMatch const& kw_match, Context& ctx) {
   Keyword const& keyword = *kw_match.keyword;
   Regex::Results const& match = kw_match.match;
 
@@ -562,6 +563,9 @@ String::const_iterator keyword_match_detail(String::const_iterator it, String::c
   // case errors? For finding these we will loop over the keyword.match string
   bool correct_case = true;
   String::const_iterator match_str_it = keyword.match.begin();
+
+  // in tags?
+  int atom = 0;
 
   // Combined tagged match string
   String total;
@@ -583,7 +587,8 @@ String::const_iterator keyword_match_detail(String::const_iterator it, String::c
     // we start counting at 1, so
     // sub = 1 mod 2 -> text
     // sub = 0 mod 2 -> parameter
-    if ((sub % 2) == 0) {
+    bool is_parameter = (sub % 2) == 0;
+    if (is_parameter) {
       // parameter
       KeywordParam& kwp = *keyword.parameters[(sub - 2) / 2];
       String param = match.str(sub); // untagged version
@@ -643,7 +648,8 @@ String::const_iterator keyword_match_detail(String::const_iterator it, String::c
       ctx.setVariable(String(_("param")) << (int)(sub / 2), script_param);
 
     } else {
-      // Plain text, check if the case matches
+      // Plain text with exact match
+      // check if the case matches
       if (correct_case) {
         while (it != part_end) {
           it = skip_all_tags(it, part_end);
@@ -664,17 +670,31 @@ String::const_iterator keyword_match_detail(String::const_iterator it, String::c
         }
       }
     }
+    // count <atom> tags
+    for (String::const_iterator pit = part.begin(); pit != part.end();) {
+      if (*pit == '<') {
+        if (is_tag(pit, part.end(), "<atom")) atom++;
+        else if(is_tag(pit, part.end(), "</atom")) atom--;
+        pit = skip_tag(pit, part.end());
+      } else {
+        if (atom > 0 && !is_parameter) {
+          // the fixed parts of a keyword should not be in atom tags
+          return {false,it};
+        }
+        ++pit;
+      }
+    }
     // build total match
     total += part;
     // next part starts after this
     it = part_end;
   }
-  assert_tagged(total);
+  assert_tagged(total, false); // note: tags might not be entirely balanced
   ctx.setVariable(_("keyword"), to_script(total));
   ctx.setVariable(_("mode"), to_script(keyword.mode));
   ctx.setVariable(_("correct_case"), to_script(correct_case));
   ctx.setVariable(_("used_placeholders"), to_script(used_placeholders));
-  return it;
+  return {true, it};
 };
 
 // expand a keyword that matches at it
@@ -686,7 +706,8 @@ tuple<bool, String::const_iterator> expand_keyword(String::const_iterator it, St
   LocalScope scope(ctx);
 
   // Get details of the match
-  String::const_iterator after = keyword_match_detail(it, end, kw_match, ctx);
+  auto [ok, after] = keyword_match_detail(it, end, kw_match, ctx);
+  if (!ok) return {false,it};
 
   // Final check whether the keyword matches
   if (options.match_condition && options.match_condition->eval(ctx)->toBool() == false) {
