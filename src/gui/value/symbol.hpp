@@ -35,7 +35,7 @@ private:
   /// Show the symbol editor
   void editSymbol();
   /// Get an object to perform actions for us
-  ValueActionPerformer* getActionPerformer();
+  unique_ptr<ValueActionPerformer> getActionPerformer();
   
   // button, or -1 for mouse down, but not on button, or -2 for mouse not down
   int button_down;

@@ -26,7 +26,7 @@ public:
   /// Construct a SymbolWindow showing a symbol from a file
   SymbolWindow(Window* parent, const String& filename);
   /// Construct a SymbolWindow showing a symbol value in a set
-  SymbolWindow(Window* parent, ValueActionPerformer* performer);
+  SymbolWindow(Window* parent, unique_ptr<ValueActionPerformer> performer);
   ~SymbolWindow();
   
 private:
@@ -39,7 +39,7 @@ private:
   SymbolPartList* parts;   ///< A list of parts in the symbol
   
   // when editing a symbol field
-  ValueActionPerformer* performer;
+  unique_ptr<ValueActionPerformer> performer;
   
   // --------------------------------------------------- : Event handling
   DECLARE_EVENT_TABLE();

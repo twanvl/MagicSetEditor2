@@ -116,6 +116,6 @@ void SymbolValueEditor::editSymbol() {
   wnd->Show();
 }
 
-ValueActionPerformer* SymbolValueEditor::getActionPerformer() {
-  return new ValueActionPerformer(valueP(), editor().getCard(), editor().getSetForActions());
+unique_ptr<ValueActionPerformer> SymbolValueEditor::getActionPerformer() {
+  return make_unique<ValueActionPerformer>(valueP(), editor().getCard(), editor().getSetForActions());
 }

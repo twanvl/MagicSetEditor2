@@ -42,9 +42,10 @@ SymbolWindow::SymbolWindow(Window* parent, const String& filename)
   init(parent, symbol);
 }
 
-SymbolWindow::SymbolWindow(Window* parent, ValueActionPerformer* performer)
-  : performer(performer)
+SymbolWindow::SymbolWindow(Window* parent, unique_ptr<ValueActionPerformer> performer_)
+  : performer(move(performer_))
 {
+  assert(performer);
   // attempt to load symbol
   SymbolP symbol;
   SymbolValueP value = static_pointer_cast<SymbolValue>(performer->value);
@@ -61,7 +62,6 @@ SymbolWindow::SymbolWindow(Window* parent, ValueActionPerformer* performer)
   init(parent, symbol);
 }
 SymbolWindow::~SymbolWindow() {
-  delete performer;
 }
 
 void SymbolWindow::init(Window* parent, SymbolP symbol) {
@@ -290,7 +290,7 @@ void SymbolWindow::onUpdateUI(wxUpdateUIEvent& ev) {
   switch(ev.GetId()) {
     // file menu
     case ID_FILE_STORE: {
-      ev.Enable(performer);
+      ev.Enable((bool)performer);
       break;
     // undo/redo
     } case ID_EDIT_UNDO: {
