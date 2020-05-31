@@ -78,7 +78,7 @@ DropDownChoiceListBase::DropDownChoiceListBase
 
 void DropDownChoiceListBase::onShow() {
   // update 'enabled'
-  Context& ctx = cve.viewer.getContext();
+  Context& ctx = cve.getContext();
   FOR_EACH(c, group->choices) {
     c->enabled.update(ctx);
   }
@@ -145,7 +145,7 @@ void DropDownChoiceListBase::drawIcon(DC& dc, int x, int y, size_t item, bool se
 void DropDownChoiceListBase::generateThumbnailImages() {
   if (!isRoot()) return;
   // init choice images
-  Context& ctx = cve.viewer.getContext();
+  Context& ctx = cve.getContext();
   if (style().choice_images.empty() && style().image.isScripted()) {
     int n = field().choices->lastId();
     for (int i = 0 ; i < n; ++i) {
@@ -230,7 +230,7 @@ size_t DropDownChoiceList::selection() const {
     } else {
       // run default script to find out what the default choice would be
       try {
-        String default_choice = field().default_script.invoke( cve.viewer.getContext() )->toString();
+        String default_choice = field().default_script.invoke(cve.getContext())->toString();
         default_id = group->choiceId(default_choice);
       } catch (ScriptError const& e) {
         handle_error(ScriptError(e.what() + _("\n  in default script for '") + field().name + _("'")));

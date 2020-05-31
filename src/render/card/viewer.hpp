@@ -97,8 +97,8 @@ protected:
   /// Notification that the size of the viewer may have changed
   virtual void onChangeSize() {}
   
-  vector<ValueViewerP> viewers;  ///< The viewers for the different values in the data
-  CardP card;            ///< The card that is currently displayed, if any
-  mutable StyleSheetP stylesheet;  ///< Stylesheet being used
+  vector<ValueViewerP> viewers; ///< The viewers for the different values in the data
+  CardP card; ///< The card that is currently displayed, if any
+  mutable StyleSheetP stylesheet; ///< Stylesheet being used
 };
 

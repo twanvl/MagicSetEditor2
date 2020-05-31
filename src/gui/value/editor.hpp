@@ -142,7 +142,7 @@ protected:
   private: \
     /** Retrieve the parent editor object */ \
     inline DataEditor& editor() const override { \
-      return static_cast<DataEditor&>(viewer); \
+      return static_cast<DataEditor&>(parent); \
     } \
   public:
 

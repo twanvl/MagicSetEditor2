@@ -32,13 +32,15 @@ public:
   Rotation getRotation() const override;
 private:
   bool use_zoom_settings;
+  double zoom  = 1.0;
+  double angle = 0.0;
 };
 Rotation UnzoomedDataViewer::getRotation() const {
   if (use_zoom_settings) {
     return DataViewer::getRotation();
   } else {
     if (!stylesheet) stylesheet = set->stylesheet;
-    return Rotation(0, stylesheet->getCardRect(), 1.0, 1.0, ROTATION_ATTACH_TOP_LEFT);
+    return Rotation(angle, stylesheet->getCardRect(), zoom, 1.0, ROTATION_ATTACH_TOP_LEFT);
   }
 }
 

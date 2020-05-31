@@ -17,9 +17,9 @@
 #include <util/action_stack.hpp>
 #include <util/defaultable.hpp>
 
-class Card;
 class StyleSheet;
 class LocalFileName;
+DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(Set);
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(Style);
@@ -36,18 +36,17 @@ DECLARE_POINTER_TYPE(PackageChoiceValue);
 /// An Action the changes a Value
 class ValueAction : public Action {
 public:
-  inline ValueAction(const ValueP& value)
-    : valueP(value), card(nullptr), old_time_modified(wxDateTime::Now())
-  {}
+  ValueAction(const ValueP& value);
+  ~ValueAction();
   
   String getName(bool to_undo) const override;
   void perform(bool to_undo) override;
   
   /// We know that the value is on the given card, add that information
-  void isOnCard(Card* card);
+  void setCard(CardP const& card);
   
   const ValueP valueP; ///< The modified value
-  const Card*  card;   ///< The card the value is on, or null if it is not a card value
+  const CardP  card;   ///< The card the value is on, or null if it is not a card value
 private:
   wxDateTime old_time_modified;
 };
@@ -166,7 +165,7 @@ public:
 /** Used to reduce coupling */
 class ValueActionPerformer {
 public:
-  ValueActionPerformer(const ValueP& value, Card* card, const SetP& set);
+  ValueActionPerformer(const ValueP& value, CardP const& card, const SetP& set);
   ~ValueActionPerformer();
   /// Perform an action. The performer takes ownerwhip of the action.
   void addAction(unique_ptr<ValueAction>&& action);
@@ -174,7 +173,7 @@ public:
   const ValueP value; ///< The value
   Package& getLocalPackage();
 private:
-  Card* card; ///< Card the value is on (if any)
-  SetP  set;  ///< Set for the actions
+  CardP card; ///< Card the value is on (if any)
+  SetP set; ///< Set for the actions
 };
 

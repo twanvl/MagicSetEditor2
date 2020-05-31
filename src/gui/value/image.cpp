@@ -37,7 +37,7 @@ bool ImageValueEditor::onLeftDClick(const RealPoint&, wxMouseEvent&) {
 void ImageValueEditor::sliceImage(const Image& image) {
   if (!image.Ok()) return;
   // mask
-  GeneratedImage::Options options((int)style().width, (int)style().height, &viewer.getStylePackage(), &viewer.getLocalPackage());
+  GeneratedImage::Options options((int)style().width, (int)style().height, &parent.getStylePackage(), &parent.getLocalPackage());
   AlphaMask mask;
   style().mask.getNoCache(options,mask);
   // slice

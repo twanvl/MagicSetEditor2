@@ -65,7 +65,7 @@ bool SymbolValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent&) {
   int button = findButton(pos);
   if (button != button_down) {
     button_down = button;
-    viewer.redraw(*this);
+    parent.redraw(*this);
   }
   return true;
 }
@@ -74,7 +74,7 @@ bool SymbolValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
     int button = findButton(pos);
     if (button != button_down) {
       button_down = button;
-      viewer.redraw(*this);
+      parent.redraw(*this);
     }
   }
   return true;
@@ -85,13 +85,13 @@ bool SymbolValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
   if (button_down == 0) {
     // edit
     button_down = -2;
-    viewer.redraw(*this);
+    parent.redraw(*this);
     editSymbol();
     return true;
   } else if (button_down == 1) {
     // gallery
     button_down = -2;
-    viewer.redraw(*this);
+    parent.redraw(*this);
     // TODO
     return true;
   } else {
@@ -117,5 +117,5 @@ void SymbolValueEditor::editSymbol() {
 }
 
 ValueActionPerformer* SymbolValueEditor::getActionPerformer() {
-  return new ValueActionPerformer(valueP(), editor().getCard().get(), editor().getSetForActions());
+  return new ValueActionPerformer(valueP(), editor().getCard(), editor().getSetForActions());
 }

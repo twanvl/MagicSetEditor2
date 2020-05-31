@@ -181,7 +181,7 @@ void DropDownWordList::setWords(const WordListWordP& words2) {
 void DropDownWordList::addWordsFromScript(const WordListWordP& w) {
   assert(w->script);
   // run script
-  Context& ctx = tve.viewer.getContext();
+  Context& ctx = tve.getContext();
   String str = w->script.invoke(ctx)->toString();
   // collect items
   vector<String> strings;
@@ -317,7 +317,7 @@ IMPLEMENT_VALUE_EDITOR(Text)
   , scrollbar(nullptr), scroll_with_cursor(false)
   , hovered_words(nullptr)
 {
-  if (viewer.nativeLook() && field().multi_line) {
+  if (nativeLook() && field().multi_line) {
     scrollbar = new TextValueEditorScrollBar(*this);
     style->padding_right = max(style->padding_right(), (double)scrollbar->GetSize().x);
   }
@@ -616,7 +616,7 @@ bool TextValueEditor::onCommand(int id) {
 wxMenu* TextValueEditor::getMenu(int type) const {
   if (type == ID_INSERT_SYMBOL && (style().always_symbol || style().allow_formating)
                                && style().symbol_font.valid()) {
-    return style().symbol_font.font->insertSymbolMenu(viewer.getContext());
+    return style().symbol_font.font->insertSymbolMenu(getContext());
   } else {
     return nullptr;
   }
@@ -709,7 +709,7 @@ wxCursor TextValueEditor::cursor(const RealPoint& pos) const {
       hovered_words = p.get();
       const_cast<TextValueEditor*>(this)->redrawWordListIndicators();
     }
-    Radians angle = viewer.getRotation().getAngle() + deg_to_rad(style().angle);
+    Radians angle = parent.getRotation().getAngle() + deg_to_rad(style().angle);
     if (is_sideways(angle)) { // 90 or 270 degrees
       if (!rotated_ibeam.Ok()) {
         rotated_ibeam = wxCursor(load_resource_cursor(_("rot_text")));
@@ -866,7 +866,7 @@ void TextValueEditor::showCaret() {
     return;
   }
   // Rotation
-  Rotation rot(viewer.getRotation());
+  Rotation rot(parent.getRotation());
   Rotater rot2(rot, getRotation());
   // The caret
   wxCaret* caret = editor().GetCaret();
@@ -877,7 +877,7 @@ void TextValueEditor::showCaret() {
   // it is not 0 for empty text, because TextRenderer handles that case
   if (cursor.height == 0) {
     if (style().always_symbol && style().symbol_font.valid()) {
-      style().symbol_font.font->update(viewer.getContext());
+      style().symbol_font.font->update(getContext());
       RealSize s = style().symbol_font.font->defaultSymbolSize(rot.trS(style().symbol_font.size));
       cursor.height = s.height;
     } else {
@@ -1033,7 +1033,7 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 
 void TextValueEditor::tryAutoReplace() {
   size_t end = selection_start_i;
-  GameSettings& gs = settings.gameSettingsFor(viewer.getGame());
+  GameSettings& gs = settings.gameSettingsFor(parent.getGame());
   if (!gs.use_auto_replace) return;
   FOR_EACH(ar, gs.auto_replaces) {
     if (ar->enabled && ar->match.size() <= end) {
@@ -1217,7 +1217,7 @@ bool TextValueEditor::matchSubstr(const String& s, size_t pos, FindInfo& find) {
     fixSelection(TYPE_INDEX);
     was_selection = old_sel_start == selection_start && old_sel_end == selection_end;
   }
-  if (find.handle(viewer.getCard(), valueP(), pos, was_selection)) {
+  if (find.handle(parent.getCard(), valueP(), pos, was_selection)) {
     return true;
   } else {
     // TODO: string might have changed when doing replace all
@@ -1253,7 +1253,7 @@ void TextValueEditor::determineSize(bool force_fit) {
   style().angle = 0; // force no rotation in nativeLook
   if (scrollbar) {
     // muliline, determine scrollbar size
-    Rotation rot = viewer.getRotation();
+    Rotation rot = parent.getRotation();
     Rotater r(rot, getRotation());
     if (!force_fit) style().height = 100;
     int sbw = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
@@ -1329,7 +1329,7 @@ void TextValueEditor::prepareDrawScrollbar(RotatedDC& dc) {
     style().width.mutate() -= scrollbar_width;
     // prepare text, and remember scroll position
     double scroll_pos = v.getExactScrollPosition();
-    v.prepare(dc, value().value(), style(), viewer.getContext());
+    v.prepare(dc, value().value(), style(), getContext());
     v.setExactScrollPosition(scroll_pos);
     // scroll to the same place, but always show the caret
     ensureCaretVisible();
@@ -1358,7 +1358,7 @@ void TextValueEditor::findWordLists() {
     String name = str.substr(pos + 11, type_end - pos - 11);
     WordListP word_list;
     // find word list type
-    FOR_EACH(wl, viewer.getGame().word_lists) {
+    FOR_EACH(wl, parent.getGame().word_lists) {
       if (wl->name == name) {
         word_list = wl;
         break;
@@ -1399,7 +1399,7 @@ void TextValueEditor::redrawWordListIndicators(bool toggling_dropdown) {
 
 void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
   if (word_lists.empty()) return;
-  DrawWhat what = viewer.drawWhat(this);
+  DrawWhat what = drawWhat();
   bool current = what & DRAW_ACTIVE;
   // Draw lines around fields
   FOR_EACH(wl, word_lists) {

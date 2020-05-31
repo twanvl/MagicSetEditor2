@@ -11,6 +11,7 @@
 #include <util/prec.hpp>
 #include <util/rotation.hpp>
 #include <util/real_point.hpp>
+#include <data/draw_what.hpp>
 #include <data/field.hpp>
 
 class Set;
@@ -69,10 +70,11 @@ public:
   
   /// Convert this viewer to an editor, if possible
   virtual ValueEditor* getEditor() { return nullptr; }
-  
-  DataViewer& viewer;  ///< Our parent object
+
+public:
+  DataViewer& parent; ///< Our parent object
 protected:
-  ValueP valueP;    ///< The value we are currently viewing
+  ValueP valueP; ///< The value we are currently viewing
   
   /// Set the pen for drawing the border, returns true if a border needs to be drawn
   bool setFieldBorderPen(RotatedDC& dc);
@@ -85,10 +87,15 @@ protected:
   /// Load the AlphaMask for this field, scaled but not rotated
   const AlphaMask& getMask(int w = 0, int h = 0) const;
   const AlphaMask& getMask(const Rotation& rot) const;
-  
+
 public:
+  // Context to use for script functions
+  Context& getContext() const;
+
   /// Should this viewer render using a platform native look?
   bool nativeLook() const;
+  /// What elements to draw
+  DrawWhat drawWhat() const;
   /// Is this the currently selected viewer?
   /** Usually only the editor allows selection of viewers */
   bool isCurrent() const;

@@ -23,18 +23,23 @@
 
 // ----------------------------------------------------------------------------- : ValueAction
 
+ValueAction::ValueAction(const ValueP& value)
+  : valueP(value), card(nullptr), old_time_modified(wxDateTime::Now())
+{}
+ValueAction::~ValueAction() {} // here because we need the destructor of Card
+
 String ValueAction::getName(bool to_undo) const {
   return _ACTION_1_("change", valueP->fieldP->name);
 }
 
 void ValueAction::perform(bool to_undo) {
   if (card) {
-    swap(const_cast<Card*>(card)->time_modified, old_time_modified);
+    swap(card->time_modified, old_time_modified);
   }
 }
 
-void ValueAction::isOnCard(Card* card) {
-  this->card = card;
+void ValueAction::setCard(CardP const& card) {
+  const_cast<CardP&>(this->card) = card;
 }
 
 // ----------------------------------------------------------------------------- : Simple
@@ -253,13 +258,13 @@ void ScriptStyleEvent::perform(bool) {
 
 // ----------------------------------------------------------------------------- : Action performer
 
-ValueActionPerformer::ValueActionPerformer(const ValueP& value, Card* card, const SetP& set)
+ValueActionPerformer::ValueActionPerformer(const ValueP& value, CardP const& card, const SetP& set)
   : value(value), card(card), set(set)
 {}
 ValueActionPerformer::~ValueActionPerformer() {}
 
 void ValueActionPerformer::addAction(unique_ptr<ValueAction>&& action) {
-  action->isOnCard(card);
+  action->setCard(card);
   set->actions.addAction(move(action));
 }
 

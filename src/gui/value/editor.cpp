@@ -14,7 +14,7 @@
 
 void ValueEditor::addAction(unique_ptr<ValueAction> a) {
   if (a) {
-    a->isOnCard(editor().getCard().get());
+    a->setCard(editor().getCard());
     editor().addAction(move(a));
   }
 }

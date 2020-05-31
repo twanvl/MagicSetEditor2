@@ -13,11 +13,11 @@
 // ----------------------------------------------------------------------------- : ValueViewer
 
 ValueViewer::ValueViewer(DataViewer& parent, const StyleP& style)
-  : StyleListener(style), viewer(parent)
+  : StyleListener(style), parent(parent)
 {}
 
-Package& ValueViewer::getStylePackage() const { return viewer.getStylePackage(); }
-Package& ValueViewer::getLocalPackage() const { return viewer.getLocalPackage(); }
+Package& ValueViewer::getStylePackage() const { return parent.getStylePackage(); }
+Package& ValueViewer::getLocalPackage() const { return parent.getLocalPackage(); }
 
 void ValueViewer::setValue(const ValueP& value) {
   assert(value->fieldP == styleP->fieldP); // matching field
@@ -53,7 +53,7 @@ Rotation ValueViewer::getRotation() const {
 
 bool ValueViewer::setFieldBorderPen(RotatedDC& dc) {
   if (!getField()->editable) return false;
-  DrawWhat what = viewer.drawWhat(this);
+  DrawWhat what = drawWhat();
   if (!(what & DRAW_BORDERS)) return false;
   if (what & DRAW_ACTIVE) {
     dc.SetPen(wxPen(Color(0, 128, 255), 1, wxPENSTYLE_SOLID));
@@ -91,20 +91,26 @@ const AlphaMask& ValueViewer::getMask(const Rotation& rot) const {
   return getMask((int)rot.trX(styleP->width), (int)rot.trY(styleP->height));
 }
 
+Context& ValueViewer::getContext() const {
+  return parent.getContext();
+}
 
 void ValueViewer::redraw() {
-  viewer.redraw(*this);
+  parent.redraw(*this);
 }
 
 bool ValueViewer::nativeLook() const {
-  return viewer.nativeLook();
+  return parent.nativeLook();
+}
+DrawWhat ValueViewer::drawWhat() const {
+  return parent.drawWhat(this);
 }
 bool ValueViewer::isCurrent() const {
-  return viewer.viewerIsCurrent(this);
+  return parent.viewerIsCurrent(this);
 }
 
 void ValueViewer::onStyleChange(int changes) {
   if (!(changes & CHANGE_ALREADY_PREPARED)) {
-    viewer.redraw(*this);
+    parent.redraw(*this);
   }
 }

@@ -115,10 +115,10 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
   int parent_height = 0;
   if (!in_place && viewer) {
     // Position the drop down list below the editor control (based on the style)
-    Rotation rot = viewer->viewer.getRotation();
+    Rotation rot = viewer->parent.getRotation();
     Rotater rr(rot, viewer->getRotation());
     RealRect r = rot.trRectToBB(rect ? *rect : rot.getInternalRect());
-    if (viewer->viewer.nativeLook()) {
+    if (viewer->nativeLook()) {
       pos           = RealPoint(r.x - 3, r.y - 3);
       size.width    = max(size.width, r.width + 6);
       parent_height = (int)r.height + 6;
@@ -282,8 +282,8 @@ int DropDownList::itemPosition(size_t item) const {
 void DropDownList::redrawArrowOnParent() {
   if (viewer) {
     ValueEditor* e = viewer->getEditor();
-    if (e && viewer->viewer.nativeLook()) {
-      CardEditor& editor = static_cast<CardEditor&>(viewer->viewer);
+    if (e && viewer->parent.nativeLook()) {
+      CardEditor& editor = static_cast<CardEditor&>(viewer->parent);
       shared_ptr<RotatedDC> dcP = editor.overdrawDC();
       RotatedDC& dc = *dcP;
       Rotater r(dc, viewer->getRotation());

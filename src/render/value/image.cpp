@@ -16,7 +16,7 @@
 IMPLEMENT_VALUE_VIEWER(Image);
 
 void ImageValueViewer::draw(RotatedDC& dc) {
-  DrawWhat what = viewer.drawWhat(this);
+  DrawWhat what = drawWhat();
   // reset?
   int w = max(0,(int)dc.trX(style().width)), h = max(0,(int)dc.trY(style().height));
   Radians a = dc.getAngle();

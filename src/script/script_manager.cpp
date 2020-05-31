@@ -142,7 +142,7 @@ void SetScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
 void SetScriptManager::onAction(const Action& action, bool undone) {
   TYPE_CASE(action, ValueAction) {
     if (action.card) {
-      updateValue(*action.valueP, const_cast<Card*>(action.card)->intrusive_from_this());
+      updateValue(*action.valueP, action.card);
       return;
     } else {
       // is it a keyword's fake value?

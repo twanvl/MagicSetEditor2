@@ -36,7 +36,7 @@ bool prepare_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& styl
   if (style.render_style & RENDER_IMAGE) {
     style.initImage();
     CachedScriptableImage& img = style.image;
-    Context& ctx = viewer.viewer.getContext();
+    Context& ctx = viewer.getContext();
     ctx.setVariable(SCRIPT_VAR_input, to_script(value));
     // generate to determine the size
     if (img.update(ctx) && img.isReady()) {
@@ -67,7 +67,7 @@ void draw_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, 
     CachedScriptableImage& img = style.image;
     if (style.content_dependent) {
       // re run script
-      Context& ctx = viewer.viewer.getContext();
+      Context& ctx = viewer.getContext();
       ctx.setVariable(SCRIPT_VAR_input, to_script(value));
       img.update(ctx);
     }
