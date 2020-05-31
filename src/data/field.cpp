@@ -189,15 +189,6 @@ int Style::update(Context& ctx) {
   return changed;
 }
 
-bool Style::isVisible() const {
-  return visible
-      &&     (width())  > 0      
-      && fabs(left())   < 100000
-      && fabs(right())  < 100000
-      &&     (height()) > 0      
-      && fabs(top())    < 100000
-      && fabs(bottom()) < 100000;
-}
 bool Style::hasSize() const {
   int h = is_setw(width)  + is_set(left) + is_set(right);
   int v = is_setw(height) + is_set(top)  + is_set(bottom);

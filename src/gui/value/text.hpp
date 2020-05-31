@@ -92,7 +92,7 @@ public:
   wxCursor cursor(const RealPoint& pos) const override;
   void determineSize(bool force_fit = false) override;
   bool containsPoint(const RealPoint& p) const override;
-  RealRect boundingBox() const override;
+  RealRect boundingBoxBorder() const override;
   void onShow(bool) override;
   void draw(RotatedDC&) override;
   

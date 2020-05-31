@@ -50,7 +50,7 @@ void ColorValueViewer::draw(RotatedDC& dc) {
             style().top_width  < style().height && style().bottom_width < style().height;
       if (clip) {
         // clip away the inside of the rectangle
-        wxRegion r = dc.trRectToRegion(style().getInternalRect());
+        wxRegion r = dc.trRectToRegion(dc.getInternalRect());
         r.Subtract(dc.trRectToRegion(RealRect(
           style().left_width,
           style().top_width,
@@ -59,7 +59,7 @@ void ColorValueViewer::draw(RotatedDC& dc) {
         )));
         dc.getDC().SetClippingRegion(r);
       }
-      dc.DrawRoundedRectangle(style().getInternalRect(), style().radius);
+      dc.DrawRoundedRectangle(dc.getInternalRect(), style().radius);
       if (clip) dc.getDC().DestroyClippingRegion();
     }
     drawFieldBorder(dc);
@@ -69,15 +69,15 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 bool ColorValueViewer::containsPoint(const RealPoint& p) const {
   // check against mask
   const AlphaMask& alpha_mask = getMask();
-  if (alpha_mask.isLoaded()) {
+  if (alpha_mask.isLoaded() || nativeLook()) {
     // check against mask
-    return alpha_mask.isOpaque(p, style().getSize());
+    return alpha_mask.isOpaque(p, bounding_box.size());
   } else {
     double left = p.x, right  = style().width  - p.x - 1;
     double top  = p.y, bottom = style().height - p.y - 1;
     if (left < 0 || right < 0 || top < 0 || bottom < 0) return false;  // outside bounding box
     // check against border
     return left < style().left_width || right  < style().right_width   // inside horizontal border
-      || top  < style().top_width  || bottom < style().bottom_width; // inside vertical border
+        || top  < style().top_width  || bottom < style().bottom_width; // inside vertical border
   }
 }

@@ -287,7 +287,7 @@ void DropDownList::redrawArrowOnParent() {
       shared_ptr<RotatedDC> dcP = editor.overdrawDC();
       RotatedDC& dc = *dcP;
       Rotater r(dc, viewer->getRotation());
-      draw_drop_down_arrow(&editor, dc.getDC(), dc.trRectToBB(dc.getInternalRect().grow(1)), IsShown());
+      draw_drop_down_arrow(&editor, dc.getDC(), dc.getExternalRect().grow(1), IsShown());
     }
   }
 }

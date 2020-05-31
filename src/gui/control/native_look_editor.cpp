@@ -35,14 +35,13 @@ void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {
   ValueEditor* e = v.getEditor();
   if (!e || e->drawLabel()) {
     // draw control border and box
-    Style& s = *v.getStyle();
-    draw_control_box(this, dc.getDC(), dc.trRectToBB(s.getInternalRect().grow(1)), current_editor == e, e != nullptr);
+    draw_control_box(this, dc.getDC(), dc.getExternalRect().grow(1), current_editor == e, e != nullptr);
     // draw label
     dc.SetFont(*wxNORMAL_FONT);
     dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
     // TODO : tr using stylesheet or using game?
-    dc.DrawText(tr(getStylePackage(), s.fieldP->caption, identity),
-          RealPoint(margin_left - s.left, 1));
+    dc.DrawText(tr(getStylePackage(), v.getField()->caption, identity),
+          RealPoint(margin_left - v.bounding_box.x, 1));
   }
   // draw viewer
   v.draw(dc);
@@ -76,15 +75,15 @@ void NativeLookEditor::resizeViewers() {
     StyleP s = v->getStyle();
     ValueEditor* e = v->getEditor();
     if (!e || e->drawLabel()) {
-      s->left = margin + label_width;
+      v->bounding_box.x = margin + label_width;
     } else {
-      s->left = margin;
+      v->bounding_box.x = margin;
     }
-    s->top  = y;
-    s->width  = w - s->left - margin;
-    s->height = default_height;
+    v->bounding_box.y  = y;
+    v->bounding_box.width  = w - v->bounding_box.x - margin;
+    v->bounding_box.height = s->height() == 0 ? default_height : s->height;
     if (e) e->determineSize();
-    y += s->height + vspace;
+    y += v->bounding_box.height + vspace;
   }
   y = y - vspace + margin;
   SetVirtualSize(w, (int)y);
@@ -93,17 +92,6 @@ void NativeLookEditor::resizeViewers() {
   }
   if (y >= h) {
     // Doesn't fit vertically, add scrollbar and resize
-    /*
-    y = margin;
-    FOR_EACH(v, viewers) {
-      StyleP s = v->getStyle();
-      ValueEditor* e = v->getEditor();
-      s->top  = y;
-      s->width = s->width - wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, this);
-      if (e) e->determineSize();
-      y += s->height + vspace;
-    }
-    */
     // create scrollbar
   }
 }

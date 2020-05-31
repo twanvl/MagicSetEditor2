@@ -21,7 +21,7 @@ IMPLEMENT_VALUE_VIEWER(Symbol);
 void SymbolValueViewer::draw(RotatedDC& dc) {
   drawFieldBorder(dc);
   // draw checker background
-  draw_checker(dc, style().getInternalRect());
+  draw_checker(dc, dc.getInternalRect());
   double wh = min(dc.getWidth(), dc.getHeight());
   // try to load symbol
   if (symbols.empty() && !value().filename.empty()) {

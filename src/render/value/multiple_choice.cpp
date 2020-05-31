@@ -24,7 +24,7 @@ bool MultipleChoiceValueViewer::prepare(RotatedDC& dc) {
 void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
   drawFieldBorder(dc);
   if (style().render_style & RENDER_HIDDEN) return;
-  RealPoint pos = align_in_rect(style().alignment, RealSize(0,0), style().getInternalRect());
+  RealPoint pos = align_in_rect(style().alignment, RealSize(0,0), dc.getInternalRect());
   // selected choices
   vector<String> selected;
   value().get(selected);

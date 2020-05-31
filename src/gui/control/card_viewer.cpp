@@ -44,7 +44,7 @@ void CardViewer::redraw(const ValueViewer& v) {
   // causing the two viewers to continously refresh.
   if (drawing_card()) return;
   up_to_date = false;
-  RefreshRect(getRotation().trRectToBB(v.boundingBox()), false);
+  RefreshRect(getRotation().trRectToBB(v.boundingBoxBorder()), false);
 }
 
 void CardViewer::onChange() {
@@ -112,7 +112,7 @@ bool CardViewer::shouldDraw(const ValueViewer& v) const {
 //  int dx = GetScrollPos(wxHORIZONTAL), dy = GetScrollPos(wxVERTICAL);
 //  wxRegion clip = GetUpdateRegion();
 //  clip.Offset(dx, dy);
-  return GetUpdateRegion().Contains(getRotation().trRectToBB(v.boundingBox().toRect()).toRect()) != wxOutRegion;
+  return GetUpdateRegion().Contains(getRotation().trRectToBB(v.boundingBoxBorder().toRect()).toRect()) != wxOutRegion;
 }
 
 // helper class for overdrawDC()

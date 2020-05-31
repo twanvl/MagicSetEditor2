@@ -546,7 +546,7 @@ void TextViewer::prepareLinesTryScales(RotatedDC& dc, const String& text, const 
 // Try to fit a blank line in the masked image, move down until it fits
 RealSize TextViewer::fitLineWidth(Line& line, RotatedDC& dc, const TextStyle& style) const {
   RealSize line_size(line.margin_left + lineLeft(dc, style, line.top), 0);
-  while (line.top < style.height && line_size.width + 1 >= style.width - style.padding_right - line.margin_right) {
+  while (line.top < dc.getHeight() && line_size.width + 1 >= dc.getWidth() - style.padding_right - line.margin_right) {
     // nothing fits on this line, move down one pixel
     line.top += 1;
     line_size.width = line.margin_left + lineLeft(dc, style, line.top);

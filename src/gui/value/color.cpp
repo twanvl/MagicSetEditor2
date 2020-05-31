@@ -148,7 +148,7 @@ void ColorValueEditor::draw(RotatedDC& dc) {
   }
 }
 void ColorValueEditor::determineSize(bool) {
-  style().height = 20;
+  bounding_box.height = 20;
 }
 
 void ColorValueEditor::change(const Defaultable<Color>& c) {

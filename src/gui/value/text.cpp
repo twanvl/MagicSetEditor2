@@ -627,7 +627,7 @@ wxMenu* TextValueEditor::getMenu(int type) const {
 void TextValueEditor::draw(RotatedDC& dc) {
   if (nativeLook()) {
     // clip the dc to the region of this control
-    dc.SetClippingRegion(style().getInternalRect());
+    dc.SetClippingRegion(dc.getInternalRect());
   }
   // update scrollbar
   prepareDrawScrollbar(dc);
@@ -663,7 +663,7 @@ void TextValueEditor::redrawSelection(size_t old_selection_start_i, size_t old_s
     Rotater r(dc, getRotation());
     if (nativeLook()) {
       // clip the dc to the region of this control
-      dc.SetClippingRegion(style().getInternalRect());
+      dc.SetClippingRegion(dc.getInternalRect());
     }
     // clear old selection by drawing it again
     if (!old_drop_down_shown) {
@@ -727,9 +727,8 @@ bool TextValueEditor::containsPoint(const RealPoint& pos) const {
   if (word_lists.empty()) return false;
   return (bool) findWordList(pos);
 }
-RealRect TextValueEditor::boundingBox() const {
-  if (word_lists.empty()) return ValueViewer::boundingBox();
-  RealRect r = style().getInternalRect().grow(1);
+RealRect TextValueEditor::boundingBoxBorder() const {
+  RealRect r = ValueViewer::boundingBoxBorder();
   FOR_EACH_CONST(wl, word_lists) {
     r.width = max(r.width, wl->rect.right() + 9);
   }
@@ -1255,14 +1254,16 @@ void TextValueEditor::determineSize(bool force_fit) {
     // muliline, determine scrollbar size
     Rotation rot = parent.getRotation();
     Rotater r(rot, getRotation());
-    if (!force_fit) style().height = 100;
+    if (!force_fit) {
+      style().height = bounding_box.height = 100;
+    }
     int sbw = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
     RealPoint pos = rot.tr(RealPoint(0,0));
     scrollbar->SetSize(
-      (int)(pos.x + rot.trX(style().width) + 1 - sbw),
+      (int)(pos.x + rot.trX(bounding_box.width) + 1 - sbw),
       (int)pos.y - 1,
       (int)sbw,
-      (int)rot.trY(style().height) + 2);
+      (int)rot.trY(bounding_box.height) + 2);
     v.reset(true);
   } else {
     // Height depends on font
@@ -1272,6 +1273,7 @@ void TextValueEditor::determineSize(bool force_fit) {
     dc.SetFont(style().font.toWxFont(1.0));
     style().height = dc.GetCharHeight() + 2 + style().padding_top + style().padding_bottom;
   }
+  bounding_box.height = style().height;
 }
 
 void TextValueEditor::onShow(bool showing) {

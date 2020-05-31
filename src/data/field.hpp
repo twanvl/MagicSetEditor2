@@ -118,15 +118,12 @@ public:
   } automatic_side : 8;  ///< Which of (left, width,  right) and (top,  height, bottom) is determined automatically?
   bool content_dependent;  ///< Does this style depend on content properties?
   
-  inline RealPoint getPos()  const { return RealPoint(left, top               ); }
-  inline RealSize  getSize() const { return RealSize (           width, height); }
-  inline RealRect  getExternalRect() const { return RealRect (left, top, width, height); }
-  inline RealRect  getInternalRect() const { return RealRect(0, 0, width, height); }
+  inline RealPoint getPos()  const { return RealPoint(left, top); }
+  inline RealSize  getSize() const { return RealSize(width, height); }
+  inline RealRect  getExternalRect() const { return RealRect(left, top, width, height); }
   
   /// Does this style have a non-zero size (or is it scripted)?
   bool hasSize() const;
-  /// Is this style visible, and does it have a sane size 
-  bool isVisible() const;
   
   /// Get a copy of this style
   virtual StyleP clone() const = 0;

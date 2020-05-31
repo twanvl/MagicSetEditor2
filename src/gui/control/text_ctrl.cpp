@@ -55,9 +55,9 @@ TextFieldP TextCtrl::getFieldP() {
 }
 void TextCtrl::updateSize() {
   wxSize cs = GetClientSize();
-  Style& style = getStyle();
-  style.width  = cs.GetWidth()  - 2;
-  style.height = cs.GetHeight() - 2;
+  ValueViewer& viewer = *viewers.front();
+  viewer.bounding_box.width  = cs.GetWidth()  - 2;
+  viewer.bounding_box.height = cs.GetHeight() - 2;
   viewers.front()->getEditor()->determineSize(true);
 }
 
@@ -76,9 +76,9 @@ void TextCtrl::onChangeSet() {
   // initialize
   if (viewers.empty()) {
     // create a field, style and value
-    TextFieldP field(new TextField);
-    TextStyleP style(new TextStyle(field));
-    TextValueP value(new FakeTextValue(field, nullptr, false, false));
+    TextFieldP field = make_intrusive<TextField>();
+    TextStyleP style = make_intrusive<TextStyle>(field);
+    TextValueP value = make_intrusive<FakeTextValue>(field, nullptr, false, false);
     // set stuff
     field->index = 0;
     field->multi_line = multi_line;

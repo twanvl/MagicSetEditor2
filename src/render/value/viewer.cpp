@@ -14,6 +14,7 @@
 
 ValueViewer::ValueViewer(DataViewer& parent, const StyleP& style)
   : StyleListener(style), parent(parent)
+  , bounding_box(style->getExternalRect())
 {}
 
 Package& ValueViewer::getStylePackage() const { return parent.getStylePackage(); }
@@ -27,14 +28,21 @@ void ValueViewer::setValue(const ValueP& value) {
 }
 
 bool ValueViewer::containsPoint(const RealPoint& p) const {
-  return getMask().isOpaque(p, styleP->getSize());
+  return getMask().isOpaque(p, bounding_box.size());
 }
-RealRect ValueViewer::boundingBox() const {
-  return styleP->getExternalRect().grow(1);
+RealRect ValueViewer::boundingBoxBorder() const {
+  return bounding_box.grow(1);
+}
+bool ValueViewer::isVisible() const {
+  return getStyle()->visible
+    && bounding_box.width > 0
+    && bounding_box.height > 0
+    && fabs(bounding_box.x) < 100000
+    && fabs(bounding_box.y) < 100000;
 }
 
 Rotation ValueViewer::getRotation() const {
-  return Rotation(deg_to_rad(getStyle()->angle), getStyle()->getExternalRect(), 1.0, getStretch());
+  return Rotation(deg_to_rad(getStyle()->angle), bounding_box, 1.0, getStretch());
 }
 
 #if defined(__WXMSW__)
@@ -113,4 +121,6 @@ void ValueViewer::onStyleChange(int changes) {
   if (!(changes & CHANGE_ALREADY_PREPARED)) {
     parent.redraw(*this);
   }
+  // update bounding box
+  if (!nativeLook()) bounding_box = getStyle()->getExternalRect();
 }

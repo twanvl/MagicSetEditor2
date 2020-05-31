@@ -159,7 +159,7 @@ public:
   inline RealPoint bottomRight() const { return RealPoint(x + width, y + height); }
   
   /// Return a rectangle that is amount larger to all sides
-  inline RealRect grow(double amount) {
+  inline RealRect grow(double amount) const {
     return RealRect(x - amount, y - amount, width + 2 * amount, height + 2 * amount);
   }
   /// Move the coordinates by some amount

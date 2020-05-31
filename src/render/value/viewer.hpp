@@ -50,7 +50,9 @@ public:
   /// Does this field contian the given point?
   virtual bool containsPoint(const RealPoint& p) const;
   /// Get a bounding rectangle for this field (including any border it may have)
-  virtual RealRect boundingBox() const;
+  virtual RealRect boundingBoxBorder() const;
+  /// Is this field visible?
+  bool isVisible() const;
   
   /// Rotation to use for drawing this field
   virtual Rotation getRotation() const;
@@ -73,6 +75,7 @@ public:
 
 public:
   DataViewer& parent; ///< Our parent object
+  RealRect bounding_box; ///< The bounding box of this viewer. Corresponds to styleP->getExternalRect(), except for native look editor
 protected:
   ValueP valueP; ///< The value we are currently viewing
   

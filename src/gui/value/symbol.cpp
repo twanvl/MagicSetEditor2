@@ -27,7 +27,7 @@ void SymbolValueEditor::draw(RotatedDC& dc) {
     dc.SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL));
     dc.SetTextForeground(*wxBLACK);
     RealSize text_size = dc.GetTextExtent(_("double click to edit symbol"));
-    dc.DrawText(_("double click to edit symbol"), align_in_rect(ALIGN_MIDDLE_CENTER, text_size, style().getInternalRect()));
+    dc.DrawText(_("double click to edit symbol"), align_in_rect(ALIGN_MIDDLE_CENTER, text_size, dc.getInternalRect()));
   }
   if (nativeLook()) {
     // draw editor buttons
@@ -38,9 +38,9 @@ void SymbolValueEditor::draw(RotatedDC& dc) {
 }
 void SymbolValueEditor::drawButton(RotatedDC& dc, int button, const String& text) {
   bool down = button == button_down;
-  double height = style().height;
-  double width  = style().height + 2;
-  double x = style().width - width - (width + 1) * button;
+  double height = bounding_box.height;
+  double width  = bounding_box.height + 2;
+  double x = bounding_box.width - width - (width + 1) * button;
   double y = 0;
   // draw button
   draw_button(&editor(), dc.getDC(), dc.trRectToBB(RealRect(x,y,width,height)), false, down, true);
@@ -54,8 +54,8 @@ void SymbolValueEditor::drawButton(RotatedDC& dc, int button, const String& text
 }
 
 int SymbolValueEditor::findButton(const RealPoint& pos) {
-  if (pos.y < 0 || pos.y >= style().height) return -1;
-  int button = (int)floor( (style().width - pos.x) / (style().height + 3) );
+  if (pos.y < 0 || pos.y >= bounding_box.height) return -1;
+  int button = (int)floor( (bounding_box.width - pos.x) / (bounding_box.height + 3) );
   if (button >= 0 && button <= 1) return button;
   return -1;
 }
@@ -107,7 +107,8 @@ bool SymbolValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent&) {
 }
 
 void SymbolValueEditor::determineSize(bool) {
-  style().height = 50;
+  if (style().height == 0) style().height = 50;
+  bounding_box.height = 50;
 }
 
 

@@ -150,7 +150,7 @@ struct CompareTabOrder {
 };
 
 bool is_enabled(ValueViewerP const& v) {
-  return v->getField()->editable && v->getStyle()->isVisible();
+  return v->getField()->editable && v->isVisible();
 }
 
 bool DataEditor::selectWithTab(vector<ValueViewerP>::iterator const& it) {
@@ -210,7 +210,7 @@ bool DataEditor::search(Iterator it, Iterator end, FindInfo& find, bool from_sta
   for (;it != end; ++it) {
     ValueViewer* viewer = *it;
     if (viewer == current_viewer) include = true;
-    if (include && viewer->getField()->editable && viewer->getStyle()->isVisible()) {
+    if (include && viewer->getField()->editable && viewer->isVisible()) {
       ValueEditor* editor = viewer->getEditor();
       if (editor) {
         if (editor && editor->search(find, from_start || viewer != current_viewer)) {

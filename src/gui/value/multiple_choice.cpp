@@ -105,7 +105,7 @@ void MultipleChoiceValueEditor::determineSize(bool force_fit) {
   item_height = 18;
   // height depends on number of items and item height
   int item_count = field().choices->lastId();
-  style().height = item_count * item_height;
+  bounding_box.height = item_count * item_height;
 }
 
 bool MultipleChoiceValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {

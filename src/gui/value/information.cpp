@@ -14,5 +14,5 @@
 IMPLEMENT_VALUE_EDITOR(Info) {}
 
 void InfoValueEditor::determineSize(bool) {
-  style().height = 26;
+  bounding_box.height = 26;
 }
