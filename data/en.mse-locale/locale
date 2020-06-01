@@ -84,8 +84,8 @@ menu:
 	window:			&Window
 	new window:			&New Window
 	cards tab:			&Cards	Alt+1
-	set info tab:		&Set Information	Alt+2
-	style tab:			St&yle	Alt+3
+	style tab:			St&yle	Alt+2
+	set info tab:		&Set Information	Alt+3
 	keywords tab:		&Keywords	Alt+4
 	stats tab:			S&tatistics	Alt+5
 	random pack tab:	&Random Packs	Alt+6
