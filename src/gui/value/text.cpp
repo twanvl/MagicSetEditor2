@@ -416,7 +416,7 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
       } else {
         moveSelection(TYPE_CURSOR, prevCharBoundary(selection_end),  !ev.ShiftDown(), MOVE_LEFT);
       }
-      break;
+      return true;
     case WXK_RIGHT:
       // move left (selection?)
       if (ev.ControlDown()) {
@@ -424,11 +424,11 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
       } else {
         moveSelection(TYPE_CURSOR, nextCharBoundary(selection_end),  !ev.ShiftDown(), MOVE_RIGHT);
       }
-      break;
+      return true;
     case WXK_UP:
       if ( wordListDropDown(findWordList(selection_end_i)) ) break;
       moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, -1), !ev.ShiftDown(), MOVE_LEFT_OPT);
-      break;
+      return true;
     case WXK_DOWN:
       if ( wordListDropDown(findWordList(selection_end_i)) ) break;
       moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, +1), !ev.ShiftDown(), MOVE_RIGHT_OPT);
@@ -440,7 +440,7 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
       } else {
         moveSelection(TYPE_INDEX, v.lineStart(selection_end_i), !ev.ShiftDown(), MOVE_LEFT_OPT);
       }
-      break;
+      return true;
     case WXK_END:
       // move to end of line / all (if control)
       if (ev.ControlDown()) {
@@ -448,7 +448,7 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
       } else {
         moveSelection(TYPE_INDEX, v.lineEnd(selection_end_i), !ev.ShiftDown(), MOVE_RIGHT_OPT);
       }
-      break;
+      return true;
     case WXK_BACK:
       if (selection_start == selection_end) {
         // if no selection, select previous character
@@ -460,7 +460,7 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
         }
       }
       replaceSelection(wxEmptyString, _ACTION_("backspace"));
-      break;
+      return true;
     case WXK_DELETE:
       if (selection_start == selection_end) {
         // if no selection select next
@@ -471,7 +471,7 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
         }
       }
       replaceSelection(wxEmptyString, _ACTION_("delete"));
-      break;
+      return true;
     case WXK_RETURN:
       if (field().multi_line) {
         if (ev.ShiftDown()) {
@@ -481,7 +481,7 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
           replaceSelection(_("\n"), _ACTION_("enter"));
         }
       }
-      break;
+      return true;
     default:
       #ifdef __WXMSW__
       if (ev.GetKeyCode() >= _(' ') && ev.GetKeyCode() == (int)ev.GetRawKeyCode()) {
@@ -498,11 +498,11 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
         #else
           replaceSelection(escape(String((Char)ev.GetKeyCode(), 1)), _ACTION_("typing"), true);
         #endif
+        return true;
       } else {
         return false;
       }
   }
-  return true;
 }
 
 // ----------------------------------------------------------------------------- : Spellchecking

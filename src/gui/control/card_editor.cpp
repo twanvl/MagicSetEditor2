@@ -453,7 +453,11 @@ void DataEditor::onChar(wxKeyEvent& ev) {
       GetParent()->HandleWindowEvent(evt);
     }
   } else if (current_editor) {
-    current_editor->onChar(ev);
+    if (!current_editor->onChar(ev)) {
+      ev.Skip();
+    }
+  } else {
+    ev.Skip();
   }
 }
 

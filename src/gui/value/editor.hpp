@@ -50,7 +50,7 @@ public:
   virtual void onMouseLeave (const RealPoint& pos, wxMouseEvent& ev) {}
   virtual bool onMouseWheel (const RealPoint& pos, wxMouseEvent& ev) { return false; }
   
-  /// Key events
+  /// Key events. Returns true if event was handled
   virtual bool onChar(wxKeyEvent& ev) { return false; }
   
   /// a context menu is requested, add extra items to the menu m
