@@ -28,7 +28,9 @@ DECLARE_LOCAL_EVENT_TYPE(EVENT_GRAPH_SELECT, <not used>)
 // ----------------------------------------------------------------------------- : Graph data
 
 /// A group in a table or graph
-/** A group is rendered as a single bar or pie slice */
+/** This corresponds to a specific value on an axis. For example "red" would be a GraphGroup for the "color" GraphAxis
+ *  A group is rendered as a single bar or pie slice.
+ */
 class GraphGroup : public IntrusivePtrBase<GraphGroup> {
 public:
   GraphGroup(const String& name, UInt size, const Color& color = *wxBLACK)
@@ -62,17 +64,17 @@ public:
     , order(order)
   {}
   
-  String             name;    ///< Name/label of this axis
-  AutoColor          auto_color;  ///< Automatically assign colors to the groups on this axis
-  vector<GraphGroup> groups;    ///< Groups along this axis
-  bool               numeric;    ///< Numeric axis?
-  double             bin_size;  ///< Group numeric values into bins of this size
-  UInt               max;      ///< Maximum size of the groups
-  UInt               total;    ///< Sum of the size of all groups
-  double             mean_value;    ///< Mean value, only for numeric axes
-  double             max_value;    ///< Maximal value, only for numeric axes
-  const map<String,Color>* colors;  ///< Colors for each choice (optional)
-  const vector<String>*    order;    ///< Order of the items (optional)
+  String                   name;         ///< Name/label of this axis
+  AutoColor                auto_color;   ///< Automatically assign colors to the groups on this axis
+  vector<GraphGroup>       groups;       ///< Groups along this axis
+  bool                     numeric;      ///< Numeric axis?
+  double                   bin_size;     ///< Group numeric values into bins of this size
+  UInt                     max;          ///< Maximum size of the groups
+  UInt                     total;        ///< Sum of the size of all groups
+  double                   mean_value;   ///< Mean value, only for numeric axes
+  double                   max_value;    ///< Maximal value, only for numeric axes
+  const map<String,Color>* colors;       ///< Colors for each choice (optional)
+  const vector<String>*    order;        ///< Order of the items (optional)
   
   /// Add a graph group
   void addGroup(const String& name, UInt size);
@@ -88,6 +90,8 @@ public:
 };
 
 /// Data to be displayed in a graph, not processed yet
+/** Requires: for (e : elements) e.values.size() == axes.size()
+ */
 class GraphDataPre {
 public:
   vector<GraphAxisP>    axes;

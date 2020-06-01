@@ -85,9 +85,10 @@ GraphData::GraphData(const GraphDataPre& d)
 {
   // find groups on each axis
   size_t i = 0;
-  FOR_EACH(a, axes) {
+  for (auto const& a : axes) {
     map<String,UInt,SmartLess> counts; // note: default constructor for UInt() does initialize to 0
     FOR_EACH_CONST(e, d.elements) {
+      assert(e->values.size() == axes.size());
       counts[e->values[i]] += 1;
     }
     if (a->numeric) {

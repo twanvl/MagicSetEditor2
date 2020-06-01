@@ -477,7 +477,7 @@ void StatsPanel::showCategory(const GraphType* prefer_layout) {
   // find values for each card
   for (size_t i = 0 ; i < set->cards.size() ; ++i) {
     Context& ctx = set->getContext(set->cards[i]);
-    GraphElementP e(new GraphElement(i));
+    GraphElementP e = make_intrusive<GraphElement>(i);
     bool show = true;
     FOR_EACH(dim, dims) {
       try {
@@ -490,9 +490,12 @@ void StatsPanel::showCategory(const GraphType* prefer_layout) {
         }
       } catch (ScriptError const& e) {
         handle_error(ScriptError(e.what() + _("\n  in script for statistics dimension '") + dim->name + _("'")));
+        show = false;
+        break;
       }
     }
     if (show) {
+      assert(e->values.size() == dims.size());
       d.elements.push_back(e);
     }
   }
