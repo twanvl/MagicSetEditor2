@@ -52,7 +52,7 @@ void NativeLookEditor::resizeViewers() {
   double y = margin;
   int w, h;
   GetClientSize(&w, &h);
-  const int default_height = 17;
+  const double default_height = 17;
   // Determine label width
   {
     label_width = 0;
@@ -81,7 +81,7 @@ void NativeLookEditor::resizeViewers() {
     }
     v->bounding_box.y  = y;
     v->bounding_box.width  = w - v->bounding_box.x - margin;
-    v->bounding_box.height = s->height() == 0 ? default_height : s->height;
+    v->bounding_box.height = s->height() == 0 ? default_height : s->height();
     if (e) e->determineSize();
     y += v->bounding_box.height + vspace;
   }
