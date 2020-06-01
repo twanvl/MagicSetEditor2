@@ -23,6 +23,9 @@ DECLARE_POINTER_TYPE(ImageValue);
 /// A field for image values
 class ImageField : public Field {
 public:
+  ImageField() {
+    show_statistics = false; // no statistics on image fields by default, that just leads to errors
+  }
   // no extra data
   DECLARE_FIELD_TYPE(Image);
 };
