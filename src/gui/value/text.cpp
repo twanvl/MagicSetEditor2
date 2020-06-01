@@ -899,7 +899,7 @@ void TextValueEditor::showCaret() {
   }
   // clip caret pos and size; show caret
   if (nativeLook()) {
-    if (cursor.y + cursor.height <= 0 || cursor.y >= style().height) {
+    if (cursor.y + cursor.height <= 0 || cursor.y >= bounding_box.height) {
       // caret should be hidden
       if (caret->IsVisible()) caret->Hide();
       return;
@@ -907,9 +907,9 @@ void TextValueEditor::showCaret() {
       // caret partially hidden, clip
       cursor.height -= -cursor.y;
       cursor.y = 0;
-    } else if (cursor.y + cursor.height >= style().height) {
+    } else if (cursor.y + cursor.height >= bounding_box.height) {
       // caret partially hidden, clip
-      cursor.height = style().height - cursor.y;
+      cursor.height = bounding_box.height - cursor.y;
     }
   }
   // rotate
@@ -1255,7 +1255,7 @@ void TextValueEditor::determineSize(bool force_fit) {
     Rotation rot = parent.getRotation();
     Rotater r(rot, getRotation());
     if (!force_fit) {
-      style().height = bounding_box.height = 100;
+      bounding_box.height = 100;
     }
     int sbw = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
     RealPoint pos = rot.tr(RealPoint(0,0));
@@ -1271,9 +1271,8 @@ void TextValueEditor::determineSize(bool force_fit) {
     Bitmap bmp(1,1);
     dc.SelectObject(bmp);
     dc.SetFont(style().font.toWxFont(1.0));
-    style().height = dc.GetCharHeight() + 2 + style().padding_top + style().padding_bottom;
+    bounding_box.height = dc.GetCharHeight() + 2 + style().padding_top + style().padding_bottom;
   }
-  bounding_box.height = style().height;
 }
 
 void TextValueEditor::onShow(bool showing) {
@@ -1305,7 +1304,7 @@ void TextValueEditor::scrollTo(int pos) {
 bool TextValueEditor::ensureCaretVisible() {
   if (scrollbar && scroll_with_cursor) {
     scroll_with_cursor = false;
-    return v.ensureVisible(style().height - style().padding_top - style().padding_bottom, selection_end_i);
+    return v.ensureVisible(bounding_box.height - style().padding_top - style().padding_bottom, selection_end_i);
   }
   return false;
 }
@@ -1313,7 +1312,7 @@ bool TextValueEditor::ensureCaretVisible() {
 void TextValueEditor::updateScrollbar() {
   assert(scrollbar);
   int position  = (int)v.firstVisibleLine();
-  int page_size = (int)v.visibleLineCount(style().height - style().padding_top - style().padding_bottom);
+  int page_size = (int)v.visibleLineCount(bounding_box.height - style().padding_top - style().padding_bottom);
   int range     = (int)v.lineCount();
   scrollbar->SetScrollbar(
     wxVERTICAL,

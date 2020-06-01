@@ -123,8 +123,8 @@ wxSize TextCtrl::DoGetBestSize() const {
     return wxSize(1,1);
   } else {
     wxSize ws = GetSize(), cs = GetClientSize();
-    Style& style = *viewers.front()->getStyle();
-    return wxSize(style.width, style.height) + ws - cs;
+    ValueViewer& viewer = *viewers.front();
+    return wxSize(viewer.bounding_box.width, viewer.bounding_box.height) + ws - cs;
   }
 }
 
