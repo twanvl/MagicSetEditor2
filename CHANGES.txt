@@ -26,6 +26,7 @@ Template features:
  * Added <li> tag for list bullet points. (Experimental!)
  * Colors can now be written using hex notation, #rrggbb / #rrggbbaa, and short hex notation (#rgb / #rgba)
  * Added card_style.field.layout, with information on the position of each line and paragraph in a text box.
+ * It is now possible to set the width and height of set info and style fields. This is especially useful for set specific images like watermarks and symbols.
 
 Scripting:
  * Added type_name function
