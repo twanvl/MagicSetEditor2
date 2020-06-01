@@ -426,13 +426,13 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
       }
       return true;
     case WXK_UP:
-      if ( wordListDropDown(findWordList(selection_end_i)) ) break;
+      if (wordListDropDown(findWordList(selection_end_i))) return true;
       moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, -1), !ev.ShiftDown(), MOVE_LEFT_OPT);
       return true;
     case WXK_DOWN:
-      if ( wordListDropDown(findWordList(selection_end_i)) ) break;
+      if (wordListDropDown(findWordList(selection_end_i))) return true;
       moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, +1), !ev.ShiftDown(), MOVE_RIGHT_OPT);
-      break;
+      return true;
     case WXK_HOME:
       // move to begining of line / all (if control)
       if (ev.ControlDown()) {
