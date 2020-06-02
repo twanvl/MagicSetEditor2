@@ -502,7 +502,7 @@ String expand_keywords(const String& tagged_str, vector<KeywordMatch> const& mat
         if (is_tag(it, end, "<atom")) {
           atom++;
         } else if (is_tag(it, end, "</atom")) {
-          atom++;
+          atom--;
         }
         // keep tag in output
         auto after = skip_tag(it, end);
@@ -519,21 +519,23 @@ String expand_keywords(const String& tagged_str, vector<KeywordMatch> const& mat
     skip_tags_for_keyword(false, true);
     if (it == end) break;
     // is there a match here?
-    if (atom == 0) // don't expand keywords that are inside <atom> tags
-    while (match_it != matches.end() && match_it->pos <= untagged_pos) {
-      if (match_it->pos > untagged_pos) {
-        ++match_it;
-        continue;
-      }
-      // try to expand
-      auto [match,new_it] = expand_keyword(it, end, *match_it, expand_type, out, options);
-      if (match) {
-        untagged_pos += untagged_length(it,new_it);
-        it = new_it;
-        ++match_it;
-        goto after_match;
-      } else {
-        ++match_it;
+    if (atom == 0) {
+      // don't expand keywords that are inside <atom> tags
+      while (match_it != matches.end() && match_it->pos <= untagged_pos) {
+        if (match_it->pos > untagged_pos) {
+          ++match_it;
+          continue;
+        }
+        // try to expand
+        auto [match,new_it] = expand_keyword(it, end, *match_it, expand_type, out, options);
+        if (match) {
+          untagged_pos += untagged_length(it,new_it);
+          it = new_it;
+          ++match_it;
+          goto after_match;
+        } else {
+          ++match_it;
+        }
       }
     }
     // No match, so there is at least one character not part of a keyword
