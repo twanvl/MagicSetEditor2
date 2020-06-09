@@ -10,7 +10,7 @@ Bug fixes:
  * Fixed: keywords after atoms were not showing up (#67)
  * Fixed: multiple keywords that matched in the same place both showed reminder text. (#70)
    Now, when there are overlapping matches the longest one is used.
- * Fixed: image slicing window now uses "size to fit" by default
+ * Fixed: Slice Image window defaulting to Force to Fit (#69)
 
 ------------------------------------------------------------------------------
 -- 2.1.0, 2020-06-01
