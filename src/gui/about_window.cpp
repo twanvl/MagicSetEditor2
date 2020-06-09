@@ -16,12 +16,12 @@
 
 AboutWindow::AboutWindow(Window* parent)
   : wxDialog(parent, wxID_ANY, _TITLE_("about"), wxDefaultPosition, wxSize(510,340), wxCLIP_CHILDREN | wxDEFAULT_DIALOG_STYLE | wxTAB_TRAVERSAL)
-  , logo (load_resource_image(_("about")))
+  , logo(load_resource_image(_("about")))
 {
   // init controls
   wxControl* ok_button = new HoverButton(this, wxID_OK, _("btn_ok"));
   wxSize bs = ok_button->GetSize(), ws = GetClientSize();
-  ok_button->Move(ws.GetWidth() - bs.GetWidth(),  ws.GetHeight() - bs.GetHeight()); // align bottom right
+  ok_button->Move(ws.GetWidth() - bs.GetWidth() - 10,  ws.GetHeight() - bs.GetHeight() - 10); // align bottom right
 }
 
 bool AboutWindow::Layout() {
@@ -33,6 +33,8 @@ void AboutWindow::onPaint(wxPaintEvent& ev) {
   draw(dc);
 }
 
+const char* MSE_AUTHORS[] = {"Twan van Laarhoven (twanvl)", "Sean Hunt (coppro)", "Alissa Rao (Lymia)"};
+
 void AboutWindow::draw(DC& dc) {
   wxSize ws = GetClientSize();
   // draw background
@@ -41,22 +43,20 @@ void AboutWindow::draw(DC& dc) {
   dc.DrawRectangle(0, 0, ws.GetWidth(), ws.GetHeight());
   // draw logo
   dc.DrawBitmap(logo,  (ws.GetWidth() -  logo.GetWidth()) / 2, 5);
-  #if USE_BETA_LOGO
-    dc.DrawBitmap(logo2,  ws.GetWidth() - logo2.GetWidth(),      ws.GetHeight() - logo2.GetHeight());
-  #endif
-  // draw version box
-  dc.SetPen  (wxPen(wxColor(184,29,19), 2));
-  dc.SetBrush(wxColor(114,197,224));
-  dc.DrawRectangle(28, 104, 245, 133);
-  dc.SetTextBackground(wxColor(114,197,224));
-  dc.SetTextForeground(wxColor(0,0,0));
   // draw version info
   dc.SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, _("Arial")));
-  dc.DrawText(_("Version: ") + app_version.toString() + version_suffix, 34, 110);
-  dc.DrawText(_("Copyright \xA9 2001-2011"), 34, 130);
-  dc.DrawText(_("   Twan van Laarhoven,"), 34, 147);
-  dc.DrawText(_("   Sean Hunt,"), 34, 164);
-  dc.DrawText(_("   and the other MSE developers"), 34, 181);
+  int x = 34, y = 110;
+  dc.DrawText(_("Version: ") + app_version.toString() + version_suffix, x, y);
+  y += 30;
+  // license
+  dc.DrawText(_("This program is free software and released under the GNU General Public\nLicense version 2 or later."), x, y);
+  y += 30+18;
+  // draw author info
+  dc.DrawText(_("Developed by"), x, y);
+  for (auto name : MSE_AUTHORS) {
+    y += 18;
+    dc.DrawText(name, x + 20, y);
+  }
 }
 
 BEGIN_EVENT_TABLE(AboutWindow, wxDialog)
