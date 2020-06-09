@@ -33,35 +33,23 @@ WelcomeWindow::WelcomeWindow()
   SetBackgroundStyle(wxBG_STYLE_PAINT);
 
   // init controls
-  #ifdef USE_HOVERBUTTON
-    wxControl* new_set   = new HoverButtonExt(this, ID_FILE_NEW,           load_resource_image(_("welcome_new")),     _BUTTON_("new set"),       _HELP_("new set"));
-    wxControl* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,          load_resource_image(_("welcome_open")),    _BUTTON_("open set"),      _HELP_("open set"));
-    #if !USE_OLD_STYLE_UPDATE_CHECKER
-    wxControl* updates   = new HoverButtonExt(this, ID_FILE_CHECK_UPDATES, load_resource_image(_("welcome_updates")), _BUTTON_("check updates"), _HELP_("check updates"));
-    #endif
-  #else
-    wxControl* new_set   = new wxButton(this, ID_FILE_NEW,           _BUTTON_("new set"));
-    wxControl* open_set  = new wxButton(this, ID_FILE_OPEN,          _BUTTON_("open set"));
-    #if !USE_OLD_STYLE_UPDATE_CHECKER
-    wxControl* updates   = new wxButton(this, ID_FILE_CHECK_UPDATES, _BUTTON_("check updates"));
-    #endif
+  wxControl* new_set   = new HoverButtonExt(this, ID_FILE_NEW,           load_resource_image(_("welcome_new")),     _BUTTON_("new set"),       _HELP_("new set"));
+  wxControl* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,          load_resource_image(_("welcome_open")),    _BUTTON_("open set"),      _HELP_("open set"));
+  #if !USE_OLD_STYLE_UPDATE_CHECKER
+  wxControl* updates   = new HoverButtonExt(this, ID_FILE_CHECK_UPDATES, load_resource_image(_("welcome_updates")), _BUTTON_("check updates"), _HELP_("check updates"));
   #endif
   wxControl* open_last = nullptr;
   if (!settings.recent_sets.empty()) {
     const String& filename = settings.recent_sets.front();
     if (wxFileName::FileExists(filename) || wxFileName::DirExists(filename + _("/"))) {
-      #ifdef USE_HOVERBUTTON
-        wxFileName n(filename);
-        open_last       = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("welcome_last")), _BUTTON_("last opened set"), _HELP_1_("last opened set", n.GetName()));
-      #else
-        open_last       = new wxButton(this, ID_FILE_RECENT, _BUTTON_("last opened set"));
-      #endif
+      wxFileName n(filename);
+      open_last = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("welcome_last")), _BUTTON_("last opened set"), _HELP_1_("last opened set", n.GetName()));
     }
   }
 
-  wxSizer* s1  = new wxBoxSizer(wxHORIZONTAL);
+  wxSizer* s1 = new wxBoxSizer(wxHORIZONTAL);
   s1->AddSpacer(25);
-    wxSizer* s2  = new wxBoxSizer(wxVERTICAL);
+    wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
     s2->AddSpacer(100);
     s2->Add(new_set,   0, wxALL, 2);
     s2->Add(open_set,  0, wxALL, 2);
