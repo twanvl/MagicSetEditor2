@@ -443,13 +443,16 @@ void keyword_matches(const String& untagged_str, unordered_set<Keyword const*> k
   }
 }
 void sort_keyword_matches(vector<KeywordMatch>& matches) {
-  // sort matches by their start position
   sort(matches.begin(), matches.end(), [](KeywordMatch const& a, KeywordMatch const& b) {
+    // sort matches by their start position
     if (a.pos < b.pos) return true;
     if (a.pos > b.pos) return false;
     // otherwise sort by matching set keywords (non-fixed) first
     if (a.keyword->fixed < b.keyword->fixed) return true;
     if (a.keyword->fixed > b.keyword->fixed) return false;
+    // otherwise sort by longest match first
+    if (a.match[0].length() > b.match[0].length()) return true;
+    if (a.match[0].length() < b.match[0].length()) return false;
     // otherwise sort by name
     return a.keyword->keyword < b.keyword->keyword;
   });
@@ -522,17 +525,15 @@ String expand_keywords(const String& tagged_str, vector<KeywordMatch> const& mat
     if (atom == 0) {
       // don't expand keywords that are inside <atom> tags
       while (match_it != matches.end() && match_it->pos <= untagged_pos) {
-        if (match_it->pos > untagged_pos) {
+        if (match_it->pos == untagged_pos) {
+          // try to expand
+          auto [match,new_it] = expand_keyword(it, end, *match_it, expand_type, out, options);
           ++match_it;
-          continue;
-        }
-        // try to expand
-        auto [match,new_it] = expand_keyword(it, end, *match_it, expand_type, out, options);
-        if (match) {
-          untagged_pos += untagged_length(it,new_it);
-          it = new_it;
-          ++match_it;
-          goto after_match;
+          if (match) {
+            untagged_pos += untagged_length(it,new_it);
+            it = new_it;
+            goto after_match;
+          }
         } else {
           ++match_it;
         }

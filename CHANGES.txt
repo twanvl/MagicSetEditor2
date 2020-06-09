@@ -7,7 +7,9 @@
 ------------------------------------------------------------------------------
 
 Bug fixes:
- * Fixed keywords after atoms (#67)
+ * Fixed: keywords after atoms were not showing up (#67)
+ * Fixed: multiple keywords that matched in the same place both showed reminder text. (#70)
+   Now, when there are overlapping matches the longest one is used.
 
 ------------------------------------------------------------------------------
 -- 2.1.0, 2020-06-01
