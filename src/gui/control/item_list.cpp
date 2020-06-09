@@ -198,7 +198,7 @@ void ItemList::sortBy(long column, bool ascending) {
   long count = GetColumnCount();
   for (long i = 0 ; i < count ; ++i) {
     if (i == column) {
-      SetColumnImage(i, sort_ascending ? 0 : 1); // arrow up/down
+      SetColumnImage(i, ascending ? 0 : 1); // arrow up/down
     } else if (i == sort_by_column) {
       SetColumnImage(i, -1);
     }
