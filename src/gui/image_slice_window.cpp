@@ -21,7 +21,7 @@ ImageSlice::ImageSlice(const Image& source, const wxSize& target_size)
   : source(source), target_size(target_size)
   , selection(0, 0, source.GetWidth(), source.GetHeight())
   , allow_outside(false), aspect_fixed(true)
-  , sharpen(true), sharpen_amount(25)
+  , sharpen(false), sharpen_amount(25)
 {}
 
 void ImageSlice::constrain(PreferedProperty prefer) {
@@ -80,6 +80,8 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
   , slice(source, target_size)
   , initialized(false)
 {
+  // init slice
+  slice.constrain();
   // init controls
   const wxPoint defPos = wxDefaultPosition;
   const wxSize spinSize(80,-1);
@@ -287,7 +289,7 @@ void ImageSliceWindow::updateControls() {
   if (slice.selection.width == slice.target_size.GetWidth() && slice.selection.height == slice.target_size.GetHeight()) {
     size->SetSelection(0); // original size
   } else if (slice.selection.x == 0 && slice.selection.width  == slice.source.GetWidth() &&
-             slice.selection.y == 0 && slice.selection.height == slice.source.GetHeight()) {
+             slice.selection.y == 0 && slice.selection.height == slice.source.GetHeight() && !slice.aspect_fixed) {
     size->SetSelection(2); // force to fit
   } else if (slice.selection.width  <= slice.source.GetWidth()  &&
              slice.selection.height <= slice.source.GetHeight() &&
