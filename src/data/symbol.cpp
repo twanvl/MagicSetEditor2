@@ -335,6 +335,9 @@ void Symbol::after_reading(Version v) {
   SymbolGroup::after_reading(v);
   updateBounds();
 }
+void after_reading(Symbol& symbol, Version v) {
+  symbol.after_reading(v);
+}
 
 double Symbol::aspectRatio() const {
   // Margin between the edges and the symbol.

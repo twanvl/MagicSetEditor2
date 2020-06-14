@@ -293,7 +293,9 @@ public:
   
   DECLARE_REFLECTION_OVERRIDE();
   void after_reading(Version) override;
+  friend void after_reading(Symbol&, Version);
 };
+void after_reading(Symbol&, Version);
 
 /// A default symbol: a square
 SymbolP default_symbol();

@@ -14,6 +14,7 @@ Bug fixes:
  * Fixed: multiple keywords that matched in the same place both showed reminder text. (#70)
    Now, when there are overlapping matches the longest one is used.
  * Fixed: Slice Image window defaulting to Force to Fit (#69)
+ * Fixed: Wide set symbols being shrunk down (#68)
 
 ------------------------------------------------------------------------------
 -- 2.1.0, 2020-06-01
