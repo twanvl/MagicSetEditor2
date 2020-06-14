@@ -489,3 +489,7 @@ void CardsPanel::selectFirstCard() {
   if (!set) return; // we want onChangeSet first
   card_list->selectFirst();
 }
+
+void CardsPanel::getCardLists(vector<CardListBase*>& out) {
+  out.push_back(card_list);
+}

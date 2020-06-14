@@ -12,6 +12,7 @@
 #include <data/set.hpp>
 #include <gui/card_select_window.hpp>
 
+class CardListBase;
 class wxFindReplaceData;
 
 // ----------------------------------------------------------------------------- : SetWindowPanel
@@ -77,7 +78,9 @@ public:
   virtual void  selectCard(const CardP& card) {}    ///< Switch the view to another card, can be null
   virtual void  selectFirstCard() {}          ///< Switch the view to the first card
   virtual void  selectionChoices(ExportCardSelectionChoices& out) {} ///< Card subsets that can be exported from this panel
-  
+ 
+  virtual void getCardLists(vector<CardListBase*>& out) {}
+
 protected:
   /// Have any controls been created?
   bool isInitialized() const;

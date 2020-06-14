@@ -134,8 +134,6 @@ public:
 private:
   /// Store the column sizes in the settings
   void storeColumns();
-  /// All card lists; used to exchange column sizes
-  static vector<CardListBase*> card_lists;
   
   // --------------------------------------------------- : Window events
   DECLARE_EVENT_TABLE();

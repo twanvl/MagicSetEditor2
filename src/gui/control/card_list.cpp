@@ -9,6 +9,7 @@
 #include <util/prec.hpp>
 #include <gui/control/card_list.hpp>
 #include <gui/control/card_list_column_select.hpp>
+#include <gui/set/window.hpp> // for sorting all cardlists in a window
 #include <gui/util.hpp>
 #include <data/game.hpp>
 #include <data/field.hpp>
@@ -44,19 +45,12 @@ CardListBase* CardSelectEvent::getTheCardList() const {
 
 // ----------------------------------------------------------------------------- : CardListBase
 
-vector<CardListBase*> CardListBase::card_lists;
-
 CardListBase::CardListBase(Window* parent, int id, long additional_style)
   : ItemList(parent, id, additional_style, true)
-{
-  // add to the list of card lists
-  card_lists.push_back(this);
-}
+{}
 
 CardListBase::~CardListBase() {
   storeColumns();
-  // remove from list of card lists
-  card_lists.erase(remove(card_lists.begin(), card_lists.end(), this));
 }
 
 void CardListBase::onBeforeChangeSet() {
@@ -263,10 +257,15 @@ void CardListBase::rebuild() {
 }
 
 void CardListBase::sortBy(long column, bool ascending) {
-  // sort all card lists for this game
-  FOR_EACH(card_list, card_lists) {
-    if (card_list->set && card_list->set->game == set->game) {
-      card_list->ItemList::sortBy(column, ascending);
+  ItemList::sortBy(column, ascending);
+  storeColumns();
+  // sort all other card lists in this window
+  SetWindow* set_window = dynamic_cast<SetWindow*>(wxGetTopLevelParent(this));
+  if (set_window) {
+    for (auto card_list : set_window->getCardLists()) {
+      if (card_list != this) {
+        card_list->ItemList::sortBy(column, ascending);
+      }
     }
   }
 }
@@ -287,14 +286,19 @@ void CardListBase::storeColumns() {
   else                     gs.sort_cards_by = wxEmptyString;
   gs.sort_cards_ascending = sort_ascending;
 }
+
 void CardListBase::selectColumns() {
   CardListColumnSelectDialog wnd(this, set->game);
   if (wnd.ShowModal() == wxID_OK) {
-    // rebuild all card lists for this game
     storeColumns();
-    FOR_EACH(card_list, card_lists) {
-      if (card_list->set && card_list->set->game == set->game) {
-        card_list->rebuild();
+    // rebuild all card lists this window
+    rebuild();
+    SetWindow* set_window = dynamic_cast<SetWindow*>(wxGetTopLevelParent(this));
+    if (set_window) {
+      for (auto card_list : set_window->getCardLists()) {
+        if (card_list != this) {
+          card_list->rebuild();
+        }
       }
     }
   }
@@ -335,9 +339,14 @@ void CardListBase::onColumnResize(wxListEvent& ev) {
   storeColumns();
   int col = ev.GetColumn();
   int width = GetColumnWidth(col);
-  FOR_EACH(card_list, card_lists) {
-    if (card_list != this && card_list->set && card_list->set->game == set->game) {
-      card_list->SetColumnWidth(col, width);
+  // update this and all other card lists in this window
+  SetColumnWidth(col, width);
+  SetWindow* set_window = dynamic_cast<SetWindow*>(wxGetTopLevelParent(this));
+  if (set_window) {
+    for (auto card_list : set_window->getCardLists()) {
+      if (card_list != this) {
+        card_list->SetColumnWidth(col, width);
+      }
     }
   }
 }

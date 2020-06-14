@@ -42,7 +42,8 @@ public:
   // --------------------------------------------------- : Selection
   CardP selectedCard() const override;
   void selectCard(const CardP& card) override;
-  
+  void getCardLists(vector<CardListBase*>& out) override;
+
   // --------------------------------------------------- : Data
 private:
   DECLARE_EVENT_TABLE();

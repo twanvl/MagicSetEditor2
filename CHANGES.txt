@@ -6,6 +6,9 @@
 -- HEAD: new items added as changes are made
 ------------------------------------------------------------------------------
 
+Features:
+ * Sorting of the card list can now be changed per window
+
 Bug fixes:
  * Fixed: keywords after atoms were not showing up (#67)
  * Fixed: multiple keywords that matched in the same place both showed reminder text. (#70)

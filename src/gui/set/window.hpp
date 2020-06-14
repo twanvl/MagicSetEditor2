@@ -14,6 +14,7 @@
 #include <gui/card_select_window.hpp>
 
 class SetWindowPanel;
+class CardListBase;
 class wxFindDialogEvent;
 struct CardSelectEvent;
 
@@ -30,7 +31,10 @@ public:
   
   /// Set the icon of one of the panels
   void setPanelIcon(SetWindowPanel* panel, wxBitmap const& icon);
-  
+ 
+  /// Get all card lists on all panels
+  vector<CardListBase*> getCardLists();
+
   // --------------------------------------------------- : Set actions
   
 private:

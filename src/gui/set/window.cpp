@@ -388,6 +388,14 @@ void SetWindow::selectionChoices(ExportCardSelectionChoices& out) {
   out.push_back(make_intrusive<ExportCardSelectionChoice>()); // custom
 }
 
+vector<CardListBase*> SetWindow::getCardLists() {
+  vector<CardListBase*> out;
+  FOR_EACH(p, panels) {
+    p->getCardLists(out);
+  }
+  return out;
+}
+
 // ----------------------------------------------------------------------------- : Window events - close
 
 void SetWindow::onClose(wxCloseEvent& ev) {

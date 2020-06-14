@@ -566,3 +566,7 @@ void StatsPanel::selectCard(const CardP& card) {
   card_list->setCard(card);
   
 }
+
+void StatsPanel::getCardLists(vector<CardListBase*>& out) {
+  if (isInitialized()) out.push_back(card_list);
+}

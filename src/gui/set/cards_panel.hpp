@@ -75,6 +75,8 @@ public:
   void selectCard(const CardP& card) override;
   void selectFirstCard() override;
 
+  void getCardLists(vector<CardListBase*>& out) override;
+
 private:
   // --------------------------------------------------- : Controls
   wxSizer*          s_left;

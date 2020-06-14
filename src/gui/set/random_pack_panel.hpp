@@ -56,7 +56,8 @@ public:
   CardP selectedCard() const override;
   void selectCard(const CardP& card) override;
   void selectionChoices(ExportCardSelectionChoices& out) override;
-  
+  void getCardLists(vector<CardListBase*>& out) override;
+ 
   // --------------------------------------------------- : Clipboard
   
   bool canCopy() const override;

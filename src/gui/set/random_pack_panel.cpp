@@ -632,6 +632,9 @@ void RandomPackPanel::selectionChoices(ExportCardSelectionChoices& out) {
     ));
 }
 
+void RandomPackPanel::getCardLists(vector<CardListBase*>& out) {
+  if (isInitialized()) out.push_back(card_list);
+}
 
 BEGIN_EVENT_TABLE(RandomPackPanel, wxPanel)
   EVT_CARD_SELECT(wxID_ANY, RandomPackPanel::onCardSelect)
