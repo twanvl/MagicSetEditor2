@@ -12,12 +12,14 @@ find_package(PkgConfig)
 
 # find hunspell
 pkg_check_modules(HUNSPELL hunspell)
-if( NOT DEFINED ${HUNSPELL_INCLUDE_DIRS} )
-	message("--   Cannot find hunspell via pkg-config, checking directly...")
+if( NOT HUNSPELL_FOUND )
+	message("-- Cannot find Hunspell via pkg-config, checking directly...")
 	find_path(HUNSPELL_INCLUDE_DIRS hunspell/hunspell.hxx)
 	find_library(HUNSPELL_LIBRARIES NAMES hunspell libhunspell)
-	if ( NOT DEFINED ${HUNSPELL_INCLUDE_DIRS} )
+	if ( ${HUNSPELL_INCLUDE_DIRS} STREQUAL "HUNSPELL_INCLUDE_DIRS-NOTFOUND" )
 		message(FATAL_ERROR "Hunspell cannot be found")
+	else()
+		message("-- Found Hunspell at ${HUNSPELL_LIBRARIES}")
 	endif()
 endif()
 
