@@ -8,11 +8,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package(wxWidgets 3 REQUIRED COMPONENTS core base net html)
 find_package(Boost REQUIRED COMPONENTS regex)
 
-# find hunspell
-#find_package(HUNSPELL)
-find_path(HUNSPELL_INCLUDE_DIRS hunspell/hunspell.hxx)
-find_library(HUNSPELL_LIBRARIES NAMES hunspell libhunspell)
+find_package(PkgConfig)
 
+# find hunspell
+pkg_check_modules(HUNSPELL hunspell)
+if( NOT HUNSPELL_FOUND )
+	message("-- Cannot find Hunspell via pkg-config, checking directly...")
+	find_path(HUNSPELL_INCLUDE_DIRS hunspell/hunspell.hxx)
+	find_library(HUNSPELL_LIBRARIES NAMES hunspell libhunspell)
+	if ( ${HUNSPELL_INCLUDE_DIRS} STREQUAL "HUNSPELL_INCLUDE_DIRS-NOTFOUND" )
+		message(FATAL_ERROR "Hunspell cannot be found")
+	else()
+		message("-- Found Hunspell at ${HUNSPELL_LIBRARIES}")
+	endif()
+endif()
 
 include_directories("${PROJECT_BINARY_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/src")

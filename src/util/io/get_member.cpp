@@ -20,7 +20,7 @@ using boost::tribool;
 template <> void GetDefaultMember::handle(const String&       v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const int&          v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const unsigned int& v) { value = to_script((int)v); }
-template <> void GetDefaultMember::handle(const uint64_t&     v) { value = to_script((int)v); }
+template <> void GetDefaultMember::handle(const size_t&       v) { value = to_script((int)v); }
 template <> void GetDefaultMember::handle(const double&       v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const bool&         v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const tribool&      v) { value = to_script((bool)v); }
