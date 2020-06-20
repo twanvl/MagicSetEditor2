@@ -1,13 +1,11 @@
-==============================================================================
-== Magic Set Editor changelog, for the details see `git log`
+Magic Set Editor changelog, for the details see `git log`
 ==============================================================================
 
-------------------------------------------------------------------------------
--- HEAD: new items added as changes are made
+HEAD: new items added as changes are made
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
--- 2.1.1, 2020-06-14
+version 2.1.1, 2020-06-14
 ------------------------------------------------------------------------------
 
 Features:
@@ -21,7 +19,7 @@ Bug fixes:
  * Fixed: Wide set symbols being shrunk down (#68)
 
 ------------------------------------------------------------------------------
--- 2.1.0, 2020-06-01
+version 2.1.0, 2020-06-01
 ------------------------------------------------------------------------------
 
 Features:
@@ -38,17 +36,17 @@ Bug fixes:
  * substr("foo",begin:3) now returns "" instead of true
 
 Template features:
- * Added <font:...> tag to change the font inside a text field.
- * Added <margin:...> tag to change the margins of a block of text.
- * Added <align:...> tag to change the horizontal alignment of a block of text.
- * Added <li> tag for list bullet points. (Experimental!)
- * Colors can now be written using hex notation, #rrggbb / #rrggbbaa, and short hex notation (#rgb / #rgba)
+ * Added `<font:...>` tag to change the font inside a text field.
+ * Added `<margin:...>` tag to change the margins of a block of text.
+ * Added `<align:...>` tag to change the horizontal alignment of a block of text.
+ * Added `<li>` tag for list bullet points. (Experimental!)
+ * Colors can now be written using hex notation, `#rrggbb` / `#rrggbbaa`, and short hex notation (`#rgb` / `#rgba`)
  * Added card_style.field.layout, with information on the position of each line and paragraph in a text box.
  * It is now possible to set the width and height of set info and style fields. This is especially useful for set specific images like watermarks and symbols.
 
 Scripting:
  * Added type_name function
- * nil != "", so missing values are no longer equal to the empty string
+ * `nil != ""`, so missing values are no longer equal to the empty string
  * The `=` operator is now deprecated, use `==` for comparisons, `:=` for assignment.
  * if statements without an else will now produce a warning if their result is used.
  * Added case-of control structure, for comparing a value against multiple alternatives
@@ -59,7 +57,7 @@ Internal:
  * Lots of code cleanup
 
 ------------------------------------------------------------------------------
--- 2.0.1
+version 2.0.1
 ------------------------------------------------------------------------------
 
  * Some bugfixes
@@ -68,7 +66,7 @@ Other
  * Changes to build system
 
 ------------------------------------------------------------------------------
--- 2.0.0, 2011-02-05
+version 2.0.0, 2011-02-05
 ------------------------------------------------------------------------------
 
 Program:
@@ -87,7 +85,7 @@ Other:
  * Actually started maintaining changelog, older entries are reconstructed.
 
 ------------------------------------------------------------------------------
--- 0.3.9, 2011-01-07
+version 0.3.9, 2011-01-07
 ------------------------------------------------------------------------------
 
 Program:
@@ -103,7 +101,7 @@ Other:
  * This is the first new release in nearly two years
 
 ------------------------------------------------------------------------------
--- 0.3.8, 2009-01-15
+version 0.3.8, 2009-01-15
 ------------------------------------------------------------------------------
 
 New in this release:
@@ -115,13 +113,13 @@ New in this release:
  * And of course lots of bug fixes.
 
 ------------------------------------------------------------------------------
--- 0.3.7b, 2008-08-11
+version 0.3.7b, 2008-08-11
 ------------------------------------------------------------------------------
 
  * This release fixes some semi-critical bugs in 0.3.7b.
 
 ------------------------------------------------------------------------------
--- 0.3.7, 2008-08-11
+version 0.3.7, 2008-08-11
 ------------------------------------------------------------------------------
 
 New in this release:
@@ -131,13 +129,13 @@ New in this release:
  * And of course lots of bug fixes.
 
 ------------------------------------------------------------------------------
--- 0.3.6b, 2008-06-02
+version 0.3.6b, 2008-06-02
 ------------------------------------------------------------------------------
 
  * This release fixes some critical bugs in 0.3.6.
 
 ------------------------------------------------------------------------------
--- 0.3.6, 2008-06-01
+version 0.3.6, 2008-06-01
 ------------------------------------------------------------------------------
 
 New in this release:
@@ -150,13 +148,13 @@ New in this release:
  * Many, many bug fixes and minor improvements.
 
 ------------------------------------------------------------------------------
--- 0.3.5b, 2007-09-21
+version 0.3.5b, 2007-09-21
 ------------------------------------------------------------------------------
 
  * This release fixes some critical bugs in 0.3.5.
 
 ------------------------------------------------------------------------------
--- 0.3.5, 2007-09-20
+version 0.3.5, 2007-09-20
 ------------------------------------------------------------------------------
 
 New in this release:
@@ -167,7 +165,7 @@ New in this release:
  * Many, many bug fixes and minor improvements.
 
 ------------------------------------------------------------------------------
--- 0.3.4, 2007-07-05
+version 0.3.4, 2007-07-05
 ------------------------------------------------------------------------------
 
 New in this release:
@@ -178,7 +176,7 @@ New in this release:
  * and of course lots of minor improvements and bugfixes.
 
 ------------------------------------------------------------------------------
--- 0.3.3, 2007-05-14
+version 0.3.3, 2007-05-14
 ------------------------------------------------------------------------------
 
  * The crashes are finally fixed.
@@ -186,20 +184,20 @@ New in this release:
  * Two dimensional statistics (e.g. color vs. rarity)
 
 ------------------------------------------------------------------------------
--- 0.3.2, 2007-05-11
+version 0.3.2, 2007-05-11
 ------------------------------------------------------------------------------
 
  * The templates have recieved a large update.
  * The large bugs from the previous version are fixed.
 
 ------------------------------------------------------------------------------
--- 0.3.1, 2007-04-21
+version 0.3.1, 2007-04-21
 ------------------------------------------------------------------------------
 
  * The most important new thing are the keywords. You can now make keywords with multiple parameters.
 
 ------------------------------------------------------------------------------
--- 0.3.0(NQMSE), 2006-12-25
+version 0.3.0(NQMSE), 2006-12-25
 ------------------------------------------------------------------------------
 
 Version 0.3.0, prerelease.
@@ -212,7 +210,7 @@ Version 0.3.0, prerelease.
  * lots of new bugs
 
 ------------------------------------------------------------------------------
--- 0.2.7, 2006-08-04
+version 0.2.7, 2006-08-04
 ------------------------------------------------------------------------------
 
 New features:
@@ -227,7 +225,7 @@ Bug fixes / template tweaks:
  * The latest VS System templates
 
 ------------------------------------------------------------------------------
--- 0.2.6, 2006-07-18
+version 0.2.6, 2006-07-18
 ------------------------------------------------------------------------------
 
 Bug fixes:
@@ -239,7 +237,7 @@ Bug fixes:
  * Support for symbols with transparency
 
 ------------------------------------------------------------------------------
--- 0.2.5, 2006-06-25
+version 0.2.5, 2006-06-25
 ------------------------------------------------------------------------------
 
 New features:
