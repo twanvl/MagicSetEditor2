@@ -20,10 +20,8 @@ using boost::tribool;
 template <> void GetDefaultMember::handle(const String&       v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const int&          v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const unsigned int& v) { value = to_script((int)v); }
-template <> void GetDefaultMember::handle(const uint64_t&     v) { value = to_script((int)v); }
+template <> void GetDefaultMember::handle(const size_t&       v) { value = to_script((int)v); }
 template <> void GetDefaultMember::handle(const double&       v) { value = to_script(v); }
-template <> void GetDefaultMember::handle(const long&          v) { value = to_script((long)v); }
-template <> void GetDefaultMember::handle(const unsigned long& v) { value = to_script((long)v); }
 template <> void GetDefaultMember::handle(const bool&         v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const tribool&      v) { value = to_script((bool)v); }
 template <> void GetDefaultMember::handle(const Vector2D&     v) { value = to_script(String::Format(_("(%.10lf,%.10lf)"), v.x, v.y)); }
