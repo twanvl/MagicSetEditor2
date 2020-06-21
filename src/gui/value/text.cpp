@@ -1045,6 +1045,7 @@ void TextValueEditor::tryAutoReplace() {
         selection_end_i   = end;
         fixSelection(TYPE_INDEX);
         replaceSelection(ar->replace, _ACTION_("auto replace"), false, false);
+        end = selection_start_i;
       }
     }
   }
