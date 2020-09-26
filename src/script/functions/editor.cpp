@@ -48,7 +48,7 @@ SCRIPT_FUNCTION_WITH_DEP(combined_editor) {
     } else if (i > 0) break;
   }
   if (separators.size() < values.size() - 1) {
-    throw ScriptError(String::Format(_("Not enough separators for combine_editor, expected %d"), values.size()-1));
+    throw ScriptError(String::Format(_("Not enough separators for combine_editor, expected %d"), static_cast<int>(values.size()-1)));
   }
   // the value
   SCRIPT_PARAM_C(String, value);
