@@ -542,6 +542,7 @@ String expand_keywords(const String& tagged_str, vector<KeywordMatch> const& mat
     // No match, so there is at least one character not part of a keyword
     // and possibly some tags before it that we missed
     skip_tags_for_keyword(true, true);
+    if (it == end) break;
     out += *it;
     ++it;
     ++untagged_pos;

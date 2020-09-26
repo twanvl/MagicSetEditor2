@@ -4,6 +4,9 @@ Magic Set Editor changelog, for the details see `git log`
 HEAD: new items added as changes are made
 ------------------------------------------------------------------------------
 
+Bug fixes:
+ * Fixed: crash in expand_keywords when given empty tags (#90)
+
 ------------------------------------------------------------------------------
 version 2.1.1, 2020-06-14
 ------------------------------------------------------------------------------
