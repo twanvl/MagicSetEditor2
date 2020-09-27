@@ -49,3 +49,9 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(AutoReplace) {
   REFLECT(match);
   REFLECT(replace);
 }
+
+void after_reading(AutoReplace& ar, Version) {
+  if (ar.match.empty()) {
+    ar.enabled = false;
+  }
+}

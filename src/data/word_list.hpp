@@ -58,3 +58,5 @@ public:
   DECLARE_REFLECTION();
 };
 
+void after_reading(AutoReplace& ar, Version);
+
