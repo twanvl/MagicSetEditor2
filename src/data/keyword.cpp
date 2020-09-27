@@ -774,7 +774,7 @@ void remove_from_stats(KeywordUsageStatistics* stat, const Value* stat_key) {
 
 String KeywordDatabase::expand(const String& text, KeywordExpandOptions const& options) const {
   assert(options.combine_script);
-  assert_tagged(text);
+  assert_tagged(text, false);
 
   // Clean up usage statistics
   remove_from_stats(options.stat, options.stat_key);
@@ -794,7 +794,7 @@ String KeywordDatabase::expand(const String& text, KeywordExpandOptions const& o
   
   // Expand
   String result = expand_keywords(tagged, matches, options);
-  assert_tagged(result);
+  assert_tagged(result, false);
   return result;
 }
 
