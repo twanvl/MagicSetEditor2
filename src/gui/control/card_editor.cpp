@@ -79,7 +79,7 @@ template <typename It, typename V, typename Comp>
 It next_element(It first, It last, V const& x, Comp comp) {
   It best = last;
   for (It it = first ; it != last ; ++it) {
-    if (comp(x, *it)) {
+    if (*it != x && comp(x, *it)) {
       // this is a candidate
       if (best == last || comp(*it, *best)) {
         best = it;
@@ -118,34 +118,37 @@ void DataEditor::select(ValueViewer* new_viewer) {
 }
 
 struct CompareTabOrder {
-  bool operator() (ValueViewer* a, ValueViewer* b) {
-    assert(a && b);
-    Style& as = *a->getStyle(), &bs = *b->getStyle();
+  bool operator() (ValueViewer const& a, ValueViewer const& b) {
+    Style& as = *a.getStyle(), &bs = *b.getStyle();
     // if tab_index differs, use that
     if (as.tab_index < bs.tab_index) return true;
     if (as.tab_index > bs.tab_index) return false;
     // otherwise look at the positions
     // To get a total order, we look at the viewer center.
     // Not completely (y,x), because for viewers that are almost at the same y we prefer to sort by x
-    double ax = 2*as.left + as.right; // bias a bit to the left
-    double bx = 2*bs.left + bs.right;
-    double ay = as.top + as.bottom + 0.1*ax; // a bit of x, so that dominates when y is approximately equal
-    double by = bs.top + bs.bottom + 0.1*bx;
+    double ax = a.bounding_box.x + 0.25*a.bounding_box.width; // bias a bit to the left of the middle
+    double bx = b.bounding_box.x + 0.25*b.bounding_box.width;
+    double ay = a.bounding_box.top() + a.bounding_box.bottom() + 0.1*ax; // a bit of x, so that dominates when y is approximately equal
+    double by = b.bounding_box.top() + b.bounding_box.bottom() + 0.1*bx;
     if (ay < by) return true;
     if (ay > by) return false;
     if (ax < bx) return true;
     if (ax > bx) return false;
     // arbitrary order otherwise
-    return a < b;
+    return a.getField()->name < b.getField()->name;
+  }
+  bool operator() (ValueViewer* a, ValueViewer* b) {
+    assert(a && b);
+    return operator () (*a, *b);
   }
   bool operator() (ValueViewerP const& a, ValueViewer* b) {
-    return operator () (a.get(), b);
+    return operator () (*a, *b);
   }
   bool operator() (ValueViewer* a, ValueViewerP const& b) {
-    return operator () (a, b.get());
+    return operator () (*a, *b);
   }
   bool operator() (ValueViewerP const& a, ValueViewerP const& b) {
-    return operator () (a.get(), b.get());
+    return operator () (*a, *b);
   }
 };
 

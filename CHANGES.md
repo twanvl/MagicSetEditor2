@@ -6,6 +6,7 @@ HEAD: new items added as changes are made
 
 Bug fixes:
  * Fixed: crash in expand_keywords when given empty tags (#90)
+ * Fixed: tab traversal in native look editors (style and set info tabs) (#98)
 
 ------------------------------------------------------------------------------
 version 2.1.1, 2020-06-14
