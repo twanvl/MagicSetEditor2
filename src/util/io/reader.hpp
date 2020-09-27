@@ -94,7 +94,8 @@ public:
   /// Reads a intrusive_ptr from the input stream
   template <typename T> void handle(intrusive_ptr<T>&);
   /// Reads a map from the input stream
-  template <typename V> void handle(map<String,V>&);
+  template <typename V> void handle(map<String, V>&);
+  template <typename V> void handle(unordered_map<String, V>&);
   /// Reads an IndexMap from the input stream, reads only keys that already exist in the map
   template <typename K, typename V> void handle(IndexMap<K,V>&);
   template <typename K, typename V> void handle(DelayedIndexMaps<K,V>&);
@@ -233,6 +234,14 @@ void Reader::handle(intrusive_ptr<T>& pointer) {
 
 template <typename V>
 void Reader::handle(map<String, V>& m) {
+  while (enterAnyBlock()) {
+    handle_greedy(m[key]);
+    exitBlock();
+  }
+}
+
+template <typename V>
+void Reader::handle(unordered_map<String, V>& m) {
   while (enterAnyBlock()) {
     handle_greedy(m[key]);
     exitBlock();

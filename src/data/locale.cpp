@@ -77,16 +77,16 @@ String identity(const String& key) {
   return key;
 }
 
-String SubLocale::tr(const String& key, DefaultLocaleFun def) {
-  map<String,String>::const_iterator it = translations.find(canonical_name_form(key));
+String SubLocale::tr(const String& key, DefaultLocaleFun def) const {
+  auto it = translations.find(canonical_name_form(key));
   if (it == translations.end()) {
     return def(key);
   } else {
     return it->second;
   }
 }
-String SubLocale::tr(const String& subcat, const String& key, DefaultLocaleFun def) {
-  map<String,String>::const_iterator it = translations.find(subcat + _("_") + canonical_name_form(key));
+String SubLocale::tr(const String& subcat, const String& key, DefaultLocaleFun def) const {
+  auto it = translations.find(subcat + _("_") + canonical_name_form(key));
   if (it == translations.end()) {
     return def(key);
   } else {

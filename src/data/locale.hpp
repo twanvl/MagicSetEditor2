@@ -19,14 +19,14 @@ DECLARE_POINTER_TYPE(SubLocaleValidator);
 
 // ----------------------------------------------------------------------------- : Locale class
 
-/// Translations of the texts of a game/stylesheet/symbolfont
+/// Translations of the texts of a locale category or game/stylesheet/symbolfont
 class SubLocale : public IntrusivePtrBase<SubLocale> {
 public:
-  map<String,String> translations;
+  unordered_map<String,String> translations;
   
   /// Translate a key, if not found, apply the default function to the key
-  String tr(const String& key, DefaultLocaleFun def);
-  String tr(const String& subcat, const String& key, DefaultLocaleFun def);
+  String tr(const String& key, DefaultLocaleFun def) const;
+  String tr(const String& subcat, const String& key, DefaultLocaleFun def) const;
   
   DECLARE_REFLECTION();
 };
