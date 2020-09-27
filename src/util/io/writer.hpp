@@ -142,7 +142,7 @@ void Writer::handle(const IndexMap<K,V>& m) {
 #define REFLECT_ENUM_WRITER(Enum) \
   template<> void Writer::handle<Enum>(const Enum& enum_) { \
     EnumWriter writer(*this); \
-    reflect_ ## Enum(const_cast<Enum&>(enum_), writer); \
+    ReflectEnum<Enum>::reflect(const_cast<Enum&>(enum_), writer); \
   }
 
 /// Handler to be used when reflecting enumerations for Writer

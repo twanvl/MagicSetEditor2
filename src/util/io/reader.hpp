@@ -263,12 +263,12 @@ void Reader::handle(IndexMap<K,V>& m) {
 #define REFLECT_ENUM_READER(Enum) \
   template<> void Reader::handle<Enum>(Enum& enum_) { \
     EnumReader reader(getValue()); \
-    reflect_ ## Enum(enum_, reader); \
+    ReflectEnum<Enum>::reflect(enum_, reader); \
     reader.warnIfNotDone(this); \
   } \
   void parse_enum(const String& value, Enum& out) { \
     EnumReader reader(value); \
-    reflect_ ## Enum(out, reader); \
+    ReflectEnum<Enum>::reflect(out, reader); \
     reader.errorIfNotDone(); \
   }
 

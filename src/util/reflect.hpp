@@ -159,6 +159,9 @@
 
 // ----------------------------------------------------------------------------- : Reflecting enums
 
+template <typename Enum>
+struct ReflectEnum {};
+
 /// Implement the refelection of a enumeration type Enum
 /** Usage:
  *    @code
@@ -176,13 +179,14 @@
  *   - GetDefaultMember::handle(const Enum&)
  */
 #define IMPLEMENT_REFLECTION_ENUM(Enum) \
-  template <class Handler> \
-  void reflect_ ## Enum (Enum& enum_, Handler& handler); \
+  template <> struct ReflectEnum<Enum> { \
+    template <class Handler> static void reflect(Enum&, Handler&); \
+  }; \
   REFLECT_ENUM_READER(Enum) \
   REFLECT_ENUM_WRITER(Enum) \
   REFLECT_ENUM_GET_MEMBER(Enum) \
   template <class Handler> \
-  void reflect_ ## Enum (Enum& enum_, Handler& handler)
+  void ReflectEnum<Enum>::reflect(Enum& enum_, Handler& handler)
 
 /// Declare a possible value of an enum
 #define VALUE(val) handler.handle(_(#val), val, enum_)

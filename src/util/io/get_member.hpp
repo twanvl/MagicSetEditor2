@@ -143,7 +143,7 @@ private:
 #define REFLECT_ENUM_GET_MEMBER(Enum) \
   template<> void GetDefaultMember::handle<Enum>(const Enum& enum_) { \
     EnumGetMember egm(*this); \
-    reflect_ ## Enum(const_cast<Enum&>(enum_), egm); \
+    ReflectEnum<Enum>::reflect(const_cast<Enum&>(enum_), egm); \
   }
 
 /// Handler to be used when reflecting enumerations for GetMember
