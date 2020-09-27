@@ -111,19 +111,18 @@ public:
 
 // ----------------------------------------------------------------------------- : InsertSymbolMenu
 
-enum MenuItemType
-{  ITEM_CODE     ///< Name gives the code to insert
-,  ITEM_CUSTOM   ///< Use a dialog box
-,  ITEM_LINE     ///< A menu separator
-,  ITEM_SUBMENU  ///< A submenu
-};
-
 /// Description of a menu to insert symbols from a symbol font into the text
 class InsertSymbolMenu : public IntrusivePtrBase<InsertSymbolMenu> {
 public:
   InsertSymbolMenu();
   
-  MenuItemType              type;
+  enum class Type {
+    CODE,     ///< Name gives the code to insert
+    CUSTOM,   ///< Use a dialog box
+    LINE,     ///< A menu separator
+    SUBMENU,  ///< A submenu
+  };
+  Type                      type;
   String                    name;
   vector<InsertSymbolMenuP> items;
   
@@ -132,7 +131,8 @@ public:
   /// Get the code for an item, id relative to the start of this menu
   String getCode(int id, const SymbolFont& font) const;
   /// Make an actual menu
-  wxMenu*     makeMenu(int first_id, SymbolFont& font) const;
+  wxMenu* makeMenu(int first_id, SymbolFont& font) const;
+private:
   /// Make an actual menu item
   wxMenuItem* makeMenuItem(wxMenu* parent, int first_id, SymbolFont& font) const;
   

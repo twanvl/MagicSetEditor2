@@ -432,13 +432,13 @@ String SymbolFont::insertSymbolCode(int menu_id) const {
 
 
 InsertSymbolMenu::InsertSymbolMenu()
-  : type(ITEM_CODE)
+  : type(Type::CODE)
 {}
 
 int InsertSymbolMenu::size() const {
-  if (type == ITEM_CODE || type == ITEM_CUSTOM) {
+  if (type == Type::CODE || type == Type::CUSTOM) {
     return 1;
-  } else if (type == ITEM_SUBMENU) {
+  } else if (type == Type::SUBMENU) {
     int count = 0;
     FOR_EACH_CONST(i, items) {
       count += i->size();
@@ -449,7 +449,7 @@ int InsertSymbolMenu::size() const {
   }
 }
 String InsertSymbolMenu::getCode(int id, const SymbolFont& font) const {
-  if (type == ITEM_SUBMENU) {
+  if (type == Type::SUBMENU) {
     FOR_EACH_CONST(i, items) {
       int id2 = id - i->size();
       if (id2 < 0) {
@@ -457,18 +457,18 @@ String InsertSymbolMenu::getCode(int id, const SymbolFont& font) const {
       }
       id = id2;
     }
-  } else if (id == 0 && type == ITEM_CODE) {
+  } else if (id == 0 && type == Type::CODE) {
     return name;
-  } else if (id == 0 && type == ITEM_CUSTOM) {
-    String caption = tr(font,_("title"),   name, capitalize_sentence);
-    String message = tr(font,_("message"), name, capitalize_sentence);
+  } else if (id == 0 && type == Type::CUSTOM) {
+    String caption = tr(font, _("title"),   name, capitalize_sentence);
+    String message = tr(font, _("message"), name, capitalize_sentence);
     return wxGetTextFromUser(message, caption);
   }
   return wxEmptyString;
 }
 
 wxMenu* InsertSymbolMenu::makeMenu(int id, SymbolFont& font) const {
-  if (type == ITEM_SUBMENU) {
+  if (type == Type::SUBMENU) {
     wxMenu* menu = new wxMenu();
     FOR_EACH_CONST(i, items) {
       menu->Append(i->makeMenuItem(menu, id, font));
@@ -487,20 +487,20 @@ wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, SymbolF
   #else
     menu_name.Replace(_("\t"),_("   ")); // by simply dropping the \t
   #endif
-  if (type == ITEM_SUBMENU) {
+  if (type == Type::SUBMENU) {
     wxMenuItem* item = new wxMenuItem(parent, wxID_ANY, menu_name,
                                       wxEmptyString, wxITEM_NORMAL,
                                       makeMenu(first_id, font));
     item->SetBitmap(wxNullBitmap);
     return item;
-  } else if (type == ITEM_LINE) {
+  } else if (type == Type::LINE) {
     wxMenuItem* item = new wxMenuItem(parent, wxID_SEPARATOR);
     return item;
   } else {
     wxMenuItem* item = new wxMenuItem(parent, first_id, menu_name);
     // Generate bitmap for use on this item
     SymbolInFont* symbol = nullptr;
-    if (type == ITEM_CUSTOM) {
+    if (type == Type::CUSTOM) {
       symbol = font.defaultSymbol();
     } else {
       FOR_EACH(sym, font.symbols) {
@@ -520,11 +520,11 @@ wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, SymbolF
 }
 
 
-IMPLEMENT_REFLECTION_ENUM(MenuItemType) {
-  VALUE_N("code",    ITEM_CODE);
-  VALUE_N("custom",  ITEM_CUSTOM);
-  VALUE_N("line",    ITEM_LINE);
-  VALUE_N("submenu", ITEM_SUBMENU);
+IMPLEMENT_REFLECTION_ENUM(InsertSymbolMenu::Type) {
+  VALUE_N("code",    InsertSymbolMenu::Type::CODE);
+  VALUE_N("custom",  InsertSymbolMenu::Type::CUSTOM);
+  VALUE_N("line",    InsertSymbolMenu::Type::LINE);
+  VALUE_N("submenu", InsertSymbolMenu::Type::SUBMENU);
 }
 
 IMPLEMENT_REFLECTION_NO_GET_MEMBER(InsertSymbolMenu) {
@@ -535,7 +535,7 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(InsertSymbolMenu) {
     REFLECT(type);
     REFLECT(name);
     REFLECT(items);
-    if (Handler::isReading && !items.empty()) type = ITEM_SUBMENU;
+    if (Handler::isReading && !items.empty()) type = Type::SUBMENU;
   }
 }
 template <> void GetDefaultMember::handle(const InsertSymbolMenu& m) {
