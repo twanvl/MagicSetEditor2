@@ -479,7 +479,7 @@ wxMenu* InsertSymbolMenu::makeMenu(int id, SymbolFont& font) const {
   return nullptr;
 }
 wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, SymbolFont& font) const {
-  wxString menu_name = tr(font, _("menu item"), name, capitalize);
+  wxString menu_name = tr(font, _("menu_item"), name, capitalize);
   // ensure that there is not actually an accelerator string,
   menu_name.Replace(_("\t "),_("\t"));
   #ifdef __WXMSW__

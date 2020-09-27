@@ -7,6 +7,7 @@ HEAD: new items added as changes are made
 Bug fixes:
  * Fixed: crash in expand_keywords when given empty tags (#90)
  * Fixed: tab traversal in native look editors (style and set info tabs) (#98)
+ * Fixed: Mana Symbol Menu Items were notlonger using names from locale (#84)
  * Auto replaces that match "" are now disabled
 
 ------------------------------------------------------------------------------
