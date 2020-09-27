@@ -4,6 +4,10 @@ Magic Set Editor changelog, for the details see `git log`
 HEAD: new items added as changes are made
 ------------------------------------------------------------------------------
 
+------------------------------------------------------------------------------
+version 2.1.2, 2020-09-28
+------------------------------------------------------------------------------
+
 Bug fixes:
  * Fixed: crash in expand_keywords when given empty tags (#90)
  * Fixed: tab traversal in native look editors (style and set info tabs) (#98)
