@@ -40,6 +40,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <unordered_map>
 using namespace std;
 
 #undef RGB
