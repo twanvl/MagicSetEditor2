@@ -14,18 +14,19 @@ The menu consists of a number of entries, either items, separators or submenus.
 		* @line@, a separating line.
 		* @submenu@, a submenu.
 | @name@	[[type:string]]				''required''			Name of this menu item, corresponding to the code to insert.
+| @label@	[[type:localized string]]				name			Label to show in the menu.
+| @prompt@	[[type:localized string]]				 			Prompt to use for the pop up box with @custom@ type
 | @items@	[[type:list]] of [[type:insert symbol menu|submenu items]]	 	Items in the submenu, when items are present the @type@ is set to @"submenu"@.
 
-In the user interface the items are shown as @"menu item {name}"@, the [[type:locale]] should be used to give a beter label.
-
-For custom items the dialog will be titled @"title {name}"@ and have message text @"message {name}"@, again this should be changed in the locale.
+For custom items the dialog will be titled with the @label@ and have message text @prompt@.
 
 --Examples--
 A menu for magic mana symbols (simplified). Containing all types of items.
 >insert symbol menu:
 >	item:
 >		type: custom
->		name: colorless
+>		name: Generic
+>		prompt: How much generic mana?
 >	item:
 >		type: line
 >	item: W
@@ -33,6 +34,9 @@ A menu for magic mana symbols (simplified). Containing all types of items.
 >	item: B
 >	item: R
 >	item: G
+>	item:
+>		label: Complex
+>		name: cplx
 >	item:
 >		type: line
 >	item:

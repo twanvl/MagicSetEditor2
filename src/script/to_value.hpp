@@ -145,9 +145,9 @@ private:
 
 // ----------------------------------------------------------------------------- : Collections : maps
 
-template <typename V>
-ScriptValueP get_member(const map<String,V>& m, const String& name) {
-  typename map<String,V>::const_iterator it = m.find(name);
+template <typename Container>
+ScriptValueP get_member(const Container& m, const String& name) {
+  auto it = m.find(name);
   if (it != m.end()) {
     return to_script(it->second);
   } else {
@@ -401,6 +401,10 @@ inline ScriptValueP to_script(const vector<T>* v) {
 template <typename K, typename V>
 inline ScriptValueP to_script(const map<K,V>* v) {
   return make_intrusive<ScriptMap<map<K,V>>>(v);
+}
+template <typename K, typename V>
+inline ScriptValueP to_script(const unordered_map<K,V>* v) {
+  return make_intrusive<ScriptMap<unordered_map<K,V>>>(v);
 }
 template <typename K, typename V>
 inline ScriptValueP to_script(const IndexMap<K,V>* v) {

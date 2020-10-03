@@ -64,7 +64,7 @@ StatsDimension::StatsDimension(const Field& field)
 IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsDimension) {
   if (!automatic) {
     REFLECT(name);
-    REFLECT(description);
+    REFLECT_LOCALIZED(description);
     REFLECT(position_hint);
     REFLECT_N("icon", icon_filename);
     REFLECT(script);
@@ -98,7 +98,7 @@ StatsCategory::StatsCategory(const StatsDimensionP& dim)
 IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsCategory) {
   if (!automatic) {
     REFLECT(name);
-    REFLECT(description);
+    REFLECT_LOCALIZED(description);
     REFLECT(position_hint);
     REFLECT_N("icon", icon_filename);
     REFLECT(type);

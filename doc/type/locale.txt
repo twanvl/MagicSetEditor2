@@ -35,12 +35,15 @@ There are usually no other files in the package.
 | @error@		[[type:map]] of [[type:string]]s	 	Error messages.
 | @type@		[[type:map]] of [[type:string]]s	 	Types of objects for error messages.
 | @game@		[[type:map]] of [[type:map]] of [[type:string]]s
+			 					 	Deprecated since MSE 2.1.3, use @localized_...@ instead.<br/>
 			 					 	Translations for specific [[type:game]]s.<br/>
 			 					 	Field names and field descriptions are looked up in the locale, if they are found the translation is used, otherwise the value from the game file.<br/>
 			 					 	Extra keys not present in the English locale can be added here.
 | @stylesheet@		[[type:map]] of [[type:map]] of [[type:string]]s
+			 					 	Deprecated since MSE 2.1.3, use @localized_...@ instead.<br/>
 			 					 	Translations for specific [[type:stylesheet]]s.
 | @symbol font@		[[type:map]] of [[type:map]] of [[type:string]]s
+			 					 	Deprecated since MSE 2.1.3, use @localized_...@ instead.<br/>
 			 					 	Translations for specific [[type:symbol font]]s, in particular the "insert symbol" menu.
 
 Some of the items can contain placeholders for other values, for example:

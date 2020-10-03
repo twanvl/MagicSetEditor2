@@ -8,6 +8,7 @@
 
 #include <util/prec.hpp>
 #include <data/locale.hpp>
+#include <data/localized_string.hpp>
 #include <data/game.hpp>
 #include <data/stylesheet.hpp>
 #include <data/symbol_font.hpp>
@@ -117,4 +118,24 @@ String tr(const Package& pkg, const String& subcat, const String& key, DefaultLo
     loc = find_wildcard_and_set(the_locale->package_translations, pkg.relativeFilename());
   }
   return loc->tr(subcat, key, def);
+}
+
+// ----------------------------------------------------------------------------- : LocalizedString
+
+String const& LocalizedString::get(String const& locale) const {
+  auto it = translations.find(locale);
+  if (it != translations.end()) {
+    return it->second;
+  } else {
+    return default_;
+  }
+}
+
+String const& LocalizedString::get(Locale const& locale) const {
+  return get(locale.name());
+}
+
+String const& LocalizedString::get() const {
+  if (translations.empty()) return default_;
+  return get(the_locale->name());
 }

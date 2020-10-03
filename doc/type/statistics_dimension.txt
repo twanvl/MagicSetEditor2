@@ -13,7 +13,7 @@ Categories are also automatically generated from dimensions.
 --Properties--
 ! Property		Type			Default		Description
 | @name@		[[type:string]]		''required''	Name of this dimension, used as an axis label and a label for automatically generated categories.
-| @description@		[[type:string]]		@""@		A description of the dimension, currently not used.
+| @description@		[[type:localized string]]		@""@		A description of the dimension, currently not used.
 | @position hint@	[[type:string]]		@0@		Hint for ordering dimensions.
 | @icon@		[[type:filename]]	 		Filename of an icon for this dimension.
 | @script@		[[type:script]]		''required''	Script that generates a value for each card in the set.

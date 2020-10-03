@@ -12,7 +12,7 @@ Statistics dimensions are automatically generated for all [[type:statistics dime
 --Properties--
 ! Property		Type			Default		Description
 | @name@		[[type:string]]		''required''	Name of this category.
-| @description@		[[type:string]]		@""@		A description of the category, currently not used.
+| @description@		[[type:localized string]]		@""@		A description of the category, currently not used.
 | @position hint@	[[type:string]]		@0@		Hint for ordering category, lower numbers are at the top of the list.
 | @icon@		[[type:filename]]	 		Filename of an icon for this category, the image should be 21x21 pixels.
 | @type@		[[type:graph type]]	@"bar"@		Type of graph to use.

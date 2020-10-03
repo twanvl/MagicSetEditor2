@@ -49,9 +49,11 @@ String identity(const String&);
 String tr(LocaleCategory cat, const String& key, DefaultLocaleFun def = warn_and_identity);
 
 /// Translate 'key' in the for a Package using the current locale
+[[deprecated]]
 String tr(const Package&, const String& key, DefaultLocaleFun def);
 
 /// Translate 'key' in the for a Package using the current locale
+[[deprecated]]
 String tr(const Package&, const String& subcat, const String& key, DefaultLocaleFun def);
 
 /// A localized string for menus

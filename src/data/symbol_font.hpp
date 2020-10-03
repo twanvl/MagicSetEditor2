@@ -11,6 +11,7 @@
 #include <util/prec.hpp>
 #include <util/alignment.hpp>
 #include <util/io/package.hpp>
+#include <data/localized_string.hpp>
 #include <data/font.hpp>
 #include <wx/regex.h>
 
@@ -124,6 +125,8 @@ public:
   };
   Type                      type;
   String                    name;
+  LocalizedString           label;  // text of menu item
+  LocalizedString           prompt; // prompt for dialog box if type == CUSTOM
   vector<InsertSymbolMenuP> items;
   
   /// Number of ids used (recursive)
@@ -138,6 +141,8 @@ private:
   
   DECLARE_REFLECTION();
 };
+
+void after_reading(InsertSymbolMenu&, Version ver);
 
 // ----------------------------------------------------------------------------- : SymbolFontRef
 

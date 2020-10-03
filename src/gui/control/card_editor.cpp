@@ -355,7 +355,7 @@ void DataEditor::onMotion(wxMouseEvent& ev) {
     // set status text
     wxFrame* frame = dynamic_cast<wxFrame*>( wxGetTopLevelParent(this) );
     if (frame) {
-      frame->SetStatusText(hovered_viewer ? hovered_viewer->getField()->description : String());
+      frame->SetStatusText(hovered_viewer ? hovered_viewer->getField()->description.get() : String());
     }
   }
 }

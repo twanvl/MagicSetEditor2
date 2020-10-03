@@ -39,9 +39,7 @@ void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {
     // draw label
     dc.SetFont(*wxNORMAL_FONT);
     dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
-    // TODO : tr using stylesheet or using game?
-    dc.DrawText(tr(getStylePackage(), v.getField()->caption, identity),
-          RealPoint(margin_left - v.bounding_box.x, 1));
+    dc.DrawText(v.getField()->caption.get(), RealPoint(margin_left - v.bounding_box.x, 1));
   }
   // draw viewer
   v.draw(dc);
@@ -64,8 +62,7 @@ void NativeLookEditor::resizeViewers() {
         // width of the label string
         int w;
         Style& s = *v->getStyle();
-        String text = tr(getStylePackage(), s.fieldP->caption, identity);
-        dc.GetTextExtent(text,&w,nullptr);
+        dc.GetTextExtent(s.fieldP->caption.get(), &w, nullptr);
         label_width = max(label_width, w + label_margin);
       }
     }

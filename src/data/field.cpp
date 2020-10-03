@@ -47,8 +47,8 @@ IMPLEMENT_REFLECTION(Field) {
     REFLECT(type);
   }
   REFLECT(name);
-  REFLECT(caption);
-  REFLECT(description);
+  REFLECT_LOCALIZED(caption);
+  REFLECT_LOCALIZED(description);
   REFLECT_N("icon", icon_filename);
   REFLECT(editable);
   REFLECT(save_value);
@@ -59,15 +59,15 @@ IMPLEMENT_REFLECTION(Field) {
   REFLECT(card_list_width);
   REFLECT(card_list_visible);
   REFLECT(card_list_allow);
-  REFLECT(card_list_name);
+  REFLECT_LOCALIZED(card_list_name);
   REFLECT(sort_script);
   REFLECT_N("card_list_alignment", card_list_align);
 }
 
 void Field::after_reading(Version ver) {
   name = canonical_name_form(name);
-  if(caption.empty()) caption = name_to_caption(name);
-  if(card_list_name.empty()) card_list_name = capitalize(caption);
+  if(caption.default_.empty()) caption.default_ = name_to_caption(name);
+  if(card_list_name.default_.empty()) card_list_name.default_ = capitalize(caption.default_);
 }
 
 template <>

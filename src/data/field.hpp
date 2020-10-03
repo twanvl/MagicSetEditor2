@@ -13,6 +13,7 @@
 #include <util/alignment.hpp>
 #include <util/age.hpp>
 #include <util/rotation.hpp>
+#include <data/localized_string.hpp>
 #include <script/scriptable.hpp>
 #include <script/dependency.hpp>
 #include <script/image.hpp>
@@ -43,8 +44,8 @@ public:
   
   size_t    index;            ///< Used by IndexMap
   String    name;             ///< Name of the field, for refering to it from scripts and files
-  String    caption;          ///< Caption for NativeLookEditor
-  String    description;      ///< Description, used in status bar
+  LocalizedString caption;    ///< Caption for NativeLookEditor
+  LocalizedString description;///< Description, used in status bar
   String    icon_filename;    ///< Filename for an icon (for list of fields)
   bool      editable;         ///< Can values of this field be edited?
   bool      save_value;       ///< Should values of this field be written to files? Can be false for script generated fields.
@@ -55,7 +56,7 @@ public:
   UInt      card_list_width;  ///< Width of the card list column (pixels).
   bool      card_list_visible;///< Is this field shown in the card list?
   bool      card_list_allow;  ///< Is this field allowed to appear in the card list?
-  String    card_list_name;   ///< Alternate name to use in card list.
+  LocalizedString  card_list_name; ///< Name to use in card list.
   Alignment card_list_align;  ///< Alignment of the card list colummn.
   OptionalScript sort_script; ///< The script to use when sorting this, if not the value.
   Dependencies dependent_scripts; ///< Scripts that depend on values of this field
