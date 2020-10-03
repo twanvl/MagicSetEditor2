@@ -4,6 +4,9 @@ Magic Set Editor changelog, for the details see `git log`
 HEAD: new items added as changes are made
 ------------------------------------------------------------------------------
 
+Features:
+ * You can now check/uncheck all selected cards in the export window (#93)
+
 Template features:
  * Localization of game/stylesheet/symbol_font names is now done in those templates, instead of via the program-wide locale file. (#100)
 
