@@ -9,6 +9,7 @@
 #include <util/prec.hpp>
 #include <util/vcs.hpp>
 #include <util/vcs/subversion.hpp>
+#include <util/vcs/git.hpp>
 
 // ----------------------------------------------------------------------------- : Reflection
 
@@ -19,6 +20,7 @@ VCSP read_new<VCS>(Reader& reader) {
   reader.handle(_("type"), type);
   if      (type == _("none")) return make_intrusive<VCS>();
   else if (type == _("subversion")) return make_intrusive<SubversionVCS>();
+  else if (type == _("git")) return make_intrusive<GitVCS>();
   else if (type.empty()) {
     reader.warning(_ERROR_1_("expected key", _("version control system")));
     throw ParseError(_ERROR_("aborting parsing"));

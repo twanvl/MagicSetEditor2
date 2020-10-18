@@ -425,6 +425,10 @@ void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_
         vcs->addFile(f_out_path);
         f.second.created = false;
       }
+      else
+      {
+          vcs->updateFile(f_out_path);
+      }
     } else if (filename != saveAs) {
       // save as, copy old filess
       if (isZipfile()) {

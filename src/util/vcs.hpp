@@ -41,6 +41,9 @@ public:
   virtual void removeFile (const wxFileName& filename) {
     remove_file(filename.GetFullName());
   }
+  /// Mark a file as updated
+  virtual void updateFile(const wxFileName& filename) {
+  }
   
   DECLARE_REFLECTION_VIRTUAL();
 };
