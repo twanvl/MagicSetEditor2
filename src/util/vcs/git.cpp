@@ -74,7 +74,6 @@ void GitVCS::removeFile(const wxFileName& filename)
     String name = filename.GetFullPath();
     const Char* name_c[] = { _("git"), _("rm"), name.c_str(), nullptr };
     wxString wd = filename.GetPath(true);
-    queue_message(MESSAGE_WARNING, String(name_c[0]) + name_c[1] + name_c[2]);
     // `git rm` only removes it from the index.  We still need to removed it from the filesystem.
     VCS::removeFile(filename);
     if (!run_git(name_c, wd)) {
@@ -85,6 +84,11 @@ void GitVCS::removeFile(const wxFileName& filename)
 void GitVCS::updateFile(const wxFileName& filename) {
     // Git needs you to explicitly stage changes
     this->addFile(filename);
+}
+
+void GitVCS::commit(const String& directory) {
+    const Char* name_c[] = { _("git"), _("commit"), nullptr };
+    run_git(name_c, directory);
 }
 
 IMPLEMENT_REFLECTION(GitVCS) {

@@ -445,6 +445,7 @@ void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_
       // old file, just keep it
     }
   }
+  vcs->commit(saveAs);
 }
 
 void Package::saveToZipfile(const String& saveAs, bool remove_unused, bool is_copy) {

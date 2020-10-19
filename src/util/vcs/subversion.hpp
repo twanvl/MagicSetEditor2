@@ -18,6 +18,7 @@ public:
   void addFile (const wxFileName& filename) final;
   void moveFile (const wxFileName& source, const wxFileName& destination) final;
   void removeFile (const wxFileName& filename) final;
+  void commit (const String& directory) final;
   
   DECLARE_REFLECTION();
 };

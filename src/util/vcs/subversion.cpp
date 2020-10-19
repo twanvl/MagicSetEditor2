@@ -58,6 +58,11 @@ void SubversionVCS::removeFile(const wxFileName& filename)
   }
 }
 
+void SubversionVCS::commit(const String& directory) {
+    // Implementing this might be a breaking change to existing svn users (if there are any)
+    // It also would require a bit of a refactoring (making run_svn do the extra things run_git does)
+}
+
 IMPLEMENT_REFLECTION(SubversionVCS) {
   REFLECT_IF_NOT_READING {
     String type = _("subversion");

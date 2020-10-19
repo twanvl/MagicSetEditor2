@@ -44,6 +44,12 @@ public:
   /// Mark a file as updated
   virtual void updateFile(const wxFileName& filename) {
   }
+
+  /// Finalize changes and push them.
+  virtual void commit(const String& directory) {
+  }
+
+
   
   DECLARE_REFLECTION_VIRTUAL();
 };
