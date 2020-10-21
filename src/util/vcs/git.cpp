@@ -48,7 +48,6 @@ bool run_git(const Char** arguments, const wxString wd) {
         delete env;
         return false;
     }
-
 }
 
 void GitVCS::addFile(const wxFileName& filename)

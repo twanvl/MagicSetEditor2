@@ -17,7 +17,7 @@ bool run_svn(const Char** arguments, const wxString wd) {
   process->Redirect();
   wxExecuteEnv* env = new wxExecuteEnv();
   env->cwd = wd;
-  switch (wxExecute(const_cast<Char**>(arguments), wxEXEC_SYNC)) { // Yuck, const_cast
+  switch (wxExecute(const_cast<Char**>(arguments), wxEXEC_SYNC, process, env)) { // Yuck, const_cast
     // Success
     case 0:
       delete process;
