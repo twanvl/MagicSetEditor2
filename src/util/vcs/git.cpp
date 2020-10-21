@@ -12,6 +12,8 @@
 
 // ----------------------------------------------------------------------------- : SVN File Manipulation
 
+// Maybe consider linking against libgit2, and making this a core feature?
+// food for future thought.  Could be useful for template devs?
 bool run_git(const Char** arguments, const wxString wd) {
     wxProcess* process = new wxProcess(wxPROCESS_REDIRECT);
     process->Redirect();
@@ -90,6 +92,13 @@ void GitVCS::commit(const String& directory) {
     const Char* name_c[] = { _("git"), _("commit"), nullptr };
     run_git(name_c, directory);
 }
+
+void GitVCS::pull(const String& directory) {
+    // TODO: Fetch, check status, and only pull if no conflicts.
+    const Char* name_c[] = { _("git"), _("pull"), nullptr };
+    run_git(name_c, directory);
+}
+
 
 IMPLEMENT_REFLECTION(GitVCS) {
     REFLECT_IF_NOT_READING{

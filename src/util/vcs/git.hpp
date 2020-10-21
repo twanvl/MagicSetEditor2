@@ -20,6 +20,7 @@ public:
 	void removeFile(const wxFileName& filename) final;
 	void updateFile(const wxFileName& filename) final;
 	void commit(const String& directory) final;
+	void pull(const String& directory) final;
 
 	DECLARE_REFLECTION();
 };

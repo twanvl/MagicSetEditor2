@@ -49,6 +49,9 @@ public:
   virtual void commit(const String& directory) {
   }
 
+  virtual void pull(const String& directory) {
+  }
+
 
   
   DECLARE_REFLECTION_VIRTUAL();
