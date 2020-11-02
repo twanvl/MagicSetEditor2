@@ -59,7 +59,6 @@ public:
 
   ActionStack              actions;           ///< Actions performed on this set and the cards in it
   KeywordDatabase          keyword_db;        ///< Database for matching keywords, must be cleared when keywords change
-  VCSP                     vcs;               ///< The version control system to use
   
   /// A context for performing scripts
   /** Should only be used from the main thread! */
@@ -118,11 +117,6 @@ public:
   Version fileVersion() const override;
   /// Validate that the set is correctly loaded
   void validate(Version = app_version) override;
-  
-protected:
-  VCSP getVCS() override {
-    return vcs;
-  }
 
 private:
   DECLARE_REFLECTION_OVERRIDE();

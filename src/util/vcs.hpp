@@ -41,6 +41,18 @@ public:
   virtual void removeFile (const wxFileName& filename) {
     remove_file(filename.GetFullName());
   }
+  /// Mark a file as updated
+  virtual void updateFile(const wxFileName& filename) {
+  }
+
+  /// Finalize changes and push them.
+  virtual void commit(const String& directory) {
+  }
+
+  virtual void pull(const String& directory) {
+  }
+
+
   
   DECLARE_REFLECTION_VIRTUAL();
 };

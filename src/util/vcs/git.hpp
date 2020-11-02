@@ -13,14 +13,15 @@
 
 // ----------------------------------------------------------------------------- : SubversionVCS
 
-class SubversionVCS : public VCS {
+class GitVCS : public VCS {
 public:
-  void addFile (const wxFileName& filename) final;
-  void moveFile (const wxFileName& source, const wxFileName& destination) final;
-  void removeFile (const wxFileName& filename) final;
-  void commit (const String& directory) final;
-  void pull (const String& directory) final;
-  
-  DECLARE_REFLECTION();
+	void addFile(const wxFileName& filename) final;
+	void moveFile(const wxFileName& source, const wxFileName& destination) final;
+	void removeFile(const wxFileName& filename) final;
+	void updateFile(const wxFileName& filename) final;
+	void commit(const String& directory) final;
+	void pull(const String& directory) final;
+
+	DECLARE_REFLECTION();
 };
 
