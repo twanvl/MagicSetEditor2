@@ -90,6 +90,8 @@ void GitVCS::updateFile(const wxFileName& filename) {
 void GitVCS::commit(const String& directory) {
     const Char* name_c[] = { _("git"), _("commit"), nullptr };
     run_git(name_c, directory);
+    const Char* push_c[] = { _("git"), _("push"), nullptr };
+    run_git(push_c, directory);
 }
 
 void GitVCS::pull(const String& directory) {
