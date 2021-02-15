@@ -37,8 +37,9 @@ private:
   DECLARE_EVENT_TABLE();
   
   std::set<CardP> selected; ///< which cards are selected?
-  
+
   void toggle(const CardP& card);
+  void toggleSelected(bool select);
   
   void onKeyDown(wxKeyEvent&);
   void onLeftDown(wxMouseEvent&);

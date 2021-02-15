@@ -52,8 +52,8 @@ IMPLEMENT_REFLECTION(SymbolFont) {
   REFLECT_N("vertical_space",   spacing.height);
   WITH_DYNAMIC_ARG(symbol_font_for_reading, this);
     REFLECT(symbols);
-  REFLECT(scale_text);
-  REFLECT(insert_symbol_menu);
+    REFLECT(scale_text);
+    REFLECT(insert_symbol_menu);
 }
 
 // ----------------------------------------------------------------------------- : SymbolInFont
@@ -460,11 +460,11 @@ String InsertSymbolMenu::getCode(int id, const SymbolFont& font) const {
   } else if (id == 0 && type == Type::CODE) {
     return name;
   } else if (id == 0 && type == Type::CUSTOM) {
-    String caption = tr(font, _("title"),   name, capitalize_sentence);
-    String message = tr(font, _("message"), name, capitalize_sentence);
-    return wxGetTextFromUser(message, caption);
+    String title = this->label.get();
+    title.Replace(_("&"), _("")); // remove underlines
+    return wxGetTextFromUser(prompt.get(), title);
   }
-  return wxEmptyString;
+  return String();
 }
 
 wxMenu* InsertSymbolMenu::makeMenu(int id, SymbolFont& font) const {
@@ -478,17 +478,18 @@ wxMenu* InsertSymbolMenu::makeMenu(int id, SymbolFont& font) const {
   }
   return nullptr;
 }
+
 wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, SymbolFont& font) const {
-  wxString menu_name = tr(font, _("menu_item"), name, capitalize);
+  String label = this->label.get();
   // ensure that there is not actually an accelerator string,
-  menu_name.Replace(_("\t "),_("\t"));
+  label.Replace(_("\t "), _("\t"));
   #ifdef __WXMSW__
-    menu_name.Replace(_("\t"),_("\t ")); // by prepending " "
+    label.Replace(_("\t"), _("\t ")); // by prepending " "
   #else
-    menu_name.Replace(_("\t"),_("   ")); // by simply dropping the \t
+    label.Replace(_("\t"), _("   ")); // by simply dropping the \t
   #endif
   if (type == Type::SUBMENU) {
-    wxMenuItem* item = new wxMenuItem(parent, wxID_ANY, menu_name,
+    wxMenuItem* item = new wxMenuItem(parent, wxID_ANY, label,
                                       wxEmptyString, wxITEM_NORMAL,
                                       makeMenu(first_id, font));
     item->SetBitmap(wxNullBitmap);
@@ -497,7 +498,7 @@ wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, SymbolF
     wxMenuItem* item = new wxMenuItem(parent, wxID_SEPARATOR);
     return item;
   } else {
-    wxMenuItem* item = new wxMenuItem(parent, first_id, menu_name);
+    wxMenuItem* item = new wxMenuItem(parent, first_id, label);
     // Generate bitmap for use on this item
     SymbolInFont* symbol = nullptr;
     if (type == Type::CUSTOM) {
@@ -527,24 +528,24 @@ IMPLEMENT_REFLECTION_ENUM(InsertSymbolMenu::Type) {
   VALUE_N("submenu", InsertSymbolMenu::Type::SUBMENU);
 }
 
-IMPLEMENT_REFLECTION_NO_GET_MEMBER(InsertSymbolMenu) {
+IMPLEMENT_REFLECTION(InsertSymbolMenu) {
   REFLECT_IF_READING_SINGLE_VALUE_AND(items.empty()) {
     REFLECT_NAMELESS(name);
   } else {
     // complex values are groups
     REFLECT(type);
     REFLECT(name);
+    REFLECT_LOCALIZED(label);
+    REFLECT_LOCALIZED(prompt);
     REFLECT(items);
     if (Handler::isReading && !items.empty()) type = Type::SUBMENU;
   }
 }
-template <> void GetDefaultMember::handle(const InsertSymbolMenu& m) {
-  handle(m.name);
-}
-template <> void GetMember::handle(const InsertSymbolMenu& m) {
-  handle(_("type"),  m.type);
-  handle(_("name"),  m.name);
-  handle(_("items"), m.items);
+
+void after_reading(InsertSymbolMenu& m, Version ver) {
+  assert(symbol_font_for_reading());
+  if (m.label.empty()) m.label.default_ = tr(*symbol_font_for_reading(), _("menu_item"), m.name, capitalize);
+  if (m.prompt.empty()) m.prompt.default_ = tr(*symbol_font_for_reading(), _("message"), m.name, capitalize_sentence);
 }
 
 // ----------------------------------------------------------------------------- : SymbolFontRef

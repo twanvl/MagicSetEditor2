@@ -56,6 +56,7 @@ public:
   template <typename T>             void handle(const Scriptable<T>& );
   template <typename T>             void handle(const vector<T>&     c) { value = to_script(&c); }
   template <typename K, typename V> void handle(const map<K,V>&      c) { value = to_script(&c); }
+  template <typename K, typename V> void handle(const unordered_map<K,V>& c) { value = to_script(&c); }
   template <typename K, typename V> void handle(const IndexMap<K,V>& c) { value = to_script(&c); }
   template <typename K, typename V> void handle(const DelayedIndexMaps<K,V>&) {}
   template <typename K, typename V> void handle(const DelayedIndexMapsData<K,V>& c);

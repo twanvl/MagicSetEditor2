@@ -74,6 +74,17 @@ void SelectCardList::toggle(const CardP& card) {
   }
 }
 
+void SelectCardList::toggleSelected(bool select) {
+  for (long i = GetFirstSelected(); i != -1; i = GetNextSelected(i)) {
+    if (select) {
+      selected.insert(getCard(i));
+    } else {
+      selected.erase(getCard(i));
+    }
+    RefreshItem(i);
+  }
+}
+
 void SelectCardList::onKeyDown(wxKeyEvent& ev) {
   if (selected_item_pos == -1 || !selected_item) {
     // no selection
@@ -82,18 +93,15 @@ void SelectCardList::onKeyDown(wxKeyEvent& ev) {
   }
   switch (ev.GetKeyCode()) {
     case WXK_SPACE: {
-      toggle(getCard());
-      RefreshItem(selected_item_pos);
+      toggleSelected(!isSelected(getCard()));
       break;
     }
     case WXK_NUMPAD_ADD: case '+': {
-      selected.insert(getCard());
-      RefreshItem(selected_item_pos);
+      toggleSelected(true);
       break;
     }
     case WXK_NUMPAD_SUBTRACT: case '-': {
-      selected.erase(getCard());
-      RefreshItem(selected_item_pos);
+      toggleSelected(false);
       break;
     }
     default:
@@ -106,8 +114,14 @@ void SelectCardList::onLeftDown(wxMouseEvent& ev) {
   long item = HitTest(wxPoint(ev.GetX(), ev.GetY()), flags);
   if (flags == wxLIST_HITTEST_ONITEMICON) {
     // only clicking the icon toggles
-    toggle(getCard(item));
-    RefreshItem(item);
+    if (IsSelected(item)) {
+      // if multiple items are selected in the view (regardless of checkbox status), check/uncheck them all
+      toggleSelected(!isSelected(getCard(item)));
+      return; // don't change selection
+    } else {
+      toggle(getCard(item));
+      RefreshItem(item);
+    }
   }
   ev.Skip();
 }

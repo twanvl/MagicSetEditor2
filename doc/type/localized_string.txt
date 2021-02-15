@@ -1,0 +1,14 @@
+Localized strings
+
+A 'localized string' is a [[type:map]] of [[type::string]]s, indexed by locale name.
+It is used to translate games and stylesheets to other user interface languages.
+
+Localized strings can be given with a @localized@ prefix on the property name.
+For example, a field has a @description@ which is a [[type::string]], and a @localized_description@ for localized variants. So
+
+>field:
+>	name: cost
+>	description: How much this card costs
+>	localized description:
+>		en_US: How much this card costs
+>		nl_NL: Hoeveel deze kaart kost

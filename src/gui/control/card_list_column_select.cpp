@@ -67,7 +67,7 @@ void CardListColumnSelectDialog::initList() {
   // Init items
   Color window_color = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
   FOR_EACH(c, columns) {
-    list->Append(tr(*game, c.field->card_list_name, identity));
+    list->Append(c.field->card_list_name.get());
     // check
     int i = list->GetCount() - 1;
     list->Check(i, c.settings.visible);
@@ -80,7 +80,7 @@ void CardListColumnSelectDialog::initList() {
 
 void CardListColumnSelectDialog::refreshItem(int i) {
   list->Check    (i, columns[i].settings.visible);
-  list->SetString(i, tr(*game, columns[i].field->card_list_name, identity) );
+  list->SetString(i, columns[i].field->card_list_name.get());
 }
 
 // ----------------------------------------------------------------------------- : Events

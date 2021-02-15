@@ -11,6 +11,7 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <data/graph_type.hpp>
+#include <data/localized_string.hpp>
 #include <script/scriptable.hpp>
 
 class Field;
@@ -28,7 +29,7 @@ public:
   
   const bool        automatic;    ///< Based on a card field?
   String            name;        ///< Name of this dimension
-  String            description;    ///< Description, used in status bar
+  LocalizedString   description;    ///< Description, used in status bar
   int               position_hint;  ///< Hint for the ordering
   String            icon_filename;  ///< Icon for lists
   Bitmap            icon;        ///< The loaded icon (optional of course)
@@ -52,15 +53,15 @@ public:
   StatsCategory();
   StatsCategory(const StatsDimensionP&);
   
-  const bool              automatic;    ///< Automatically generated?
-  String                  name;      ///< Name/label
-  String                  description;  ///< Description, used in status bar
-  int                     position_hint;  ///< Hint for the ordering
-  String                  icon_filename;  ///< Icon for lists
-  Bitmap                  icon;      ///< The loaded icon (optional of course)
-  vector<String>          dimension_names;///< Names of the dimensions to use
-  vector<StatsDimensionP> dimensions;    ///< Actual dimensions
-  GraphType               type;      ///< Type of graph to use
+  const bool              automatic;       ///< Automatically generated?
+  String                  name;            ///< Name/label
+  LocalizedString         description;     ///< Description, used in status bar
+  int                     position_hint;   ///< Hint for the ordering
+  String                  icon_filename;   ///< Icon for lists
+  Bitmap                  icon;            ///< The loaded icon (optional of course)
+  vector<String>          dimension_names; ///< Names of the dimensions to use
+  vector<StatsDimensionP> dimensions;      ///< Actual dimensions
+  GraphType               type;            ///< Type of graph to use
   
   /// Initialize dimensions from dimension_names
   void find_dimensions(const vector<StatsDimensionP>& available);
