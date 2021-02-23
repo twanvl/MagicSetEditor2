@@ -66,9 +66,17 @@ sudo apt install libboost-dev libwxgtk3.0-gtk3-dev libhunspell-dev
 ````
 Then use cmake to build
 ````
-cmake build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
+mkdir build
+cd build
+cmake ..
+make
 ````
+Before running you must copy the resource directory
+````
+mkdir ~/.magicseteditor
+cp -r resource ~/.magicseteditor/
+````
+Then you need to get data files. The most commonly used data files can be found [here](https://github.com/CajunAvenger/Cajun-Style-Templates/)  
 Use `CMAKE_BUILD_TYPE=Debug` for a debug build
 
 ## Building on Mac
