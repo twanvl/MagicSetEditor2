@@ -61,7 +61,7 @@ The tests can be run from inside visual studio
 
 Install the dependencies, for example on a debian based system
 ```shell
-$ sudo apt install g++
+$ sudo apt install g++ cmake
 $ sudo apt install libboost-dev libwxgtk3.0-gtk3-dev libhunspell-dev
 ```
 Then use cmake to build
@@ -75,7 +75,7 @@ Use `CMAKE_BUILD_TYPE=Debug` for a debug build
 
 Install the dependencies, for example using Homebrew
 ```shell
-$ brew install boost wxwidgets hunspell
+$ brew install boost wxwidgets hunspell cmake
 ```
 Note: Tested with boost 1.72.0\_3, wxmac (wxwidgets) 3.0.5.1\_1, hunspell 1.7.0\_2
 Then use cmake to build
