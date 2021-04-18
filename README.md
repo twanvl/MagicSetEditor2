@@ -62,7 +62,7 @@ The tests can be run from inside visual studio
 Install the dependencies, for example on a debian based system
 ```shell
 $ sudo apt install g++ cmake
-$ sudo apt install libboost-dev libwxgtk3.0-gtk3-dev libhunspell-dev
+$ sudo apt install libboost-dev libboost-regex-dev libwxgtk3.0-gtk3-dev libhunspell-dev
 ```
 Then use cmake to build
 ```shell
