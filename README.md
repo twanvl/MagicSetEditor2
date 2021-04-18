@@ -66,7 +66,7 @@ $ sudo apt install libboost-dev libboost-regex-dev libwxgtk3.0-gtk3-dev libhunsp
 ```
 Then use cmake to build
 ```shell
-$ cmake build -DCMAKE_BUILD_TYPE=Release
+$ cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
 $ cmake --build build
 ```
 Use `CMAKE_BUILD_TYPE=Debug` for a debug build
@@ -80,7 +80,7 @@ $ brew install boost wxwidgets hunspell cmake
 Note: Tested with boost 1.72.0\_3, wxmac (wxwidgets) 3.0.5.1\_1, hunspell 1.7.0\_2
 Then use cmake to build
 ```shell
-$ cmake build -DCMAKE_BUILD_TYPE=Release
+$ cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
 $ cmake --build build
 ```
 Use `CMAKE_BUILD_TYPE=Debug` for a debug build
