@@ -80,9 +80,8 @@ $ brew install boost wxwidgets hunspell
 Note: Tested with boost 1.72.0\_3, wxmac (wxwidgets) 3.0.5.1\_1, hunspell 1.7.0\_2
 Then use cmake to build
 ```shell
-$ mkdir build && cd build
-$ cmake -DCMAKE_BUILD_TYPE=Release ..
-$ cmake --build ..
+$ cmake build -DCMAKE_BUILD_TYPE=Release
+$ cmake --build build
 ```
 Use `CMAKE_BUILD_TYPE=Debug` for a debug build
 
