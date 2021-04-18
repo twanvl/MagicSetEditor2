@@ -68,6 +68,8 @@ Then use cmake to build
 ```shell
 $ cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
 $ cmake --build build
+# Optinal systemwide install (/usr/local/). Use --prefix to override.
+$ cmake --install build
 ```
 Use `CMAKE_BUILD_TYPE=Debug` for a debug build
 
@@ -82,12 +84,7 @@ Then use cmake to build
 ```shell
 $ cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
 $ cmake --build build
+# Optinal systemwide install (/usr/local/). Use --prefix to override.
+$ cmake --install build
 ```
 Use `CMAKE_BUILD_TYPE=Debug` for a debug build
-
-Finally, copy the resources to a SharedSupport directory and run the executable
-```shell
-$ mkdir SharedSupport && cd SharedSupport
-$ cp -r ../resource SharedSupport/
-$ ./magicseteditor
-```
