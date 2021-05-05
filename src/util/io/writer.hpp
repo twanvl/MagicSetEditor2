@@ -10,6 +10,7 @@
 
 #include <util/prec.hpp>
 #include <wx/txtstrm.h>
+#include <unordered_map>
 
 template <typename T> class Defaultable;
 template <typename T> class Scriptable;

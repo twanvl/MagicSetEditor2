@@ -10,6 +10,7 @@
 
 #include <util/prec.hpp>
 #include <util/version.hpp>
+#include <unordered_map>
 
 template <typename T> class Defaultable;
 template <typename T> class Scriptable;
