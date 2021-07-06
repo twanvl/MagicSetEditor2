@@ -41,7 +41,7 @@ namespace std {
       return std::hash<std::wstring>()(s.ToStdWstring());
     }
   };
-} //
+}
 #endif
 
 // ----------------------------------------------------------------------------- : Unicode
