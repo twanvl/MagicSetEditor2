@@ -57,6 +57,12 @@ if(WIN32)
   )
 endif()
 
+if(UNIX)
+  include(GNUInstallDirs)
+  install(TARGETS magicseteditor DESTINATION "${CMAKE_INSTALL_FULL_BINDIR}")
+  install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/data" DESTINATION "${CMAKE_INSTALL_FULL_DATAROOTDIR}/magicseteditor")
+  install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/resource" DESTINATION "${CMAKE_INSTALL_FULL_DATAROOTDIR}/magicseteditor")
+endif()
 
 # warnings
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)

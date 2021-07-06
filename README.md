@@ -18,15 +18,15 @@ On windows, the program can be compiled with Visual Studio (recommended) or with
  * Download and install [Visual Studio Community edition](https://visualstudio.microsoft.com/vs/community/)
  * Download and install [vcpkg](https://github.com/microsoft/vcpkg)
  * Use vcpkg to install wxwidgets, boost, hunspell
-````
-vcpkg install wxwidgets
-vcpkg install boost-smart-ptr
-vcpkg install boost-regex
-vcpkg install boost-logic
-vcpkg install boost-pool
-vcpkg install hunspell
-vcpkg integrate install
-````
+```shell
+> vcpkg install wxwidgets
+> vcpkg install boost-smart-ptr
+> vcpkg install boost-regex
+> vcpkg install boost-logic
+> vcpkg install boost-pool
+> vcpkg install hunspell
+> vcpkg integrate install
+```
  * Then just use "Open Folder" from inside visual studio to open the Magic Set Editor source code root folder.
  * Select the configuration that you want to build, and hit F7.
 
@@ -43,52 +43,48 @@ The tests can be run from inside visual studio
 
  * Download and install [msys2](https://www.msys2.org/)
  * Install a recent version of the gcc compiler, cmake, and wxWidgets libraries:
-````
-pacman -S mingw32/mingw-w64-i686-gcc
-pacman -S mingw32/mingw-w64-i686-wxWidgets
-pacman -S mingw32/mingw-w64-i686-boost
-pacman -S mingw32/mingw-w64-i686-hunspell
-pacman -S cmake
-````
+```shell
+> pacman -S mingw32/mingw-w64-i686-gcc
+> pacman -S mingw32/mingw-w64-i686-wxWidgets
+> pacman -S mingw32/mingw-w64-i686-boost
+> pacman -S mingw32/mingw-w64-i686-hunspell
+> pacman -S cmake
+```
    Use `mingw64/mingw-w64-x86_64-...` instead of for the 64bit build
  * Build
-````
-cmake -G "MSYS Makefiles" -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-````
+```shell
+> cmake -G "MSYS Makefiles" -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
+> cmake --build build
+```
 
 ## Building on linux
 
 Install the dependencies, for example on a debian based system
-````
-sudo apt install g++
-sudo apt install libboost-dev libwxgtk3.0-gtk3-dev libhunspell-dev
-````
+```shell
+$ sudo apt install g++ cmake
+$ sudo apt install libboost-dev libboost-regex-dev libwxgtk3.0-gtk3-dev libhunspell-dev
+```
 Then use cmake to build
-````
-cmake build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-````
+```shell
+$ cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+$ cmake --build build
+# Optinal systemwide install (/usr/local/). Use --prefix to override.
+$ cmake --install build
+```
 Use `CMAKE_BUILD_TYPE=Debug` for a debug build
 
 ## Building on Mac
 
 Install the dependencies, for example using Homebrew
-````
-brew install boost wxwidgets hunspell
-````
-Note: Tested with boost 1.72.0_3, wxmac (wxwidgets) 3.0.5.1_1, hunspell 1.7.0_2
+```shell
+$ brew install boost wxwidgets hunspell cmake
+```
+Note: Tested with boost 1.72.0\_3, wxmac (wxwidgets) 3.0.5.1\_1, hunspell 1.7.0\_2
 Then use cmake to build
-````
-mkdir build && cd build
-cmake -DCMAKE_BUILD_TYPE=Release ..
-cmake --build ..
-````
+```shell
+$ cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+$ cmake --build build
+# Optinal systemwide install (/usr/local/). Use --prefix to override.
+$ cmake --install build
+```
 Use `CMAKE_BUILD_TYPE=Debug` for a debug build
-
-Finally, copy the resources to a SharedSupport directory and run the executable
-````
-mkdir SharedSupport && cd SharedSupport
-cp -r ../resource SharedSupport/
-./magicseteditor
-````
