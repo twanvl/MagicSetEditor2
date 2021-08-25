@@ -33,6 +33,17 @@ inline wxStdString const& toStdString(String const& s) {
   #endif
 }
 
+#if wxVERSION_NUMBER < 3100
+// wxWidgets 3.1.0 added this specialization
+namespace std {
+  template<> struct hash<String> {
+    size_t operator()(String const& s) const {
+      return std::hash<std::wstring>()(s.ToStdWstring());
+    }
+  };
+}
+#endif
+
 // ----------------------------------------------------------------------------- : Unicode
 
 /// u if UNICODE is defined, a otherwise

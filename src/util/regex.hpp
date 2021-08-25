@@ -31,23 +31,18 @@
 // ----------------------------------------------------------------------------- : Boost implementation
 
 #if USE_BOOST_REGEX
-  // needed for boost::regex
-  inline std::size_t hash_value(wxUniChar const& x) {
-    boost::hash<int> hasher;
-    return hasher(static_cast<int>(x));
-  }
-  /*
-  // fix: boost regex doesn't like that wxUniChar can't be constructed from an int
-  namespace boost {
-    namespace BOOST_REGEX_DETAIL_NS {
-      inline bool can_start(wxUniChar c, const unsigned char* map, unsigned char mask) {
-        return can_start(c.GetValue(), map, mask);
-      }
-      inline bool can_start(wxUniCharRef c, const unsigned char* map, unsigned char mask) {
-        return can_start(c.GetValue(), map, mask);
-      }
+  // needed for boost::regex to compute hash values of unicode chars
+  #if BOOST_VERSION < 107600
+    inline std::size_t hash_value(wxUniChar const& x) {
+      boost::hash<int> hasher;
+      return hasher(static_cast<int>(x));
     }
-  }*/
+  #else
+    // boost > 1.76 uses its own hash function that needs operator +
+    inline int operator + (wxUniChar x, unsigned int y) {
+      return static_cast<int>(x) + y;
+    }
+  #endif
 
   /// Our own regular expression wrapper
   /** Suppors both boost::regex and wxRegEx.
