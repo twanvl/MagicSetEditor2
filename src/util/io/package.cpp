@@ -15,6 +15,9 @@
 #include <wx/wfstream.h>
 #include <wx/zipstrm.h>
 #include <wx/dir.h>
+#include <util\vcs\git.hpp>
+#include <util\vcs\git.hpp>
+#include <util\vcs\subversion.hpp>
 
 // ----------------------------------------------------------------------------- : Package : outside
 
@@ -23,6 +26,7 @@ IMPLEMENT_DYNAMIC_ARG(Package*, clipboard_package, nullptr);
 
 Package::Package()
   : zipStream (nullptr)
+  , vcs (nullptr)
 {}
 
 Package::~Package() {
@@ -372,8 +376,18 @@ void Package::openDirectory(bool fast) {
 void Package::openSubdir(const String& name) {
   wxDir d(filename + _("/") + name);
   if (!d.IsOpened()) return; // ignore errors here
-  // find files
   String f; // filename
+  if (d.GetFirst(&f, _(".git"))) {
+      queue_message(MESSAGE_INFO, filename + _(" under git"));
+      vcs = make_intrusive<GitVCS>();
+      vcs->pull(filename);
+  }
+  if (d.GetFirst(&f, _(".svn"))) {
+      queue_message(MESSAGE_INFO, filename + _(" under subversion"));
+      vcs = make_intrusive<SubversionVCS>();
+      vcs->pull(filename);
+  }
+  // find files
   for(bool ok = d.GetFirst(&f, wxEmptyString, wxDIR_FILES | wxDIR_HIDDEN) ; ok ; ok = d.GetNext(&f)) {
     if (ignore_file(f)) continue;
     // add file to list of known files
@@ -425,6 +439,10 @@ void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_
         vcs->addFile(f_out_path);
         f.second.created = false;
       }
+      else
+      {
+          vcs->updateFile(f_out_path);
+      }
     } else if (filename != saveAs) {
       // save as, copy old filess
       if (isZipfile()) {
@@ -441,6 +459,7 @@ void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_
       // old file, just keep it
     }
   }
+  vcs->commit(saveAs);
 }
 
 void Package::saveToZipfile(const String& saveAs, bool remove_unused, bool is_copy) {

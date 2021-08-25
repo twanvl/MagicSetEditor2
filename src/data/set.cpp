@@ -26,13 +26,11 @@
 // ----------------------------------------------------------------------------- : Set
 
 Set::Set()
-  : vcs (make_intrusive<VCS>())
-  , script_manager(new SetScriptManager(*this))
+  : script_manager(new SetScriptManager(*this))
 {}
 
 Set::Set(const GameP& game)
   : game(game)
-  , vcs (make_intrusive<VCS>())
   , script_manager(new SetScriptManager(*this))
 {
   data.init(game->set_fields);
@@ -41,7 +39,6 @@ Set::Set(const GameP& game)
 Set::Set(const StyleSheetP& stylesheet)
   : game(stylesheet->game)
   , stylesheet(stylesheet)
-  , vcs (make_intrusive<VCS>())
   , script_manager(new SetScriptManager(*this))
 {
   data.init(game->set_fields);
@@ -204,7 +201,7 @@ IMPLEMENT_REFLECTION(Set) {
     REFLECT(pack_types);
   }
   reflect_set_info_get_member(handler,data);
-  REFLECT_NO_SCRIPT_N("version_control", vcs);
+  //REFLECT_NO_SCRIPT_N("version_control", vcs);
   REFLECT(apprentice_code);
 }
 
