@@ -92,7 +92,7 @@ bool update_available()  {
 class CheckUpdateThread : public wxThread {
 public:
   void* Entry() override {
-    Work();
+//    Work();
     return 0;
   }
   
