@@ -10,6 +10,9 @@
 
 #include <util/prec.hpp>
 #include <util/version.hpp>
+#ifdef __APPLE__
+    #include <unordered_map>
+#endif
 
 template <typename T> class Defaultable;
 template <typename T> class Scriptable;

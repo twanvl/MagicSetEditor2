@@ -66,8 +66,9 @@ sudo apt install libboost-dev libwxgtk3.0-gtk3-dev libhunspell-dev
 ````
 Then use cmake to build
 ````
-cmake build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
+mkdir build && cd build
+cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake --build .
 ````
 Use `CMAKE_BUILD_TYPE=Debug` for a debug build
 

@@ -27,6 +27,9 @@ template <> void GetDefaultMember::handle(const tribool&      v) { value = to_sc
 template <> void GetDefaultMember::handle(const Vector2D&     v) { value = to_script(String::Format(_("(%.10lf,%.10lf)"), v.x, v.y)); }
 template <> void GetDefaultMember::handle(const Color&        v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const wxDateTime&   v) { value = to_script(v); }
+#ifdef __APPLE__
+    template <> void GetDefaultMember::handle(const unsigned long& v) { value = to_script((int)v); }
+#endif
             void GetDefaultMember::handle(const ScriptValueP& v) { value = v; }
             void GetDefaultMember::handle(const ScriptP&      v) { value = v; }
 

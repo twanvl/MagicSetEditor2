@@ -10,6 +10,9 @@
 
 #include <util/prec.hpp>
 #include <wx/txtstrm.h>
+#ifdef __APPLE__
+    #include <unordered_map>
+#endif
 
 template <typename T> class Defaultable;
 template <typename T> class Scriptable;

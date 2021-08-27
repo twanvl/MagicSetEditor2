@@ -92,7 +92,9 @@ bool update_available()  {
 class CheckUpdateThread : public wxThread {
 public:
   void* Entry() override {
-    Work();
+    #ifndef __APPLE__
+        Work();
+    #endif
     return 0;
   }
   

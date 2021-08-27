@@ -106,3 +106,13 @@ typedef unsigned int  UInt;
   #define assert(exp) (void)( (exp) || (msvc_assert(nullptr, _CRT_WIDE(#exp), _CRT_WIDE(__FILE__), __LINE__), 0) )
 #endif
 
+#ifdef __APPLE__
+  #if wxVERSION_NUMBER < 3100
+  // wx <= 3.1 doesn't include a hash implementation for wxString
+  template <> struct std::hash<wxString> {
+    size_t operator()(const wxString& k) const {
+      return hash<wstring>()(k.ToStdWstring());
+    }
+  };
+  #endif
+#endif
