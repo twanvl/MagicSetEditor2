@@ -103,7 +103,14 @@ void capitalize_in_place(String& s) {
           (is_substr(it, s.end(), _("is ")) || is_substr(it, s.end(), _("the ")) ||
            is_substr(it, s.end(), _("in ")) || is_substr(it, s.end(), _("of "))  ||
            is_substr(it, s.end(), _("to ")) || is_substr(it, s.end(), _("at "))  ||
-           is_substr(it, s.end(), _("a " )))) {
+           is_substr(it, s.end(), _("a " )) || is_substr(it, s.end(), _("an ")) ||
+           is_substr(it, s.end(), _("for ")) || is_substr(it, s.end(), _("and "))  ||
+           is_substr(it, s.end(), _("nor ")) || is_substr(it, s.end(), _("but "))  ||
+           is_substr(it, s.end(), _("or " )) || is_substr(it, s.end(), _("yet ")) ||
+           is_substr(it, s.end(), _("so ")) || is_substr(it, s.end(), _("if "))  ||
+           is_substr(it, s.end(), _("as ")) || is_substr(it, s.end(), _("by "))  ||
+           is_substr(it, s.end(), _("off " )) || is_substr(it, s.end(), _("on ")) ||
+           is_substr(it, s.end(), _("up ")) || is_substr(it, s.end(), _("via ")))) {
         // Short words are not capitalized, keep lower case
       } else {
         *it = toUpper(*it);
