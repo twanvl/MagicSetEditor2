@@ -71,7 +71,7 @@ cmake --build build
 ````
 Use `CMAKE_BUILD_TYPE=Debug` for a debug build
 
-## Building on Mac
+## Building on Mac (Doesn't support M1 Macs)
 
 Install the dependencies, for example using Homebrew
 ````
@@ -82,7 +82,7 @@ Then use cmake to build
 ````
 mkdir build && cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
-cmake --build ..
+cmake --build .
 ````
 Use `CMAKE_BUILD_TYPE=Debug` for a debug build
 
