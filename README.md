@@ -24,6 +24,7 @@ vcpkg install boost-smart-ptr
 vcpkg install boost-regex
 vcpkg install boost-logic
 vcpkg install boost-pool
+vcpkg install boost-iterator
 vcpkg install hunspell
 vcpkg integrate install
 ````
