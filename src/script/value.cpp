@@ -37,7 +37,7 @@ wxDateTime ScriptValue::toDateTime() const {
   throw ScriptErrorConversion(typeName(), _TYPE_("date"));
 }
 GeneratedImageP ScriptValue::toImage() const {
-  throw ScriptErrorConversion(typeName(), _TYPE_("image"   ));
+  throw ScriptErrorConversion(typeName(), _TYPE_("image"));
 }
 String ScriptValue::toCode() const {
   return toString();

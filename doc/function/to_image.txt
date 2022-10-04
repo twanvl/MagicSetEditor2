@@ -7,7 +7,8 @@ DOC_MSE_VERSION: since 0.3.8
 
 Convert any value to a [[type:image]].
 
-A string is interpreted as a [[type:filename]].
+* A string is interpreted as a [[type:filename]].
+* A [[type:card]] will be converted into an image onto which image operations can be done.
 
 --Parameters--
 ! Parameter	Type			Description

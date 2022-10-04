@@ -386,3 +386,17 @@ private:
   Age age; ///< Age the image was last updated
 };
 
+// ----------------------------------------------------------------------------- : PreGeneratedImage
+
+/// Use an image from an ImageValue as an image
+class PreGeneratedImage : public GeneratedImage {
+public:
+  PreGeneratedImage(const Image& image);
+  ~PreGeneratedImage();
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+  bool local() const override { return true; }
+private:
+  PreGeneratedImage(const PreGeneratedImage&); // copy ctor
+  Image image;
+};

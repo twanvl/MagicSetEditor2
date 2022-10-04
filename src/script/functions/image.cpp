@@ -16,6 +16,8 @@
 #include <data/stylesheet.hpp>
 #include <data/symbol.hpp>
 #include <data/field/symbol.hpp>
+#include <data/format/formats.hpp>
+#include <data/export_template.hpp>
 #include <gfx/generated_image.hpp>
 #include <render/symbol/filter.hpp>
 
@@ -24,8 +26,13 @@ void parse_enum(const String&, ImageCombine& out);
 // ----------------------------------------------------------------------------- : Utility
 
 SCRIPT_FUNCTION(to_image) {
-  SCRIPT_PARAM_C(GeneratedImageP, input);
-  return input;
+  SCRIPT_PARAM_C(ScriptValueP, input);
+  ScriptObject<CardP>* card = dynamic_cast<ScriptObject<CardP>*>(input.get());
+  if (card) {
+    Image image = export_bitmap(export_info()->set, card->getValue()).ConvertToImage();
+    return make_intrusive<PreGeneratedImage>(image);
+  }
+  return input->toImage();
 }
 
 // ----------------------------------------------------------------------------- : Image functions
