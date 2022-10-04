@@ -216,9 +216,16 @@ SCRIPT_FUNCTION(to_color) {
 
 SCRIPT_FUNCTION(to_date) {
   try {
-    SCRIPT_PARAM_C(wxDateTime, input);
-    SCRIPT_RETURN(input);
-  } catch (const ScriptError& e) {
+    SCRIPT_PARAM_C(String, input);
+    if (input == "now") {
+      SCRIPT_RETURN(wxDateTime::Now());
+    }
+    else {
+      SCRIPT_PARAM_C(wxDateTime, input);
+      SCRIPT_RETURN(input);
+    }
+  }
+  catch (const ScriptError& e) {
     return delay_error(e);
   }
 }
