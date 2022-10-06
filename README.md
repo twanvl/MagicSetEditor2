@@ -24,6 +24,7 @@ vcpkg install boost-smart-ptr
 vcpkg install boost-regex
 vcpkg install boost-logic
 vcpkg install boost-pool
+vcpkg install boost-iterator
 vcpkg install hunspell
 vcpkg integrate install
 ````
@@ -33,7 +34,7 @@ vcpkg integrate install
 Notes:
  * You may need to work around [this bug](https://github.com/microsoft/vcpkg/issues/4756) by replacing `$VCPATH\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.16\Modules\FindwxWidgets.cmake` with the file from  https://github.com/CaeruleusAqua/vcpkg-wx-find (`$VCPATH` is usually `C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7`)
  * vcpkg by default installs 32 bit versions of libraries, use `vcpkg install PACKAGENAME:x64-windows` if you want to enable a 64 bit build.
- * Similarly, to use a static build, use `vcpkg install PACKAGENAME:x32-windows-static`.
+ * Similarly, to use a static build, use `vcpkg install PACKAGENAME:x84-windows-static` or `vcpkg install PACKAGENAME:x64-windows-static`.
  
 For running tests you will also need to
  * Download and install perl (For example [Strawberry perl](http://strawberryperl.com/) or using [MSYS2](https://www.msys2.org/))
