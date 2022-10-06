@@ -97,6 +97,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 	
 ! Cards				<<<
 | [[fun:new_card]]		Construct a new [[type:card]] object.
+| [[fun:get_card_styling]]		Get the styling data of a [[type:card]].
 	
 ! HTML export			<<<
 | [[fun:to_html]]		Convert [[type:tagged text]] to html.

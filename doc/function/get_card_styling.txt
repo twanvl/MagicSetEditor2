@@ -1,0 +1,17 @@
+Function: get_card_styling
+
+--Usage--
+> get_card_styling(card, set: set)
+
+Get the styling data of a [[type:card]].
+
+This is for use in exporter scripts. In card scripts, use the "styling" predefined variable instead.
+
+--Parameters--
+! Parameter	Type					Description
+| @input@	[[type:card]]		The card you want to retrieve the styling data from.
+| @set@		[[type:set]]		The set the card belongs to. In an exporter script, this can be ommited since "set" is a predefined variable.
+
+--Examples--
+> # Retrieve the value "is foil" from the card's styling options
+> card_is_foil := get_card_styling(card)["is_foil"] or else false
