@@ -655,6 +655,17 @@ SCRIPT_FUNCTION(random_select_many) {
   return ret;
 }
 
+SCRIPT_FUNCTION(get_card_styling) {
+  SCRIPT_PARAM_C(ScriptValueP, input);
+  SCRIPT_PARAM_C(ScriptValueP, set);
+  ScriptObject<CardP>* c = dynamic_cast<ScriptObject<CardP>*>(input.get());
+  ScriptObject<Set*>* s = dynamic_cast<ScriptObject<Set*>*>(set.get());
+  if (s && c) {
+    return to_script(&s->getValue()->stylingDataFor(c->getValue()));
+  }
+  throw ScriptError(_("invalid set or card argument"));
+}
+
 // ----------------------------------------------------------------------------- : Keywords
 
 
@@ -741,6 +752,7 @@ void init_script_basic_functions(Context& ctx) {
   ctx.setVariable(_("to_date"),              script_to_date);
   ctx.setVariable(_("to_code"),              script_to_code);
   ctx.setVariable(_("type_name"),            script_type_name);
+  ctx.setVariable(_("get_card_styling"),       script_get_card_styling);
   // math
   ctx.setVariable(_("abs"),                  script_abs);
   ctx.setVariable(_("random_real"),          script_random_real);
