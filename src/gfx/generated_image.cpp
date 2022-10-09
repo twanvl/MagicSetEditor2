@@ -133,7 +133,10 @@ bool MaskedBlendImage::operator == (const GeneratedImage& that) const {
 
 Image CombineBlendImage::generate(const Options& opt) const {
   Image img = image1->generate(opt);
-  combine_image(img, image2->generate(opt), image_combine);
+  Image img2 = image2->generate(opt);
+  if (img.GetWidth() != img2.GetWidth() || img.GetHeight() != img2.GetHeight())
+	throw ScriptError(_("Combined images must be of the same size"));
+  combine_image(img, img2, image_combine);
   return img;
 }
 ImageCombine CombineBlendImage::combine() const {
