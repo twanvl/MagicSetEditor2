@@ -3,9 +3,9 @@ Function: resize_image
 DOC_MSE_VERSION: since 0.3.9
 
 --Usage--
-> resize_image(input: image)
+> resize_image(input: image, height: height_of_new_image, width: width_of_new_image)
 
-Resize an image.
+Resize an image using bilinear filtering.
 
 --Parameters--
 ! Parameter	Type			Description

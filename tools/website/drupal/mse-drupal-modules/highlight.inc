@@ -74,6 +74,7 @@ $built_in_functions = array(
 	'linear_blend'		=>'',
 	'masked_blend'		=>'',
 	'combine_blend'		=>'',
+	'overlay'		=>'',
 	'set_mask'		=>'',
 	'set_alpha'		=>'',
 	'set_combine'		=>'',

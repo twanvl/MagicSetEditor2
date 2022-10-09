@@ -146,6 +146,33 @@ bool CombineBlendImage::operator == (const GeneratedImage& that) const {
                && image_combine == that2->image_combine;
 }
 
+// ----------------------------------------------------------------------------- : OverlayImage
+
+Image OverlayImage::generate(const Options& opt) const {
+  Image img = image1->generate(opt);
+  Image img2 = image2->generate(opt);
+  if (img.GetWidth() < img2.GetWidth() + offset_x || img.GetHeight() < img2.GetHeight() + offset_y)
+    throw ScriptError(_("Overlayed image is out of bounds"));
+
+  int off_x = offset_x,  off_y = offset_y;
+  int w = img.GetWidth(), h = img.GetHeight();  // original image size
+  int ow = img2.GetWidth(), oh = img2.GetHeight();  // overlay image size
+  Byte* data = img.GetData(), *data2 = img2.GetData();
+
+  for (int y = 0; y < oh; ++y) {
+	  memcpy(data + 3 * (off_x + (y + off_y) * w), data2 + 3 * y * ow, 3 * ow); // copy a line
+  }
+  return img;
+}
+ImageCombine OverlayImage::combine() const {
+	return image1->combine();
+}
+bool OverlayImage::operator == (const GeneratedImage& that) const {
+  const OverlayImage* that2 = dynamic_cast<const OverlayImage*>(&that);
+  return that2 && image1 == that2->image1 && image2 == that2->image2
+               && offset_x == that2->offset_x && offset_y == that2->offset_y;
+}
+
 // ----------------------------------------------------------------------------- : SetMaskImage
 
 Image SetMaskImage::generate(const Options& opt) const {

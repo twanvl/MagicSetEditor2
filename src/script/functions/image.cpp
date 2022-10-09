@@ -54,6 +54,14 @@ SCRIPT_FUNCTION(combine_blend) {
   return make_intrusive<CombineBlendImage>(image1, image2, image_combine);
 }
 
+SCRIPT_FUNCTION(overlay) {
+	SCRIPT_PARAM(GeneratedImageP, image1);
+	SCRIPT_PARAM(GeneratedImageP, image2);
+	SCRIPT_PARAM(int, offset_x);
+	SCRIPT_PARAM(int, offset_y);
+	return make_intrusive<OverlayImage>(image1, image2, offset_x, offset_y);
+}
+
 SCRIPT_FUNCTION(set_mask) {
   SCRIPT_PARAM(GeneratedImageP, image);
   SCRIPT_PARAM(GeneratedImageP, mask);
@@ -220,6 +228,7 @@ void init_script_image_functions(Context& ctx) {
   ctx.setVariable(_("linear_blend"),     script_linear_blend);
   ctx.setVariable(_("masked_blend"),     script_masked_blend);
   ctx.setVariable(_("combine_blend"),    script_combine_blend);
+  ctx.setVariable(_("overlay"),          script_overlay);
   ctx.setVariable(_("set_mask"),         script_set_mask);
   ctx.setVariable(_("set_alpha"),        script_set_alpha);
   ctx.setVariable(_("set_combine"),      script_set_combine);
