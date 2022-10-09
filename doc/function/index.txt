@@ -88,6 +88,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:recolor_image]]		Change the colors of an image to match the font color.
 | [[fun:enlarge]]		Enlarge an image by putting a border around it.
 | [[fun:crop]]			Crop an image, giving only a small subset of it.
+| [[fun:resize_image]]	Resize an image.
 | [[fun:flip_horizontal]]	Flip an image horizontally.
 | [[fun:flip_vertical]]		Flip an image vertically.
 | [[fun:rotate_image]]		Rotate an image.

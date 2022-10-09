@@ -113,6 +113,13 @@ SCRIPT_FUNCTION(crop) {
   return make_intrusive<CropImage>(input, width, height, offset_x, offset_y);
 }
 
+SCRIPT_FUNCTION(resize_image) {
+	SCRIPT_PARAM_C(GeneratedImageP, input);
+	SCRIPT_PARAM(int, width);
+	SCRIPT_PARAM(int, height);
+	return make_intrusive<ResizeImage>(input, width, height);
+}
+
 SCRIPT_FUNCTION(flip_horizontal) {
   SCRIPT_PARAM_C(GeneratedImageP, input);
   return make_intrusive<FlipImageHorizontal>(input);
@@ -221,6 +228,7 @@ void init_script_image_functions(Context& ctx) {
   ctx.setVariable(_("recolor_image"),    script_recolor_image);
   ctx.setVariable(_("enlarge"),          script_enlarge);
   ctx.setVariable(_("crop"),             script_crop);
+  ctx.setVariable(_("resize_image"),     script_resize_image);
   ctx.setVariable(_("flip_horizontal"),  script_flip_horizontal);
   ctx.setVariable(_("flip_vertical"),    script_flip_vertical);
   ctx.setVariable(_("rotate"),           script_rotate);

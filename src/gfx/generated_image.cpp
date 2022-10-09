@@ -316,6 +316,21 @@ bool CropImage::operator == (const GeneratedImage& that) const {
                && offset_x == that2->offset_x && offset_y == that2->offset_y;
 }
 
+// ----------------------------------------------------------------------------- : ResizeImage
+
+Image ResizeImage::generate(const Options& opt) const {
+  Image resampled_image((int)width, (int)height, false);
+  if (!resampled_image.Ok())
+    return Image(1, 1);
+  resample(image->generate(opt), resampled_image);
+  return resampled_image;
+}
+bool ResizeImage::operator == (const GeneratedImage& that) const {
+  const ResizeImage* that2 = dynamic_cast<const ResizeImage*>(&that);
+  return that2 && *image == *that2->image
+    && width == that2->width && height == that2->height;
+}
+
 // ----------------------------------------------------------------------------- : DropShadowImage
 
 /// Preform a gaussian blur, from the image in of w*h bytes to out

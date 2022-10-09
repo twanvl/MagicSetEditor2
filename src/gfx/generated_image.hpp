@@ -302,6 +302,20 @@ private:
   double offset_x, offset_y;
 };
 
+// ----------------------------------------------------------------------------- : ResizeImage
+
+/// Resize an image
+class ResizeImage : public SimpleFilterImage {
+public:
+  inline ResizeImage(const GeneratedImageP& image, double width, double height)
+    : SimpleFilterImage(image), width(width), height(height)
+  {}
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
+  double width, height;
+};
+
 // ----------------------------------------------------------------------------- : DropShadowImage
 
 /// Add a drop shadow to an image

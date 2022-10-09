@@ -82,6 +82,7 @@ $built_in_functions = array(
 	'recolor_image'		=>'',
 	'enlarge'		=>'',
 	'crop'			=>'',
+	'resize_image'		=>'',
 	'flip_horizontal'	=>'',
 	'flip_vertical'		=>'',
 	'rotate'		=>'',

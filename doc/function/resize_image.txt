@@ -1,0 +1,14 @@
+Function: resize_image
+
+DOC_MSE_VERSION: since 0.3.9
+
+--Usage--
+> resize_image(input: image)
+
+Resize an image.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:image]]		Image to resize.
+| @height@		[[type:double]]		Height of the resulting image
+| @width@		[[type:double]]		Width of the resulting image
