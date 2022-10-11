@@ -155,13 +155,44 @@ Image OverlayImage::generate(const Options& opt) const {
     throw ScriptError(_("Overlayed image is out of bounds"));
 
   int off_x = offset_x,  off_y = offset_y;
-  int w = img.GetWidth(), h = img.GetHeight();  // original image size
-  int ow = img2.GetWidth(), oh = img2.GetHeight();  // overlay image size
-  Byte* data = img.GetData(), *data2 = img2.GetData();
+  int w1 = img.GetWidth(), h1 = img.GetHeight();  // original image size
+  int w2 = img2.GetWidth(), h2 = img2.GetHeight();  // overlay image size
+  Byte* data1 = img.GetData(), *data2 = img2.GetData();
+  Byte* alpha1 = img.GetAlpha(), *alpha2 = img2.GetAlpha();
 
-  for (int y = 0; y < oh; ++y) {
-	  memcpy(data + 3 * (off_x + (y + off_y) * w), data2 + 3 * y * ow, 3 * ow); // copy a line
+  // if image2 has alpha, take it into account
+  if (alpha2) {
+    for (int x = 0; x < w2; ++x) {
+      for (int y = 0; y < h2; ++y) {
+        Byte a = 255 - alpha2[x + y * w2];
+        for (int b = 0; b < 3; ++b) { // each pixel is 3 bytes
+          Byte& d1 = data1[((y + off_y) * w1 + x + off_x) * 3 + b];
+          Byte d2 = data2[(y * w2 + x) * 3 + b];
+          d1 = (d1 * a + d2 * (255 - a)) / 255; // copied from mask_blend()
+        }
+      }
+    }
+
+    if (alpha1) {
+      for (int x = 0; x < w2; ++x) {
+        for (int y = 0; y < h2; ++y) {
+          int idx1 = (y + off_y) * w1 + x + off_x;
+		  alpha1[idx1] = max(alpha1[idx1], alpha2[x + y * w2]);
+        }
+      }
+    }
+  // otherwise, we can copy the data directly
+  } else {
+    for (int y = 0; y < h2; ++y) {
+      memcpy(data1 + 3 * ((y + off_y) * w1 + off_x), data2 + 3 * y * w2, 3 * w2); // copy a line
+    }
+    if (alpha1) {
+      for (int y = 0; y < h2; ++y) {
+        memset(alpha1 + (y + off_y) * w1 + off_x, w2, 255);
+      }
+    }
   }
+
   return img;
 }
 ImageCombine OverlayImage::combine() const {

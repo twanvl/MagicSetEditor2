@@ -3,7 +3,7 @@ Function: overlay
 --Usage--
 > overlay(image1: image, image2: image, offset_x: x_position_to_overlay_image, offset_y: y_position_to_overlay_image)
 
-Overlay an image over another.
+Overlay an image over another, taking the second image's alpha channel into account.
 
 --Parameters--
 ! Parameter	Type			Description
