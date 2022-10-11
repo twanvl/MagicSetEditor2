@@ -54,6 +54,12 @@ String get_export_full_path(String& rel_name) {
   return fn.GetFullPath();
 }
 
+void ensure_dir_valid(String& path) {
+  wxFileName filename = path;
+  if (!filename.DirExists())
+    filename.Mkdir();
+}
+
 // ----------------------------------------------------------------------------- : HTML
 
 // An HTML tag
@@ -375,6 +381,7 @@ SCRIPT_FUNCTION(copy_file) {
   // copy
   ExportInfo& ei = *export_info();
   auto in = ei.export_template->openIn(input);
+  ensure_dir_valid(out_path);
   wxFileOutputStream out(out_path);
   if (!out.Ok()) throw Error(_("Unable to open file '") + out_path + _("' for output"));
   out.Write(*in);
@@ -389,6 +396,7 @@ SCRIPT_FUNCTION(write_text_file) {
   // output path
   String out_path = get_export_full_path(file);
   // write
+  ensure_dir_valid(out_path);
   wxFileOutputStream out(out_path);
   if (!out.Ok()) throw Error(_("Unable to open file '") + out_path + _("' for output"));
   wxTextOutputStream tout(out);
@@ -421,6 +429,7 @@ SCRIPT_FUNCTION(write_image_file) {
   }
   if (!image.Ok()) throw Error(_("Unable to generate image for file ") + file);
   // write
+  ensure_dir_valid(out_path);
   image.SaveFile(out_path);
   ei.exported_images.insert(make_pair(file, wxSize(image.GetWidth(), image.GetHeight())));
   SCRIPT_RETURN(file);
@@ -433,6 +442,7 @@ SCRIPT_FUNCTION(write_set_file) {
   String out_path = get_export_full_path(file);
   // export
   SCRIPT_PARAM_C(Set*, set);
+  ensure_dir_valid(out_path);
   set->saveCopy(out_path); // TODO: use export_set instead?
   SCRIPT_RETURN(file);
   
