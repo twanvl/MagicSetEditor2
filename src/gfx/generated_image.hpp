@@ -324,13 +324,14 @@ private:
 /// Resize an image
 class ResizeImage : public SimpleFilterImage {
 public:
-  inline ResizeImage(const GeneratedImageP& image, double width, double height)
-    : SimpleFilterImage(image), width(width), height(height)
+  inline ResizeImage(const GeneratedImageP& image, double width, double height, wxImageResizeQuality resize_quality)
+    : SimpleFilterImage(image), width(width), height(height), resize_quality(resize_quality)
   {}
   Image generate(const Options& opt) const override;
   bool operator == (const GeneratedImage& that) const override;
 private:
   double width, height;
+  wxImageResizeQuality resize_quality;
 };
 
 // ----------------------------------------------------------------------------- : DropShadowImage

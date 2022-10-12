@@ -376,17 +376,22 @@ bool CropImage::operator == (const GeneratedImage& that) const {
 
 // ----------------------------------------------------------------------------- : ResizeImage
 
+IMPLEMENT_REFLECTION_ENUM(wxImageResizeQuality) {
+  VALUE_N("nearest", wxIMAGE_QUALITY_NEAREST);
+  VALUE_N("bilinear", wxIMAGE_QUALITY_BILINEAR);
+  VALUE_N("bicubic", wxIMAGE_QUALITY_BICUBIC);
+  VALUE_N("box average", wxIMAGE_QUALITY_BOX_AVERAGE);
+}
+
 Image ResizeImage::generate(const Options& opt) const {
-  Image resampled_image((int)width, (int)height, false);
-  if (!resampled_image.Ok())
-    return Image(1, 1);
-  resample(image->generate(opt), resampled_image);
-  return resampled_image;
+  return image->generate(opt).Rescale((int)width, (int)height, resize_quality);
 }
 bool ResizeImage::operator == (const GeneratedImage& that) const {
   const ResizeImage* that2 = dynamic_cast<const ResizeImage*>(&that);
   return that2 && *image == *that2->image
-    && width == that2->width && height == that2->height;
+               && width == that2->width
+               && height == that2->height
+               && resize_quality == that2->resize_quality;
 }
 
 // ----------------------------------------------------------------------------- : DropShadowImage

@@ -1,0 +1,17 @@
+Enumeration: resize mode type
+
+This specifies how an image is to be resized.
+
+--Script syntax--
+In scripts, resize modes are stored as a string.
+
+--Possible values--
+! Value			Description
+| @nearest@		No resampling is done, use the nearest pixel value.
+| @bilinear@		Pixels are linearly interpolated.
+| @bicubic@		Use [[https://en.wikipedia.org/wiki/Bicubic_interpolation|bicubic interpolation]].
+| @box average@		Use surrounding pixels to calculate an average that will be used for new pixels. Typically used when reducing the size of an image.
+
+--Examples--
+> resize_image(..., width: ..., height: ..., mode: "bilinear")
+

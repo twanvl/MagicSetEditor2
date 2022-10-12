@@ -20,6 +20,7 @@
 #include <render/symbol/filter.hpp>
 
 void parse_enum(const String&, ImageCombine& out);
+void parse_enum(const String&, wxImageResizeQuality& out);
 
 // ----------------------------------------------------------------------------- : Utility
 
@@ -122,10 +123,16 @@ SCRIPT_FUNCTION(crop) {
 }
 
 SCRIPT_FUNCTION(resize_image) {
-	SCRIPT_PARAM_C(GeneratedImageP, input);
-	SCRIPT_PARAM(int, width);
-	SCRIPT_PARAM(int, height);
-	return make_intrusive<ResizeImage>(input, width, height);
+  SCRIPT_PARAM_C(GeneratedImageP, input);
+  SCRIPT_PARAM(int, width);
+  SCRIPT_PARAM(int, height);
+  wxImageResizeQuality resize_quality;
+  SCRIPT_OPTIONAL_PARAM(String, mode) {
+    parse_enum(mode, resize_quality);
+  } else {
+    resize_quality = wxIMAGE_QUALITY_NEAREST;
+  }
+  return make_intrusive<ResizeImage>(input, width, height, resize_quality);
 }
 
 SCRIPT_FUNCTION(flip_horizontal) {

@@ -12,3 +12,4 @@ Resize an image using bilinear filtering.
 | @input@	[[type:image]]		Image to resize.
 | @height@		[[type:double]]		Height of the resulting image
 | @width@		[[type:double]]		Width of the resulting image
+| @mode@	[[type:resize_mode]]	Resize mode to use (optional), default is nearest
