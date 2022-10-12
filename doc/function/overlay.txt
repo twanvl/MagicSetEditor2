@@ -1,0 +1,20 @@
+Function: overlay
+
+--Usage--
+> overlay(image1: image, image2: image, offset_x: x_position_to_overlay_image, offset_y: y_position_to_overlay_image)
+
+Overlay an image over another, taking the second image's alpha channel into account.
+
+--Parameters--
+! Parameter	Type			Description
+| @image1@	[[type:image]]		Base image
+| @image2@	[[type:image]]		Image to overlay over the base image
+| @offset_x@	[[type:double]]		Offset of the overlayed image, horizontally
+| @offset_y@	[[type:double]]		Offset of the overlayed image, vertically
+
+--Examples--
+> combine_blend(image1: "image1.png", image2: "image2.png", combine: "add")  ==  [[Image]]
+>>> combine_blend(image1: <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, image2: <img src="image2.png" alt='"image2.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, combine: "add") == <img src="image_combine_blend.png" alt='"image_combine_blend.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
+
+--See also--
+| [[fun:crop]]		Crop an image, giving only a small subset of it.

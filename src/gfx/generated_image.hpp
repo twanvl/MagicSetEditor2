@@ -147,6 +147,23 @@ private:
   ImageCombine image_combine;
 };
 
+// ----------------------------------------------------------------------------- : OverlayImage
+
+/// Overlay an image over another
+class OverlayImage : public GeneratedImage {
+public:
+	inline OverlayImage(const GeneratedImageP& image1, const GeneratedImageP& image2, double offset_x, double offset_y)
+		: image1(image1), image2(image2), offset_x(offset_x), offset_y(offset_y)
+	{}
+	Image generate(const Options& opt) const override;
+	ImageCombine combine() const override;
+	bool operator == (const GeneratedImage& that) const override;
+	bool local() const override { return image1->local() && image2->local(); }
+private:
+	GeneratedImageP image1, image2;
+	double offset_x, offset_y;
+};
+
 // ----------------------------------------------------------------------------- : SetMaskImage
 
 /// Change the alpha channel of an image
@@ -300,6 +317,21 @@ public:
 private:
   double width, height;
   double offset_x, offset_y;
+};
+
+// ----------------------------------------------------------------------------- : ResizeImage
+
+/// Resize an image
+class ResizeImage : public SimpleFilterImage {
+public:
+  inline ResizeImage(const GeneratedImageP& image, double width, double height, wxImageResizeQuality resize_quality)
+    : SimpleFilterImage(image), width(width), height(height), resize_quality(resize_quality)
+  {}
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
+  double width, height;
+  wxImageResizeQuality resize_quality;
 };
 
 // ----------------------------------------------------------------------------- : DropShadowImage

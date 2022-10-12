@@ -1,0 +1,15 @@
+Function: resize_image
+
+DOC_MSE_VERSION: since 0.3.9
+
+--Usage--
+> resize_image(input: image, height: height_of_new_image, width: width_of_new_image)
+
+Resize an image using bilinear filtering.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:image]]		Image to resize.
+| @height@		[[type:double]]		Height of the resulting image
+| @width@		[[type:double]]		Width of the resulting image
+| @mode@	[[type:resize_mode]]	Resize mode to use (optional), default is nearest

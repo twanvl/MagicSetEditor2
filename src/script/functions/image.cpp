@@ -20,6 +20,7 @@
 #include <render/symbol/filter.hpp>
 
 void parse_enum(const String&, ImageCombine& out);
+void parse_enum(const String&, wxImageResizeQuality& out);
 
 // ----------------------------------------------------------------------------- : Utility
 
@@ -52,6 +53,14 @@ SCRIPT_FUNCTION(combine_blend) {
   ImageCombine image_combine;
   parse_enum(combine, image_combine);
   return make_intrusive<CombineBlendImage>(image1, image2, image_combine);
+}
+
+SCRIPT_FUNCTION(overlay) {
+	SCRIPT_PARAM(GeneratedImageP, image1);
+	SCRIPT_PARAM(GeneratedImageP, image2);
+	SCRIPT_PARAM(int, offset_x);
+	SCRIPT_PARAM(int, offset_y);
+	return make_intrusive<OverlayImage>(image1, image2, offset_x, offset_y);
 }
 
 SCRIPT_FUNCTION(set_mask) {
@@ -111,6 +120,19 @@ SCRIPT_FUNCTION(crop) {
   SCRIPT_PARAM(double, offset_x);
   SCRIPT_PARAM(double, offset_y);
   return make_intrusive<CropImage>(input, width, height, offset_x, offset_y);
+}
+
+SCRIPT_FUNCTION(resize_image) {
+  SCRIPT_PARAM_C(GeneratedImageP, input);
+  SCRIPT_PARAM(int, width);
+  SCRIPT_PARAM(int, height);
+  wxImageResizeQuality resize_quality;
+  SCRIPT_OPTIONAL_PARAM(String, mode) {
+    parse_enum(mode, resize_quality);
+  } else {
+    resize_quality = wxIMAGE_QUALITY_NEAREST;
+  }
+  return make_intrusive<ResizeImage>(input, width, height, resize_quality);
 }
 
 SCRIPT_FUNCTION(flip_horizontal) {
@@ -213,6 +235,7 @@ void init_script_image_functions(Context& ctx) {
   ctx.setVariable(_("linear_blend"),     script_linear_blend);
   ctx.setVariable(_("masked_blend"),     script_masked_blend);
   ctx.setVariable(_("combine_blend"),    script_combine_blend);
+  ctx.setVariable(_("overlay"),          script_overlay);
   ctx.setVariable(_("set_mask"),         script_set_mask);
   ctx.setVariable(_("set_alpha"),        script_set_alpha);
   ctx.setVariable(_("set_combine"),      script_set_combine);
@@ -221,6 +244,7 @@ void init_script_image_functions(Context& ctx) {
   ctx.setVariable(_("recolor_image"),    script_recolor_image);
   ctx.setVariable(_("enlarge"),          script_enlarge);
   ctx.setVariable(_("crop"),             script_crop);
+  ctx.setVariable(_("resize_image"),     script_resize_image);
   ctx.setVariable(_("flip_horizontal"),  script_flip_horizontal);
   ctx.setVariable(_("flip_vertical"),    script_flip_vertical);
   ctx.setVariable(_("rotate"),           script_rotate);

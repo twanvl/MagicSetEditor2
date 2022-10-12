@@ -146,6 +146,64 @@ bool CombineBlendImage::operator == (const GeneratedImage& that) const {
                && image_combine == that2->image_combine;
 }
 
+// ----------------------------------------------------------------------------- : OverlayImage
+
+Image OverlayImage::generate(const Options& opt) const {
+  Image img = image1->generate(opt);
+  Image img2 = image2->generate(opt);
+  if (img.GetWidth() < img2.GetWidth() + offset_x || img.GetHeight() < img2.GetHeight() + offset_y)
+    throw ScriptError(_("Overlayed image is out of bounds"));
+
+  int off_x = offset_x,  off_y = offset_y;
+  int w1 = img.GetWidth(), h1 = img.GetHeight();  // original image size
+  int w2 = img2.GetWidth(), h2 = img2.GetHeight();  // overlay image size
+  Byte* data1 = img.GetData(), *data2 = img2.GetData();
+  Byte* alpha1 = img.GetAlpha(), *alpha2 = img2.GetAlpha();
+
+  // if image2 has alpha, take it into account
+  if (alpha2) {
+    for (int x = 0; x < w2; ++x) {
+      for (int y = 0; y < h2; ++y) {
+        Byte a = 255 - alpha2[x + y * w2];
+        for (int b = 0; b < 3; ++b) { // each pixel is 3 bytes
+          Byte& d1 = data1[((y + off_y) * w1 + x + off_x) * 3 + b];
+          Byte d2 = data2[(y * w2 + x) * 3 + b];
+          d1 = (d1 * a + d2 * (255 - a)) / 255; // copied from mask_blend()
+        }
+      }
+    }
+
+    if (alpha1) {
+      for (int x = 0; x < w2; ++x) {
+        for (int y = 0; y < h2; ++y) {
+          int idx1 = (y + off_y) * w1 + x + off_x;
+		  alpha1[idx1] = max(alpha1[idx1], alpha2[x + y * w2]);
+        }
+      }
+    }
+  // otherwise, we can copy the data directly
+  } else {
+    for (int y = 0; y < h2; ++y) {
+      memcpy(data1 + 3 * ((y + off_y) * w1 + off_x), data2 + 3 * y * w2, 3 * w2); // copy a line
+    }
+    if (alpha1) {
+      for (int y = 0; y < h2; ++y) {
+        memset(alpha1 + (y + off_y) * w1 + off_x, w2, 255);
+      }
+    }
+  }
+
+  return img;
+}
+ImageCombine OverlayImage::combine() const {
+	return image1->combine();
+}
+bool OverlayImage::operator == (const GeneratedImage& that) const {
+  const OverlayImage* that2 = dynamic_cast<const OverlayImage*>(&that);
+  return that2 && image1 == that2->image1 && image2 == that2->image2
+               && offset_x == that2->offset_x && offset_y == that2->offset_y;
+}
+
 // ----------------------------------------------------------------------------- : SetMaskImage
 
 Image SetMaskImage::generate(const Options& opt) const {
@@ -314,6 +372,26 @@ bool CropImage::operator == (const GeneratedImage& that) const {
   return that2 && *image      == *that2->image
                && width    == that2->width    && height   == that2->height
                && offset_x == that2->offset_x && offset_y == that2->offset_y;
+}
+
+// ----------------------------------------------------------------------------- : ResizeImage
+
+IMPLEMENT_REFLECTION_ENUM(wxImageResizeQuality) {
+  VALUE_N("nearest", wxIMAGE_QUALITY_NEAREST);
+  VALUE_N("bilinear", wxIMAGE_QUALITY_BILINEAR);
+  VALUE_N("bicubic", wxIMAGE_QUALITY_BICUBIC);
+  VALUE_N("box average", wxIMAGE_QUALITY_BOX_AVERAGE);
+}
+
+Image ResizeImage::generate(const Options& opt) const {
+  return image->generate(opt).Rescale((int)width, (int)height, resize_quality);
+}
+bool ResizeImage::operator == (const GeneratedImage& that) const {
+  const ResizeImage* that2 = dynamic_cast<const ResizeImage*>(&that);
+  return that2 && *image == *that2->image
+               && width == that2->width
+               && height == that2->height
+               && resize_quality == that2->resize_quality;
 }
 
 // ----------------------------------------------------------------------------- : DropShadowImage
