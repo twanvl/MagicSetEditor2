@@ -7,11 +7,13 @@ DOC_MSE_VERSION: since 0.3.8
 
 Convert any value to a [[type:image]].
 
-A string is interpreted as a [[type:filename]].
+* A string is interpreted as a [[type:filename]].
+* A [[type:card]] will be converted into an image onto which image operations can be done.
 
 --Parameters--
 ! Parameter	Type			Description
 | @input@	''any type''		Value to convert to an image
+| @zoom@	[[type:double]] (optional)	A zoom value for the image. Only used when converting cards. This allows you to keep the sharpness of the text at higher resolution.
 
 --Examples--
 >>> to_image("image1.png")  ==  <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />

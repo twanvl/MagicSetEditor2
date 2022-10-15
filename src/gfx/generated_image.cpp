@@ -504,3 +504,21 @@ bool ImageValueToImage::operator == (const GeneratedImage& that) const {
   return that2 && filename == that2->filename
                && age      == that2->age;
 }
+
+// ----------------------------------------------------------------------------- : PreGeneratedImage
+
+PreGeneratedImage::PreGeneratedImage(const Image& image)
+  : image(image)
+{}
+PreGeneratedImage::~PreGeneratedImage() {}
+
+Image PreGeneratedImage::generate(const Options& opt) const {
+  if (!image.Ok()) {
+    return Image(max(1, opt.width), max(1, opt.height));
+  }
+  return image;
+}
+bool PreGeneratedImage::operator == (const GeneratedImage& that) const {
+  const PreGeneratedImage* that2 = dynamic_cast<const PreGeneratedImage*>(&that);
+  return that2 && image.IsSameAs(that2->image);
+}
