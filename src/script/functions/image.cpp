@@ -29,7 +29,9 @@ SCRIPT_FUNCTION(to_image) {
   SCRIPT_PARAM_C(ScriptValueP, input);
   ScriptObject<CardP>* card = dynamic_cast<ScriptObject<CardP>*>(input.get());
   if (card) {
-    Image image = export_bitmap(export_info()->set, card->getValue()).ConvertToImage();
+    SCRIPT_OPTIONAL_PARAM_(double, zoom);
+	if (zoom <= 0) zoom = 1; // default
+    Image image = export_bitmap(export_info()->set, card->getValue(), zoom).ConvertToImage();
     return make_intrusive<PreGeneratedImage>(image);
   }
   return input->toImage();

@@ -13,6 +13,7 @@ Convert any value to a [[type:image]].
 --Parameters--
 ! Parameter	Type			Description
 | @input@	''any type''		Value to convert to an image
+| @zoom@	[[type:double]] (optional)	A zoom value for the image. Only used when converting cards. This allows you to keep the sharpness of the text at higher resolution.
 
 --Examples--
 >>> to_image("image1.png")  ==  <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
