@@ -218,7 +218,7 @@ void StylingEditor::onChangeSet() {
 // ----------------------------------------------------------------------------- : ExportOptionsEditor
 
 ExportOptionsEditor::ExportOptionsEditor(Window* parent, int id, long style)
-  : NativeLookEditor(parent, id, style)
+  : NativeLookEditor(parent, id, style | wxVSCROLL)
 {}
 
 void ExportOptionsEditor::showExport(const ExportTemplateP& export_template) {
